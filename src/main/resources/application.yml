@@ -1,7 +1,22 @@
-
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: ""
-    password: ""
+    # local docker db
+    url: ENC(ulGy/5rB4Y7rD0wHbwR21rLG/jT1Lkm02LgSbHuE9n9mmxZmv0FenoE8dD89qMadlLdy+gAf24ulHM3z9/JYrQ==)
+    username: ENC(gv8+vDAseDkw87FNUNmFQVdk5dTBu0GQ71VBBuUyeIY=)
+    password: ENC(VcPYkEOg9OzuwNw1UeYOgLqKsRkFoRUHwjRcxZzGgZQ=)
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: validate
+
+
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndTripleDES
+
+
