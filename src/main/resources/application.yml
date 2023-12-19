@@ -5,7 +5,9 @@ spring:
     url: ENC(ulGy/5rB4Y7rD0wHbwR21rLG/jT1Lkm02LgSbHuE9n9mmxZmv0FenoE8dD89qMadlLdy+gAf24ulHM3z9/JYrQ==)
     username: ENC(gv8+vDAseDkw87FNUNmFQVdk5dTBu0GQ71VBBuUyeIY=)
     password: ENC(VcPYkEOg9OzuwNw1UeYOgLqKsRkFoRUHwjRcxZzGgZQ=)
-
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   jpa:
     show-sql: true
     properties:
