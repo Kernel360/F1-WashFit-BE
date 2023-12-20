@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5431/washpedia
-    username: postgres
-    password: 1q2w3e4r
+    url: jdbc:postgresql://localhost:5422/washpedia
+    username:
+    password:
 
 jasypt:
   encryptor:
