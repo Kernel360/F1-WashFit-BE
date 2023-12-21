@@ -51,24 +51,21 @@ jobs:
       - name: DockerHub Push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
-  jobs:
-    runs-on:
-    deploy:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Install vultr-cli
-          uses: techknowlogick/action-vultr@v2
-          with:
-          token: ${{ secrets.VULTR_API_KEY }}
+  deploy:
+    steps:
+      - name: Install vultr-cli
+        uses: techknowlogick/action-vultr@v2
+        with:
+        token: ${{secrets.VULTR_API_KEY }}
 
-        - name: Run shell script with secrets
-          run: |
-            export SECRET_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-            export SECRET_DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
-            export SECRET_PROJECT_NAME=${{ secrets.PROJECT_NAME }}
-            export SECRET_VULTR_API_KEY=${{ secrets.VULTR_API_KEY }}
-            export SECRET_VULTR_IP=${{ secrets.VULTR_IP }}
-            export SECRET_VULTR_SSH_KEY=${{ secrets.VULTR_SSH_KEY }}
-            export SECRET_VULTR_USER_NAME=${{ secrets.VULTR_USER_NAME }}
-            ./scripts/deploy.sh
+      - name: Run shell script with secrets
+        run: |
+          export SECRET_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+          export SECRET_DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
+          export SECRET_PROJECT_NAME=${{ secrets.PROJECT_NAME }}
+          export SECRET_VULTR_API_KEY=${{ secrets.VULTR_API_KEY }}
+          export SECRET_VULTR_IP=${{ secrets.VULTR_IP }}
+          export SECRET_VULTR_SSH_KEY=${{ secrets.VULTR_SSH_KEY }}
+          export SECRET_VULTR_USER_NAME=${{ secrets.VULTR_USER_NAME }}
+          ./scripts/deploy.sh
 
