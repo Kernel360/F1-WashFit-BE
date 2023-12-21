@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: GitHub Action for Vultr - vultr-cli
-        uses: techknowlogick/action-vultr@v2.3.0
+        uses: techknowlogick/action-vultr@v2.2.1
         with:
           token: ${{ secrets.VULTR_API_KEY }}
 
