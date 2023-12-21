@@ -57,7 +57,7 @@ jobs:
       - name: GitHub Action for Vultr - vultr-cli
         uses: techknowlogick/action-vultr@v2.3.0
         with:
-          token: ${{secrets.VULTR_API_KEY }}
+          token: ${{ secrets.VULTR_API_KEY }}
 
       - name: Run shell script with secrets
         run: |
