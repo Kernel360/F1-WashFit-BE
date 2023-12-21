@@ -51,13 +51,20 @@ jobs:
       - name: DockerHub Push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: GitHub Action for Vultr - vultr-cli
-        uses: techknowlogick/action-vultr@v2.2.1
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: GitHub Action for Vultr - vultr-cli
+#        uses: techknowlogick/action-vultr@v2.2.1
+#        with:
+#          token: ${{ secrets.VULTR_API_KEY }}
+
+      - name: Application Run
+        uses: appleboy/ssh-action@v0.1.6
         with:
-          token: ${{ secrets.VULTR_API_KEY }}
+          host: ${{ secrets.VULTR_IP }}
+          username: ${{ secrets.VULTR_USER_NAME }}
+          key: ${{ secrets.VULTR_SSH_KEY }}
 
       - name: Run shell script with secrets
         run: |
