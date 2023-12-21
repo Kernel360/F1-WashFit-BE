@@ -52,6 +52,7 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
   deploy:
+    runs-on: ubuntu-latest
     steps:
       - name: Install vultr-cli
         uses: techknowlogick/action-vultr@v2
@@ -68,4 +69,3 @@ jobs:
           export SECRET_VULTR_SSH_KEY=${{ secrets.VULTR_SSH_KEY }}
           export SECRET_VULTR_USER_NAME=${{ secrets.VULTR_USER_NAME }}
           ./scripts/deploy.sh
-
