@@ -54,8 +54,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Install vultr-cli
-        uses: techknowlogick/action-vultr@v2
+      - name: GitHub Action for Vultr - vultr-cli
+        uses: techknowlogick/action-vultr@v2.3.0
         with:
           token: ${{secrets.VULTR_API_KEY }}
 
