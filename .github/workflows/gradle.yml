@@ -67,6 +67,7 @@ jobs:
 #          key: ${{ secrets.VULTR_SSH_KEY }}
           password: ${{ secrets.VULTR_PASSWORD }}
 
+
       - name: Run shell script with secrets
         run: |
           export SECRET_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
