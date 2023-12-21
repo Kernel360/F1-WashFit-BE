@@ -60,8 +60,8 @@ jobs:
         with:
           host: ${{ secrets.VULTR_IP }}
           username: ${{ secrets.VULTR_USER_NAME }}
-#          key: ${{ secrets.VULTR_SSH_KEY }}
-          password: ${{ secrets.VULTR_PASSWORD }}
+          key: ${{ secrets.VULTR_SSH_KEY }}
+#          password: ${{ secrets.VULTR_PASSWORD }}ㅣ
 
 
       - name: Run shell script with secrets
