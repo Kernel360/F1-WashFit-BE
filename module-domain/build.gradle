@@ -37,4 +37,7 @@ tasks.jar {
     enabled = true
 }
 
-tasks.register("prepareKotlinBuildScriptModel") {}
+tasks.register("prepareKotlinBuildScriptModel") {
+
+
+}
