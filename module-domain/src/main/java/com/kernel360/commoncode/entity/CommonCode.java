@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 @Getter
 @Entity
-@Builder
 @Table(name = "common_code")
 public class CommonCode {
     @Id
@@ -48,7 +47,6 @@ public class CommonCode {
     @Column(name = "modified_by", length = Integer.MAX_VALUE)
     private String modifiedBy;
 
-    public CommonCode() {
-
+    public CommonCode(int i, String black, int i1, String color, int i2, boolean b, String 검정색, String date, String admin) {
     }
 }
