@@ -43,6 +43,4 @@ tasks.named('test') {
 
 tasks.register("prepareKotlinBuildScriptModel") {}
 
-application {
-    mainClassName = 'com.kernel360.ModulApiApplication'
-}
+
