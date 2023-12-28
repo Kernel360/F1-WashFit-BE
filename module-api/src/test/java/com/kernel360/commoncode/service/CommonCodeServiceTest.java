@@ -28,7 +28,7 @@ public class CommonCodeServiceTest {
     private CommonCodeService commonCodeService;
 
     @Test
-    @DisplayName("getCodes")
+    @DisplayName("getCodes :: 8개를 지닌 List 조회")
     void 상위코드명을_인수로_받는_공통코드_목록_조회_(){
         /** given **/
         String codeName = "color";
@@ -49,6 +49,7 @@ public class CommonCodeServiceTest {
 
         /** when **/
         List<CommonCodeDto> test = commonCodeService.getCodes(codeName);
+
         /** then **/
         assertEquals(8,test.size());
     }
