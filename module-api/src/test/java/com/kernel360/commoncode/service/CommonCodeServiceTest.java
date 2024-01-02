@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CommonCodeServiceTest {
+class CommonCodeServiceTest {
     @Mock
     private CommonCodeRepository commonCodeRepository;
 
@@ -35,14 +35,14 @@ public class CommonCodeServiceTest {
 
         List<CommonCode> entities = new ArrayList<>();
 
-        entities.add(new CommonCode (21,"white",20,"color",1,true,"흰색","2023-12-28","admin"));
-        entities.add(new CommonCode (22,"gray",20,"color",5,true,"쥐색","2023-12-28","admin"));
-        entities.add(new CommonCode (23,"black",20,"color",6,true,"검정색","2023-12-28","admin"));
-        entities.add(new CommonCode (24,"red",20,"color",4,true,"빨간색","2023-12-28","admin"));
-        entities.add(new CommonCode (25,"yellow",20,"color",2,true,"노란색","2023-12-28","admin"));
-        entities.add(new CommonCode (26,"green",20,"color",3,true,"초록색","2023-12-28","admin"));
-        entities.add(new CommonCode (27,"blue",20,"color",4,true,"파란색","2023-12-28","admin"));
-        entities.add(new CommonCode (28,"etc",20,"color",7,true,"기타","2023-12-28","admin"));
+        entities.add(CommonCode.builder().codeNo(21).codeName("white").upperNo(20).upperName("color").sortOrder(1).isUsed(true).description("흰색").build());
+        entities.add(CommonCode.builder().codeNo(22).codeName("gray").upperNo(20).upperName("color").sortOrder(5).isUsed(true).description("쥐색").build());
+        entities.add(CommonCode.builder().codeNo(23).codeName("black").upperNo(20).upperName("color").sortOrder(6).isUsed(true).description("검정색").build());
+        entities.add(CommonCode.builder().codeNo(24).codeName("red").upperNo(20).upperName("color").sortOrder(4).isUsed(true).description("빨간색").build());
+        entities.add(CommonCode.builder().codeNo(25).codeName("yellow").upperNo(20).upperName("color").sortOrder(2).isUsed(true).description("노란색").build());
+        entities.add(CommonCode.builder().codeNo(26).codeName("green").upperNo(20).upperName("color").sortOrder(3).isUsed(true).description("초록색").build());
+        entities.add(CommonCode.builder().codeNo(27).codeName("blue").upperNo(20).upperName("color").sortOrder(4).isUsed(true).description("파란색").build());
+        entities.add(CommonCode.builder().codeNo(28).codeName("etc").upperNo(20).upperName("color").sortOrder(7).isUsed(true).description("기타").build());
 
         /** stub **/
         when(commonCodeRepository.findAllByUpperNameAndIsUsed(anyString(),anyBoolean())).thenReturn(entities);
