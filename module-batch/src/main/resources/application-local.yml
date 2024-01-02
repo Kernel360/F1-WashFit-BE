@@ -1,0 +1,40 @@
+server:
+  port: 8091
+
+spring:
+  batch:
+    jdbc:
+      initialize-schema: always
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        generate_statistics: true
+        jdbc:
+          batch_size: 100
+        format_sql: true
+    open-in-view: true
+
+  datasource:
+    hikari:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:ecolife
+      username: sa
+      password:
+
+
+
+
+
+
+
+
+
+
+
+
+
