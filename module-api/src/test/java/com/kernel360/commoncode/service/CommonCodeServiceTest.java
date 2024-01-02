@@ -29,7 +29,7 @@ public class CommonCodeServiceTest {
 
     @Test
     @DisplayName("getCodes :: 8개를 지닌 List 조회")
-    void 상위코드명을_인수로_받는_공통코드_목록_조회_(){
+    void 상위코드명을_인수로_받는_공통코드_목록_조회(){
         /** given **/
         String codeName = "color";
 
