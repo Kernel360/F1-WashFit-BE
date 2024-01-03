@@ -27,13 +27,13 @@ public class WashInfo extends BaseEntity {
     @Column(name = "monthly_expense")
     private Integer monthlyExpense;
 
-    @Column(name = "interest", length = Integer.MAX_VALUE)
+    @Column(name = "interest")
     private String interest;
 
-    @Column(name = "driving_env", length = Integer.MAX_VALUE)
+    @Column(name = "driving_env")
     private String drivingEnv;
 
-    @Column(name = "parking_env", length = Integer.MAX_VALUE)
+    @Column(name = "parking_env")
     private String parkingEnv;
 
 }

@@ -17,13 +17,13 @@ public class CommonCode {
     @Column(name = "code_no", nullable = false)
     private Integer codeNo;
 
-    @Column(name = "code_name", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "code_name", nullable = false)
     private String codeName;
 
     @Column(name = "upper_no")
     private Integer upperNo;
 
-    @Column(name = "upper_name", length = Integer.MAX_VALUE)
+    @Column(name = "upper_name")
     private String upperName;
 
     @Column(name = "sort_order", nullable = false)
@@ -38,13 +38,13 @@ public class CommonCode {
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
-    @Column(name = "created_by", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "created_by", nullable = false)
     private String createdBy;
 
     @Column(name = "modified_at")
     private LocalDate modifiedAt;
 
-    @Column(name = "modified_by", length = Integer.MAX_VALUE)
+    @Column(name = "modified_by")
     private String modifiedBy;
 
     public CommonCode(int codeNo, String codeName, int upperNo, String upperName, int sortOrder, boolean isUsed, String description, String createdAt, String createdBy) {

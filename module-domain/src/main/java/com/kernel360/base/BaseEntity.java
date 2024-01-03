@@ -11,11 +11,12 @@ import java.time.LocalDate;
 
 @Getter
 public class BaseEntity {
+
     @Column(name = "created_at", nullable = false)
     @CreatedDate
     private LocalDate createdAt;
 
-    @Column(name = "created_by", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "created_by", nullable = false)
     @CreatedBy
     private String createdBy;
 
@@ -23,7 +24,7 @@ public class BaseEntity {
     @LastModifiedDate
     private LocalDate modifiedAt;
 
-    @Column(name = "modified_by", length = Integer.MAX_VALUE)
+    @Column(name = "modified_by")
     @LastModifiedBy
     private String modifiedBy;
 }

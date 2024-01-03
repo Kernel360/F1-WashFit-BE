@@ -12,16 +12,15 @@ import lombok.Setter;
 public class Brand extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_id_gen")
-    @SequenceGenerator(name = "brand_id_gen", sequenceName = "brand_brand_no_seq", allocationSize = 50)
+    @SequenceGenerator(name = "brand_id_gen", sequenceName = "brand_brand_no_seq")
     @Column(name = "brand_no", nullable = false)
     private Integer brandNo;
-
-    @Column(name = "brand_name", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "brand_name", nullable = false)
     private String brandName;
 
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
-    @Column(name = "nation_name", length = Integer.MAX_VALUE)
+    @Column(name = "nation_name")
     private String nationName;
 }
