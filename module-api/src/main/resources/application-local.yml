@@ -15,3 +15,12 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+
+logging:
+  file:
+    path: ./logs/api/
+    name: api-log
+  logback:
+    rollingpolicy:
+      max-history: 7
+      total-size-cap: 50MB
