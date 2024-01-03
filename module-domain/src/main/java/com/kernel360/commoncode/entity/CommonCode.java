@@ -1,29 +1,31 @@
 package com.kernel360.commoncode.entity;
 
+import com.kernel360.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDate;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "common_code")
-public class CommonCode {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CommonCode extends BaseEntity {
     @Id
     @Column(name = "code_no", nullable = false)
     private Integer codeNo;
 
-    @Column(name = "code_name", nullable = false)
+    @Column(name = "code_name", nullable = false, length = Integer.MAX_VALUE)
     private String codeName;
 
     @Column(name = "upper_no")
     private Integer upperNo;
 
-    @Column(name = "upper_name")
+    @Column(name = "upper_name", length = Integer.MAX_VALUE)
     private String upperName;
 
     @Column(name = "sort_order", nullable = false)
@@ -35,22 +37,8 @@ public class CommonCode {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
-
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
-
-    @Column(name = "modified_at")
-    private LocalDate modifiedAt;
-
-    @Column(name = "modified_by")
-    private String modifiedBy;
-
-    public CommonCode(int codeNo, String codeName, int upperNo, String upperName, int sortOrder, boolean isUsed, String description, String createdAt, String createdBy) {
-    }
-
-    public CommonCode() {
+    @Builder
+    public CommonCode (Integer codeNo, String codeName, Integer upperNo, String upperName, Integer sortOrder, Boolean isUsed, String description){
 
     }
 }

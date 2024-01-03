@@ -7,6 +7,7 @@ import java.time.LocalDate;
 /**
  * DTO for {@link com.kernel360.product.entity.Product}
  */
+
 public record ProductDto(Integer productNo,
                          String productName,
                          String barcode,
@@ -64,14 +65,14 @@ public record ProductDto(Integer productNo,
         );
     }
 
-    public Product toEntity(ProductDto productDto) {
+    public static Product toEntity(ProductDto productDto) {
         return Product.of(
-                this.productName,
-                this.barcode,
-                this.description,
-                this.declareNo,
-                this.isViolation,
-                this.viewCount
+                productDto.productName,
+                productDto.barcode,
+                productDto.description,
+                productDto.declareNo,
+                productDto.isViolation,
+                productDto.viewCount
         );
     }
 

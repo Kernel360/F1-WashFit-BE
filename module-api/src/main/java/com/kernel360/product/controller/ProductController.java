@@ -5,38 +5,43 @@ import com.kernel360.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-@RequiredArgsConstructor
+
 @RestController
-@RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/")
+    @GetMapping("/products")
     ResponseEntity<List<ProductDto>> findProductList(){
         final List<Product> productList = productService.getProductList();
         final List<ProductDto> productDtoList = productList.stream()
                 .map(ProductDto::from)
                 .toList();
 
-        return new ResponseEntity<>(productDtoList, HttpStatus.OK);
+        return productDtoList.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+                : ResponseEntity.status(HttpStatus.OK).body(productDtoList);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/product/{id}")
     ResponseEntity<ProductDto> findProductById(@PathVariable("id") Long productId) {
-        Product product = productService.getProductById(productId).orElse(null);
-        final ProductDto productDto = ProductDto.from(product);
 
-        return product == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
-                : ResponseEntity.status(HttpStatus.OK).body(productDto);
-
+        return productService.getProductById(productId)
+                .map(ProductDto::from)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    @GetMapping("/products/")
+    ResponseEntity<List<ProductDto>> findProductByKeyword(@RequestParam("keyword") String keyword){
+        final List<ProductDto> list = productService.getProductListByKeyword(keyword);
+
+        return list.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+                : ResponseEntity.status(HttpStatus.OK).body(list);
+    }
 
 }
