@@ -1,10 +1,7 @@
 package com.kernel360.commoncode.dto;
 
 import com.kernel360.commoncode.entity.CommonCode;
-import com.kernel360.member.dto.MemberDto;
-import com.kernel360.member.entity.Member;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -23,7 +20,10 @@ public record CommonCodeDto(Integer codeNo,
 
                             LocalDate modifiedAt,
                             String modifiedBy) {
-    /** all binding **/
+    /**
+     * @param codeNo, codeName
+     * **/
+
     public static CommonCodeDto of(
             Integer codeNo,
             String codeName,
