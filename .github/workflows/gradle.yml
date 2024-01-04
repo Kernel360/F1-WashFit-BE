@@ -29,6 +29,9 @@ jobs:
           distribution: 'temurin'
       ## application.yml 생성 후 secret 값 복붙
 
+      - name: Change path
+        run: cd module-api
+
       # Gradle Build를 위한 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -53,7 +56,7 @@ jobs:
 
 #  deploy:
 #    runs-on: ubuntu-latest
-#    steps:
+#    steps:cd
 #
 #      - name: Application Run
 #        uses: appleboy/ssh-action@v0.1.6
