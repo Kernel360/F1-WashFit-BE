@@ -24,7 +24,7 @@ services:
   db-edit:
     image: younglong/pg-washpedia:latest
     volumes:
-      - postgreReadOnlyDB:/var/lib/postgresql/data
+      - ./postgreReadOnlyDB:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: edit_db
       POSTGRES_USER: ${USER}
