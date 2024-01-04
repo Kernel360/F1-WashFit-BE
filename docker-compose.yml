@@ -27,7 +27,7 @@ services:
       - postgreReadOnlyDB:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: edit_db
-      POSTGRES_USER: ${{ secrets.PROJECT_USER }}
+      POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
     ports:
       - "5432:5432"
