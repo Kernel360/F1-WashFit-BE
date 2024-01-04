@@ -1,27 +1,24 @@
 package com.kernel360.base;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
 @Getter
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
+
+    private static final int MAX_STRING_LENGTH = 255;
 
     @Column(name = "created_at", nullable = false)
     @CreatedDate
     private LocalDate createdAt;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", nullable = false, length = MAX_STRING_LENGTH)
     @CreatedBy
     private String createdBy;
 
@@ -29,7 +26,7 @@ public class BaseEntity {
     @LastModifiedDate
     private LocalDate modifiedAt;
 
-    @Column(name = "modified_by")
+    @Column(name = "modified_by", length = MAX_STRING_LENGTH )
     @LastModifiedBy
     private String modifiedBy;
 }

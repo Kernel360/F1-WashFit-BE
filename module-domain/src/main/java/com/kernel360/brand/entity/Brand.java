@@ -15,12 +15,12 @@ public class Brand extends BaseEntity {
     @SequenceGenerator(name = "brand_id_gen", sequenceName = "brand_brand_no_seq")
     @Column(name = "brand_no", nullable = false)
     private Integer brandNo;
-    @Column(name = "brand_name", nullable = false)
+    @Column(name = "brand_name", nullable = false, length = Integer.MAX_VALUE)
     private String brandName;
 
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
-    @Column(name = "nation_name")
+    @Column(name = "nation_name", length = Integer.MAX_VALUE)
     private String nationName;
 }
