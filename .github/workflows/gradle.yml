@@ -5,7 +5,7 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Java CI with Gradle and Docker for WashPedia Project
 
 on:
   push:
@@ -44,8 +44,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       # Docker 이미지 빌드
-      - name: Docker Image Build
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }} . --platform=linux/amd64
+      - name: Docker Compose Build
+        run: docker-compose build --no-cache
 
       # DockerHub Push
       - name: DockerHub Push

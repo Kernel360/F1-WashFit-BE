@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  domain:
+  webapp:
     build: ./module-api
     ports:
       - "8080:8080"
@@ -27,8 +27,8 @@ services:
       - postgreReadOnlyDB:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: edit_db
-      POSTGRES_USER: ${PROJECT_USER}
-      POSTGRES_PASSWORD: ${POSTGRE_PASSWORD}
+      POSTGRES_USER: ${{ secrets.PROJECT_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
     ports:
       - "5432:5432"
 
@@ -38,10 +38,10 @@ services:
       - postgreEditDB:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: read_db
-      POSTGRES_USER: ${PROJECT_USER}
-      POSTGRES_PASSWORD: ${POSTGRE_PASSWORD}
+      POSTGRES_USER: ${{ secrets.PROJECT_USER2 }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD2 }}
     ports:
-      - "5433:5432"
+      - "5433:5433"
 
 volumes:
   db-read-volume: {}
