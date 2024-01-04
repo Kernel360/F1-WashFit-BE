@@ -32,16 +32,16 @@ services:
     ports:
       - "5432:5432"
 
-  db-read:
-    image: younglong/pg-washpedia:latest
-    volumes:
-      - postgreEditDB:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: read_db
-      POSTGRES_USER: ${{ secrets.PROJECT_USER2 }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD2 }}
-    ports:
-      - "5433:5433"
+#  db-read:
+#    image: younglong/pg-washpedia:latest
+#    volumes:
+#      - postgreEditDB:/var/lib/postgresql/data
+#    environment:
+#      POSTGRES_DB: read_db
+#      POSTGRES_USER: ${{ secrets.PROJECT_USER2 }}
+#      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD2 }}
+#    ports:
+#      - "5433:5433"
 
 volumes:
   db-read-volume: {}
