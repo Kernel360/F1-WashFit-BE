@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  domain:
+    build: ./module-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db-edit
+
+#  batch:
+#    build: ./module-batch
+#    ports:
+#      - "8082:8080"
+#    depends_on:
+#      - db-edit
+#
+#  admin:
+#    build: ./module-admin
+#    ports:
+#      - "8083:8080"
+#    depends_on:
+#      - db-read
+
+  db-edit:
+    image: younglong/pg-washpedia:latest
+    volumes:
+      - postgreReadOnlyDB:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: edit_db
+      POSTGRES_USER: ${PROJECT_USER}
+      POSTGRES_PASSWORD: ${POSTGRE_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  db-read:
+    image: younglong/pg-washpedia:latest
+    volumes:
+      - postgreEditDB:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: read_db
+      POSTGRES_USER: ${PROJECT_USER}
+      POSTGRES_PASSWORD: ${POSTGRE_PASSWORD}
+    ports:
+      - "5433:5432"
+
+volumes:
+  db-read-volume: {}
+  db-edit-volume: {}
