@@ -20,8 +20,7 @@ public class LogAspect {
         log.info("###Start request {}", joinPoint.getSignature().toShortString());
 
         Arrays.stream(joinPoint.getArgs())
-              .map(arg -> arg != null ? arg : "null")
-              .map(str -> "\t" + str)
+              .map(arg -> arg != null ? "\t" + arg : "\tnull")
               .forEach(log::info);
     }
 
