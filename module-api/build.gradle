@@ -11,6 +11,10 @@ java {
     sourceCompatibility = '17'
 }
 
+bootJar {
+    mainClassName = 'com.kernel360.ModuleApiApplication'
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
