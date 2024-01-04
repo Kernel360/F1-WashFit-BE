@@ -45,6 +45,20 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+#      - name: Set up Docker Compose
+#        run: |
+#            echo "POSTGRE_USER=${{ secrets.POSTGRE_USER }}" >> $GITHUB_ENV
+#            echo "POSTGRE_PASSWORD=${{ secrets.POSTGRE_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Set yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./docker-compose.yml
+        env:
+          services.db-edit.environment.POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
+          services.db-edit.environment.POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
+
       # Docker 이미지 빌드
       - name: Docker Compose Build
         run: docker-compose build --no-cache
