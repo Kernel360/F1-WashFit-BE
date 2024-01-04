@@ -58,6 +58,7 @@ jobs:
         env:
           services.db-edit.environment.POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
           services.db-edit.environment.POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
+          services.webapp.image: ${{ secrets.DOCKER_IMAGE }}
 
       # Docker 이미지 빌드
       - name: Docker Compose Build
