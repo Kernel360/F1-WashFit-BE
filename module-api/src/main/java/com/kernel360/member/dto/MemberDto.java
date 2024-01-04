@@ -19,6 +19,7 @@ public record MemberDto(Integer memberNo,
                         String modifiedBy
 ) {
 
+    /** New All **/
     public static MemberDto of(
             Integer memberNo,
             String id,
@@ -45,6 +46,27 @@ public record MemberDto(Integer memberNo,
         );
     }
 
+    /** joinMember **/
+    public static MemberDto of(
+            String id,
+            String email,
+            String password
+    ){
+        return new MemberDto(
+                null,
+                id,
+                email,
+                password,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    /** Entity -> DTO **/
     public static MemberDto from(Member entity) {
         return MemberDto.of(
                 entity.getMemberNo(),
@@ -60,9 +82,15 @@ public record MemberDto(Integer memberNo,
         );
     }
 
-//    public Member toEntity(MemberDto memberInfo) {
-//        return Member.of(
-//
-//        );`
-//    }
+    /** DTO -> Entity All binding **/
+    public static Member toEntity(MemberDto memberDto) {
+        return Member.of(
+                memberDto.memberNo,
+                memberDto.id,
+                memberDto.email,
+                memberDto.password,
+                memberDto.gender,
+                memberDto.birthdate
+        );
+    }
 }

@@ -10,14 +10,16 @@ import java.util.List;
 @Service
 public class CommonCodeService {
 
+    final CommonCodeRepository commonCodeRepository;
+
     @Autowired
-    private CommonCodeRepository commonCodeRepository;
+    public CommonCodeService(CommonCodeRepository commonCodeRepository) {
+        this.commonCodeRepository = commonCodeRepository;
+    }
 
     public List<CommonCodeDto> getCodes(String codeName) {
 
-        boolean isUsed = true;
-
-        return commonCodeRepository.findAllByUpperNameAndIsUsed(codeName,isUsed)
+        return commonCodeRepository.findAllByUpperNameAndIsUsed(codeName,true)
                                    .stream()
                                    .map(CommonCodeDto::from)
                                    .toList();

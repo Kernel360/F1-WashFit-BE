@@ -14,8 +14,13 @@ import java.util.List;
 @RequestMapping("/commoncode")
 public class CommonCodeController {
 
+    final CommonCodeService commonCodeService;
+
     @Autowired
-    CommonCodeService commonCodeService;
+    public CommonCodeController(CommonCodeService commonCodeService) {
+        this.commonCodeService = commonCodeService;
+    }
+
     @GetMapping("/{codeName}")
     public List<CommonCodeDto> getCommonCode (@PathVariable String codeName){
 

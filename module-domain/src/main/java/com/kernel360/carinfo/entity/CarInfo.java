@@ -12,17 +12,17 @@ import lombok.Setter;
 public class CarInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_info_id_gen")
-    @SequenceGenerator(name = "car_info_id_gen", sequenceName = "car_info_car_no_seq", allocationSize = 50)
+    @SequenceGenerator(name = "car_info_id_gen", sequenceName = "car_info_car_no_seq")
     @Column(name = "car_no", nullable = false)
     private Integer carNo;
 
-    @Column(name = "car_brand", length = Integer.MAX_VALUE)
+    @Column(name = "car_brand")
     private String carBrand;
 
-    @Column(name = "car_type", length = Integer.MAX_VALUE)
+    @Column(name = "car_type")
     private String carType;
 
-    @Column(name = "car_size", length = Integer.MAX_VALUE)
+    @Column(name = "car_size")
     private String carSize;
 
     @Column(name = "pearl")
