@@ -2,6 +2,7 @@ version: '3.8'
 services:
   webapp:
     build: ./module-api
+    image: ${IMAGE}
     ports:
       - "8080:8080"
     depends_on:
@@ -24,11 +25,11 @@ services:
   db-edit:
     image: younglong/pg-washpedia:latest
     volumes:
-      - postgreReadOnlyDB:/var/lib/postgresql/data
+      - ./postgreReadOnlyDB:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: edit_db
-      POSTGRES_USER: ${{ secrets.PROJECT_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
     ports:
       - "5432:5432"
 
@@ -38,8 +39,8 @@ services:
 #      - postgreEditDB:/var/lib/postgresql/data
 #    environment:
 #      POSTGRES_DB: read_db
-#      POSTGRES_USER: ${{ secrets.PROJECT_USER2 }}
-#      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD2 }}
+#      POSTGRES_USER: ${{ secrets.PROJECT_USER }}
+#      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
 #    ports:
 #      - "5433:5433"
 
