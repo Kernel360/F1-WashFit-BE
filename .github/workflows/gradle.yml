@@ -65,7 +65,7 @@ jobs:
 
       # DockerHub Push
       - name: DockerHub Push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:latest
 
 #  deploy:
 #    runs-on: ubuntu-latest
