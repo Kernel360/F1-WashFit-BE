@@ -29,15 +29,14 @@ jobs:
           distribution: 'temurin'
       ## application.yml 생성 후 secret 값 복붙
 
-      - name: Change path
-        run: cd module-api
-
       # Gradle Build를 위한 권한 부여
       - name: Grant execute permission for gradlew
+        working-directory: ./module-api
         run: chmod +x ./gradlew
 
       # Gradle Build (test 제외)
       - name: Build with Gradle
+        working-directory: ./module-api
         run: ./gradlew clean build -x test
 
       # DockerHub 로그인
