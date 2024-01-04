@@ -60,9 +60,14 @@ public record MemberDto(Integer memberNo,
         );
     }
 
-//    public Member toEntity(MemberDto memberInfo) {
-//        return Member.of(
-//
-//        );`
-//    }
+    public static Member toEntity(MemberDto memberDto) {
+        return Member.of(
+                memberDto.memberNo,
+                memberDto.id,
+                memberDto.email,
+                memberDto.password,
+                memberDto.gender,
+                memberDto.birthdate
+        );
+    }
 }
