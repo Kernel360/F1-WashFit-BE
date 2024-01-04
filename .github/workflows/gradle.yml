@@ -61,7 +61,7 @@ jobs:
 
       # Docker 이미지 빌드
       - name: Docker Compose Build
-        run: docker-compose build --no-cache
+        run: docker-compose build
 
       # DockerHub Push
       - name: DockerHub Push
