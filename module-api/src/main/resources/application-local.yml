@@ -2,8 +2,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     # local docker db
-    url: ENC(ulGy/5rB4Y7rD0wHbwR21rLG/jT1Lkm02LgSbHuE9n9mmxZmv0FenoE8dD89qMadlLdy+gAf24ulHM3z9/JYrQ==)
-    username: ENC(gv8+vDAseDkw87FNUNmFQVdk5dTBu0GQ71VBBuUyeIY=)
+    url: ENC(DPvTlKCZniOLZz5QHwB2I1p6FbeyEhWeo6DXSHL7kq8idfthgqkC/VJX78osBC5D/hzFwdXGDkxWUZ2euYPrAA==)
+    username: ENC(izKjVNL/2x4aTDQeLxQg4VU0v5kAKduTrnVq7LUa80U=)
     password: ENC(VcPYkEOg9OzuwNw1UeYOgLqKsRkFoRUHwjRcxZzGgZQ=)
   jpa:
     show-sql: true
