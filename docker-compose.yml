@@ -36,7 +36,7 @@ services:
 #  db-read:
 #    image: younglong/pg-washpedia:latest
 #    volumes:
-#      - postgreEditDB:/var/lib/postgresql/data
+#      - ./postgreEditDB:/var/lib/postgresql/data
 #    environment:
 #      POSTGRES_DB: read_db
 #      POSTGRES_USER: ${{ secrets.PROJECT_USER }}
