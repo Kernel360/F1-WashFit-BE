@@ -1,5 +1,3 @@
-# .github/workflows/cr.yml
-
 name: Code Review
 
 permissions:
