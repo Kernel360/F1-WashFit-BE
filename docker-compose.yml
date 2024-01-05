@@ -39,8 +39,8 @@ services:
 #      - postgreEditDB:/var/lib/postgresql/data
 #    environment:
 #      POSTGRES_DB: read_db
-#      POSTGRES_USER: ${{ secrets.PROJECT_USER2 }}
-#      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD2 }}
+#      POSTGRES_USER: ${{ secrets.PROJECT_USER }}
+#      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
 #    ports:
 #      - "5433:5433"
 

@@ -46,12 +46,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-#      - name: Set up Docker Compose
-#        run: |
-#            echo "POSTGRE_USER=${{ secrets.POSTGRE_USER }}" >> $GITHUB_ENV
-#            echo "POSTGRE_PASSWORD=${{ secrets.POSTGRE_PASSWORD }}" >> $GITHUB_ENV
-
-      - name: Set yml file
+      # DockerCompose 세팅
+      - name: Set up Docker Compose
         uses: microsoft/variable-substitution@v1
         with:
           files: ./docker-compose.yml
