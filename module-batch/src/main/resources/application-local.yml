@@ -2,15 +2,10 @@ server:
   port: 8091
 
 spring:
-  batch:
-    jdbc:
-      initialize-schema: always
-
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
-    database-platform: org.hibernate.dialect.H2Dialect
     properties:
       hibernate:
         generate_statistics: true
@@ -20,13 +15,34 @@ spring:
     open-in-view: true
 
   datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ENC(ulGy/5rB4Y7rD0wHbwR21rLG/jT1Lkm02LgSbHuE9n9mmxZmv0FenoE8dD89qMadlLdy+gAf24ulHM3z9/JYrQ==)
+    username: ENC(gv8+vDAseDkw87FNUNmFQVdk5dTBu0GQ71VBBuUyeIY=)
+    password: ENC(VcPYkEOg9OzuwNw1UeYOgLqKsRkFoRUHwjRcxZzGgZQ=)
     hikari:
-      driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:mem:ecolife
-      username: sa
-      password:
+      maximum-pool-size: 100
+      idle-timeout: 20000
+      validation-timeout: 5000
+      minimum-idle: 5
 
 
+logging:
+  file:
+    path: ./logs/batch/
+    name: batch-log
+  logback:
+    rolling policy:
+      max-history: 14
+      max-file-size: 50MB
+      total-size-cap: 5GB
+  level:
+    root: warn
+    com.kernel360: debug
+    org.hibernate.sql: debug
+    org.hibernate.type.descriptor.sql: trace
+    org:
+      springframework:
+        transaction=DEBUG:
 
 
 
