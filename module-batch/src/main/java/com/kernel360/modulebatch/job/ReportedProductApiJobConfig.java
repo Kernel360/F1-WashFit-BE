@@ -1,64 +1,60 @@
 package com.kernel360.modulebatch.job;
 
-import com.kernel360.modulebatch.JobCompletionNotificationListener;
-import com.kernel360.modulebatch.controller.ReportedProductApiClient;
-import com.kernel360.product.entity.ReportedProduct;
-import jakarta.persistence.EntityManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kernel360.modulebatch.dto.ReportedProductDto;
+import com.kernel360.modulebatch.service.ReportedProductService;
 import java.util.List;
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class ReportedProductApiJobConfig {
 
-    private final ReportedProductApiClient client;
-
-    public ReportedProductApiJobConfig(ReportedProductApiClient client) {
-        this.client = client;
-    }
+    private final ReportedProductService apiService;
 
 
     @Bean
-    public Job fetchReportedProductListJob(JobRepository jobRepository, JobCompletionNotificationListener listener,
-                                           Step step) {
+    public Job fetchReportedProductListJob(JobRepository jobRepository, Step fetchProduct) {
         return new JobBuilder("fetchReportedProductListJob", jobRepository)
-                .listener(listener)
-                .start(step)
+                .start(fetchProduct)
                 .build();
     }
 
     @Bean
-    public Step fetchReportedProductListStep(JobRepository jobRepository, DataSourceTransactionManager manager,
-                                             Tasklet tasklet) {
-        return new StepBuilder("fetchReportedProductListStep", jobRepository)
-                .tasklet(tasklet, manager)
+    public Step fetchProduct(JobRepository jobRepository, PlatformTransactionManager transactionManager)
+            throws JsonProcessingException {
+
+        return new StepBuilder("fetchReportedProductStep", jobRepository)
+                .<List<ReportedProductDto>, List<ReportedProductDto>>chunk(20, transactionManager)
+                .reader(productListItemReader()) // API 요청, 응답을 DTO 리스트로 반환
+                .writer(productListItemWriter()) // DTO 리스트 입력, 저장
                 .build();
     }
 
     @Bean
-    public Tasklet fetchReportedProductListTasklet(JobRepository jobRepository, EntityManager entityManager) {
-        return (contribution, chunkContext) -> {
-            ResponseEntity<List<ReportedProduct>> result = client.getRawData(1);
-            persistReportedProducts(entityManager, Objects.requireNonNull(result.getBody()));
-            return RepeatStatus.FINISHED;
-        };
+    @StepScope
+    public ItemReader<List<ReportedProductDto>> productListItemReader() throws JsonProcessingException {
+        return new ReportedProductListItemReader(apiService);
     }
 
-    private void persistReportedProducts(EntityManager entityManager, List<ReportedProduct> products) {
-        for (ReportedProduct product : products) {
-            entityManager.persist(product);
-        }
+    @Bean
+    @StepScope
+    public ItemWriter<List<ReportedProductDto>> productListItemWriter() {
+        return new ReportedProductListItemWriter(apiService);
     }
+
+
 }
