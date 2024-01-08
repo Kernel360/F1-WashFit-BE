@@ -5,7 +5,7 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Java CI with Gradle and Docker for WashPedia Project
 
 on:
   push:
@@ -31,10 +31,12 @@ jobs:
 
       # Gradle Build를 위한 권한 부여
       - name: Grant execute permission for gradlew
+        working-directory: ./module-api
         run: chmod +x ./gradlew
 
       # Gradle Build (test 제외)
       - name: Build with Gradle
+        working-directory: ./module-api
         run: ./gradlew clean build -x test
 
       # DockerHub 로그인
@@ -43,17 +45,28 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # DockerCompose 세팅
+      - name: Set up Docker Compose
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./docker-compose.yml
+        env:
+          services.db-edit.environment.POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
+          services.db-edit.environment.POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
+          services.webapp.image: ${{ secrets.DOCKER_IMAGE }}
+
       # Docker 이미지 빌드
-      - name: Docker Image Build
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }} . --platform=linux/amd64
+      - name: Docker Compose Build
+        run: docker-compose build
 
       # DockerHub Push
       - name: DockerHub Push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:latest
 
 #  deploy:
 #    runs-on: ubuntu-latest
-#    steps:
+#    steps:cd
 #
 #      - name: Application Run
 #        uses: appleboy/ssh-action@v0.1.6

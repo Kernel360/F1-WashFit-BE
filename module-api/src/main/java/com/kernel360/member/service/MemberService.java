@@ -1,33 +1,33 @@
-package com.kernel360.member.service;
+//package com.kernel360.member.service;
+//
+//import com.kernel360.member.dto.MemberDto;
+//import com.kernel360.member.entity.Member;
+//import com.kernel360.member.repository.MemberRepository;
+//import com.kernel360.utils.ConvertSHA256;
+//import lombok.RequiredArgsConstructor;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.stereotype.Service;
+//
+//
+//@Slf4j
+//@Service
+//@RequiredArgsConstructor
+//public class MemberService {
+//
+//    final private MemberRepository memberRepository;
+//    /** 가입 로직 **/
+//    public void joinMember(MemberDto requestDto){
+//
+//        String encodePassword = ConvertSHA256.convertToSHA256(requestDto.password());
+//
+//        Member entity = getNewJoinMemberEntity(requestDto,encodePassword);
+//
+//        memberRepository.save(entity);
+//    }
 
-import com.kernel360.member.dto.MemberDto;
-import com.kernel360.member.entity.Member;
-import com.kernel360.member.repository.MemberRepository;
-import com.kernel360.utils.ConvertSHA256;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-
-@Slf4j
-@Service
-@RequiredArgsConstructor
-public class MemberService {
-
-    final private MemberRepository memberRepository;
-    /** 가입 로직 **/
-    public void joinMember(MemberDto requestDto){
-
-        String encodePassword = ConvertSHA256.convertToSHA256(requestDto.password());
-
-        Member entity = getNewJoinMemberEntity(requestDto,encodePassword);
-
-        memberRepository.save(entity);
-    }
-
-    private Member getNewJoinMemberEntity (MemberDto dto, String password){
-        return Member.createJoinMember(dto.id(),dto.email(),password);
-    }
+//    private Member getNewJoinMemberEntity (MemberDto dto, String password){
+//        return Member.createJoinMember(dto.id(),dto.email(),password);
+//    }
 
 //
 //    public void login(){
@@ -76,4 +76,4 @@ public class MemberService {
 ////                - 패스워드 재설정 resetPasswordByAuthKey
 //
 //    }
-}
+//}
