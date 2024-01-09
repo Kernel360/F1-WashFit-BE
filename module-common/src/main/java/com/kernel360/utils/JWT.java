@@ -11,11 +11,11 @@ import java.util.Date;
 @Component
 public class JWT {
     private static final Key SECRET_KEY = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
-    private static final long EXPIRATION_TIME = 1000 * 60 * 15; //15분
+    private static final long EXPIRATION_TIME = (long) 1000 * 60 * 15; //15분
 
-    public String generateToken(String ID) {
+    public String generateToken(String entityId) {
         return Jwts.builder()
-                .setSubject(ID)
+                .setSubject(entityId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY)

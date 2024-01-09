@@ -29,13 +29,18 @@ public class Auth extends BaseEntity {
     private String snsToken;
 
 
-    public static Auth of(Integer authNo, Integer memberNo, String jwtToken, String snsToken){
+    /**
+     * all create
+     **/
+    public static Auth of(Integer authNo, Integer memberNo, String jwtToken, String snsToken) {
 
         return new Auth(authNo, memberNo, jwtToken, snsToken);
     }
 
-    /** All Binding **/
-    private Auth (Integer authNo, Integer memberNo, String jwtToken, String snsToken){
+    /**
+     * all binding
+     **/
+    private Auth(Integer authNo, Integer memberNo, String jwtToken, String snsToken) {
         this.authNo = authNo;
         this.memberNo = memberNo;
         this.jwtToken = jwtToken;
@@ -43,13 +48,15 @@ public class Auth extends BaseEntity {
     }
 
 
-    public static Auth jwt(Integer authNo, Integer memberNo, String jwtToken){
+    public static Auth jwt(Integer authNo, Integer memberNo, String jwtToken) {
 
         return new Auth(authNo, memberNo, jwtToken);
     }
 
-    /** JWT **/
-    private Auth (Integer authNo, Integer memberNo, String jwtToken){
+    /**
+     * JWT
+     **/
+    private Auth(Integer authNo, Integer memberNo, String jwtToken) {
         this.authNo = authNo;
         this.memberNo = memberNo;
         this.jwtToken = jwtToken;
@@ -59,8 +66,4 @@ public class Auth extends BaseEntity {
         this.jwtToken = encryptToken;
     }
 
-    public void createJwt(Integer memberNo, String encryptToken) {
-        this.memberNo = memberNo;
-        this.jwtToken = encryptToken;
-    }
 }
