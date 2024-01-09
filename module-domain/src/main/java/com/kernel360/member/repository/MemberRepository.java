@@ -5,4 +5,6 @@ import jakarta.persistence.Id;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository <Member, Id> {
+
+    Member findAllByIdAndPassword(String id, String password);
 }

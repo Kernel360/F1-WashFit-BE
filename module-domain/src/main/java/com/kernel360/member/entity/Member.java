@@ -2,16 +2,16 @@ package com.kernel360.member.entity;
 
 import com.kernel360.base.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "member")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_id_gen")
@@ -35,12 +35,11 @@ public class Member extends BaseEntity {
     private LocalDate birthdate;
 
     public static Member of(Integer memberNo, String id, String email, String password, String gender, LocalDate birthdate) {
+
         return new Member(memberNo, id, email, password, gender, birthdate);
     }
 
-    protected Member(){
-    }
-
+    /** All Binding **/
     private Member(
             Integer memberNo,
             String id,
@@ -56,4 +55,30 @@ public class Member extends BaseEntity {
         this.gender = gender;
         this.birthdate = birthdate;
     }
+
+    /** joinMember **/
+    public static Member createJoinMember(String id, String email, String password){
+
+        return new Member(id,email,password);
+    }
+
+    /** joinMember Binding **/
+    private Member(String id, String email, String password){
+        this.id = id;
+        this.email = email;
+        this.password = password;
+    }
+
+    /** loginMember **/
+    public static Member loginMember(String id, String password){
+
+        return new Member(id,password);
+    }
+
+    /** loginMember Binding **/
+    private Member(String id, String password){
+        this.id = id;
+        this.password = password;
+    }
+
 }

@@ -1,79 +1,80 @@
-//package com.kernel360.member.service;
-//
-//import com.kernel360.member.dto.MemberDto;
-//import com.kernel360.member.entity.Member;
-//import com.kernel360.member.repository.MemberRepository;
-//import com.kernel360.utils.ConvertSHA256;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.stereotype.Service;
-//
-//
-//@Slf4j
-//@Service
-//@RequiredArgsConstructor
-//public class MemberService {
-//
-//    final private MemberRepository memberRepository;
-//    /** 가입 로직 **/
-//    public void joinMember(MemberDto requestDto){
-//
-//        String encodePassword = ConvertSHA256.convertToSHA256(requestDto.password());
-//
-//        Member entity = getNewJoinMemberEntity(requestDto,encodePassword);
-//
-//        memberRepository.save(entity);
-//    }
+package com.kernel360.member.service;
 
-//    private Member getNewJoinMemberEntity (MemberDto dto, String password){
-//        return Member.createJoinMember(dto.id(),dto.email(),password);
-//    }
+import com.kernel360.auth.entity.Auth;
+import com.kernel360.auth.repository.AuthRepository;
+import com.kernel360.member.dto.MemberDto;
+import com.kernel360.member.entity.Member;
+import com.kernel360.member.repository.MemberRepository;
+import com.kernel360.utils.ConvertSHA256;
+import com.kernel360.utils.JWT;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
-//
-//    public void login(){
-//
-//        //토큰 검증
-//
-//        //MemberLoginDTO
-////        - 회원정보 검증 (findAllByIdAndPassword
-//
-////                - 로그인 정보 반출 (return MemberLoginDTO + 세션/토큰)
-//
-//        //토큰 시간 체크 후 갱신
-//
-//        //회원정보, 토큰 리턴
-//
-//        String jwtToken = token.replace("Bearer ", "");
-//
-//        Claims claims = Jwts.parserBuilder()
-//                .setSigningKey(SECRET_KEY)
-//                .build()
-//                .parseClaimsJws(jwtToken)
-//                .getBody();
-//
-//        String username = claims.getSubject();
-//        // 사용자 정보를 기반으로 처리
-//    }
-//
-//    public void findID(){
-////        to findIdByEmailDTO
-////        - 정보 검증 (이메일)
-////                - 이메일 발신
-//    }
-//
-//    public void requestResetPassword(){
-////        resetPasswordDTO(ID, EMAIL)
-////                - 재설정용 임시 키 생성 (UUID)
-////                - 키 반출 (return uuid)
-////        - 패스워드 재설정 resetPasswordByAuthKey
-//
-//
-//    }
-//
-//    public void resetPassword(){
-//        //resetPasswordByAuthKey
-////        resetPasswordDTO(newPassword, authKey)
-////                - 패스워드 재설정 resetPasswordByAuthKey
-//
-//    }
-//}
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class MemberService {
+
+    private final JWT jwt;
+    private final ConvertSHA256 convertSHA256;
+    private final AuthRepository authRepository;
+    private final MemberRepository memberRepository;
+
+    /** 가입 **/
+    public void joinMember(MemberDto requestDto){
+
+        Member entity = getNewJoinMemberEntity(requestDto);
+
+        memberRepository.save(entity);
+    }
+
+    protected Member getNewJoinMemberEntity(MemberDto requestDto){
+
+        String encodePassword = convertSHA256.convertToSHA256(requestDto.password());
+
+        return Member.createJoinMember(requestDto.id(), requestDto.email(), encodePassword);
+    }
+
+    /** 로그인 **/
+    public MemberDto login(MemberDto loginDto) {
+
+        Member loginEntity = getReqeustLoginEntity(loginDto);
+        Member memberEntity = memberRepository.findAllByIdAndPassword(loginEntity.getId(), loginEntity.getPassword());
+        String token = printJwtToken(memberEntity);
+
+        MemberDto memberInfo = MemberDto.login(memberEntity, token);
+
+        return memberInfo;
+    }
+
+    private Member getReqeustLoginEntity(MemberDto loginDto) {
+        String encodePassword = convertSHA256.convertToSHA256(loginDto.password());
+        return Member.loginMember(loginDto.id(),encodePassword );
+    }
+
+    /** 토큰 발급, 이전 토큰에 따른 update or insert **/
+    public String printJwtToken(Member memberEntity){
+
+        String token = jwt.generateToken(memberEntity.getId());
+        String encryptToken = convertSHA256.convertToSHA256(token);
+        Auth authJwt = authRepository.findOneByMemberNo(memberEntity.getMemberNo());
+
+        if (authJwt == null) {
+            authJwt = createAuthJwt(null, memberEntity.getMemberNo(),encryptToken);
+        } else {
+            authJwt.updateJwt(encryptToken);
+        }
+        authRepository.save(authJwt);
+
+
+        return token;
+    }
+
+    protected Auth createAuthJwt(Integer authNo, Integer memberNo, String encryptToken) {
+
+        return Auth.of(null, memberNo, encryptToken, null);
+    }
+
+}
