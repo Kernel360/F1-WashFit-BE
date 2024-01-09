@@ -15,19 +15,19 @@ import java.io.IOException;
 public class LogFilter implements Filter {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        ContentCachingRequestWrapper req = new ContentCachingRequestWrapper((HttpServletRequest) request);
-        ContentCachingResponseWrapper res = new ContentCachingResponseWrapper((HttpServletResponse) response);
-        log.info("##### INIT URI: {}", req.getRequestURI());
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        ContentCachingRequestWrapper request = new ContentCachingRequestWrapper((HttpServletRequest) req);
+        ContentCachingResponseWrapper response = new ContentCachingResponseWrapper((HttpServletResponse) res);
+        log.info("##### INIT URI: {}", request.getRequestURI());
 
-        chain.doFilter(req, res);
+        chain.doFilter(request, response);
 
         // Request
-        StringBuilder reqHeaderValues = new StringBuilder();
-        req.getHeaderNames().asIterator().forEachRemaining(headerKey -> {
-            String headerValue = req.getHeader(headerKey);
+        StringBuilder requestHeaderValues = new StringBuilder();
+        request.getHeaderNames().asIterator().forEachRemaining(headerKey -> {
+            String headerValue = request.getHeader(headerKey);
 
-            reqHeaderValues
+            requestHeaderValues
                     .append("[")
                     .append(headerKey)
                     .append(" : ")
@@ -35,17 +35,17 @@ public class LogFilter implements Filter {
                     .append("] ");
         });
 
-        String requestBody = new String(req.getContentAsByteArray());
-        String uri = req.getRequestURI();
-        String method = req.getMethod();
-        log.info("##### REQUEST ##### uri: {}, method: {}, header: {}, body: {}", uri, method, reqHeaderValues, requestBody);
+        String requestBody = new String(request.getContentAsByteArray());
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
+        log.info("##### REQUEST ##### uri: {}, method: {}, header: {}, body: {}", uri, method, requestHeaderValues, requestBody);
 
         // Response
-        StringBuilder resHeaderValues = new StringBuilder();
-        res.getHeaderNames().forEach(headerKey -> {
-            String headerValue = res.getHeader(headerKey);
+        StringBuilder responseHeaderValues = new StringBuilder();
+        response.getHeaderNames().forEach(headerKey -> {
+            String headerValue = response.getHeader(headerKey);
 
-            resHeaderValues
+            responseHeaderValues
                     .append("[")
                     .append(headerKey)
                     .append(" : ")
@@ -53,9 +53,9 @@ public class LogFilter implements Filter {
                     .append("] ");
         });
 
-        String responseBody = new String(res.getContentAsByteArray());
-        log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, resHeaderValues, responseBody);
+        String responseBody = new String(response.getContentAsByteArray());
+        log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, responseHeaderValues, responseBody);
 
-        res.copyBodyToResponse();
+        response.copyBodyToResponse();
     }
 }
