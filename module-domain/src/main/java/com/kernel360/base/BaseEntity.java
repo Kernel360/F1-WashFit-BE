@@ -17,11 +17,13 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
+    private static final int MAX_STRING_LENGTH = 255;
+
     @Column(name = "created_at", nullable = false)
     @CreatedDate
     private LocalDate createdAt;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", nullable = false, length = MAX_STRING_LENGTH, updatable = false)
     @CreatedBy
     private String createdBy;
 
@@ -29,7 +31,7 @@ public class BaseEntity {
     @LastModifiedDate
     private LocalDate modifiedAt;
 
-    @Column(name = "modified_by")
+    @Column(name = "modified_by", length = MAX_STRING_LENGTH )
     @LastModifiedBy
     private String modifiedBy;
 }

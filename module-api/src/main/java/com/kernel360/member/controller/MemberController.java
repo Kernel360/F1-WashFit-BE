@@ -1,9 +1,8 @@
 package com.kernel360.member.controller;
 
-import ch.qos.logback.core.model.Model;
+
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.service.MemberService;
-import com.kernel360.utils.JWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,23 +15,28 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member/")
+@RequestMapping("/member")
 public class MemberController {
 
     private final MemberService memberService;
 
-    /** 가입 **/
     @PostMapping("/join")
-    public ResponseEntity<Model> joinMember (@ModelAttribute MemberDto joinRequestDto){
+    public ResponseEntity<String> joinMember(@ModelAttribute MemberDto joinRequestDto) {
 
-        try{
+        try {
             memberService.joinMember(joinRequestDto);
-        }catch (IllegalArgumentException args){
+        } catch (IllegalArgumentException args) {
             log.error("가입에러발생", args);
         }
 
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<MemberDto> login(@ModelAttribute MemberDto loginDto) {
 
+        MemberDto memberInfo = memberService.login(loginDto);
+
+        return new ResponseEntity<>(memberInfo, HttpStatus.OK);
+    }
 }

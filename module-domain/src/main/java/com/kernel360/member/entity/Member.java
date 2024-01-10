@@ -15,31 +15,39 @@ import java.time.LocalDate;
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_id_gen")
-    @SequenceGenerator(name = "member_id_gen", sequenceName = "member_member_no_seq", allocationSize = 50)
+    @SequenceGenerator(name = "member_id_gen", sequenceName = "member_member_no_seq")
     @Column(name = "member_no", nullable = false)
     private Integer memberNo;
 
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, length = Integer.MAX_VALUE)
     private String id;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, length = Integer.MAX_VALUE)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = Integer.MAX_VALUE)
     private String password;
 
-    @Column(name = "gender")
+    @Column(name = "gender", length = Integer.MAX_VALUE)
     private String gender;
 
     @Column(name = "birthdate")
     private LocalDate birthdate;
 
     public static Member of(Integer memberNo, String id, String email, String password, String gender, LocalDate birthdate) {
+
         return new Member(memberNo, id, email, password, gender, birthdate);
     }
 
     /** All Binding **/
-    private Member(Integer memberNo, String id, String email, String password, String gender, LocalDate birthdate) {
+    private Member(
+            Integer memberNo,
+            String id,
+            String email,
+            String password,
+            String gender,
+            LocalDate birthdate
+    )    {
         this.memberNo = memberNo;
         this.id = id;
         this.email = email;
@@ -50,13 +58,26 @@ public class Member extends BaseEntity {
 
     /** joinMember **/
     public static Member createJoinMember(String id, String email, String password){
+
         return new Member(id,email,password);
     }
 
     /** joinMember Binding **/
-    public Member(String id, String email, String password){
+    private Member(String id, String email, String password){
         this.id = id;
         this.email = email;
+        this.password = password;
+    }
+
+    /** loginMember **/
+    public static Member loginMember(String id, String password){
+
+        return new Member(id,password);
+    }
+
+    /** loginMember Binding **/
+    private Member(String id, String password){
+        this.id = id;
         this.password = password;
     }
 

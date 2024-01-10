@@ -16,10 +16,10 @@ public record MemberDto(Integer memberNo,
                         LocalDate createdAt,
                         String createdBy,
                         LocalDate modifiedAt,
-                        String modifiedBy
+                        String modifiedBy,
+                        String jwtToken
 ) {
 
-    /** New All **/
     public static MemberDto of(
             Integer memberNo,
             String id,
@@ -30,7 +30,8 @@ public record MemberDto(Integer memberNo,
             LocalDate createdAt,
             String createdBy,
             LocalDate modifiedAt,
-            String modifiedBy
+            String modifiedBy,
+            String jwtToken
     ) {
         return new MemberDto(
                 memberNo,
@@ -42,7 +43,35 @@ public record MemberDto(Integer memberNo,
                 createdAt,
                 createdBy,
                 modifiedAt,
-                modifiedBy
+                modifiedBy,
+                jwtToken
+        );
+    }
+
+    public static MemberDto from(Member entity) {
+        return MemberDto.of(
+                entity.getMemberNo(),
+                entity.getId(),
+                entity.getEmail(),
+                entity.getPassword(),
+                entity.getGender(),
+                entity.getBirthdate(),
+                entity.getCreatedAt(),
+                entity.getCreatedBy(),
+                entity.getModifiedAt(),
+                entity.getModifiedBy(),
+                null
+        );
+    }
+
+    public Member toEntity(MemberDto memberDto) {
+        return Member.of(
+                this.memberNo,
+                this.id,
+                this.email,
+                this.password,
+                this.gender,
+                this.birthdate
         );
     }
 
@@ -62,35 +91,45 @@ public record MemberDto(Integer memberNo,
                 null,
                 null,
                 null,
+                null,
                 null
         );
     }
 
-    /** Entity -> DTO **/
-    public static MemberDto from(Member entity) {
+    /** Login Binding **/
+    public static MemberDto login(Member entity,String jwtToken) {
         return MemberDto.of(
                 entity.getMemberNo(),
                 entity.getId(),
                 entity.getEmail(),
-                entity.getPassword(),
+                null,
                 entity.getGender(),
                 entity.getBirthdate(),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
-                entity.getModifiedBy()
+                entity.getModifiedBy(),
+                jwtToken
         );
     }
 
-    /** DTO -> Entity All binding **/
-    public static Member toEntity(MemberDto memberDto) {
-        return Member.of(
-                memberDto.memberNo,
-                memberDto.id,
-                memberDto.email,
-                memberDto.password,
-                memberDto.gender,
-                memberDto.birthdate
+    /** Request Login **/
+    public static MemberDto of(
+            String id,
+            String password
+    ){
+        return new MemberDto(
+                null,
+                id,
+                null,
+                password,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 }
