@@ -41,7 +41,7 @@ public class ReportedProductApiJobConfig {
                                        @Qualifier("fetchReportedProductListStep") Step fetchReportedProductListStep,
                                        @Qualifier("fetchReportedProductDetailStep") Step fetchReportedProductDetailStep) {
         log.info("Fetch ReportedProduct List Job Build Configuration");
-        return new JobBuilder("fetchReportedProductListJob", jobRepository)
+        return new JobBuilder("fetchReportedProductJob", jobRepository)
                 .start(fetchReportedProductListStep)
                 .next(fetchReportedProductDetailStep)
                 .incrementer(new RunIdIncrementer())

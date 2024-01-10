@@ -16,24 +16,26 @@ import org.springframework.stereotype.Component;
 @Profile({"local", "prod"})
 public class ReportedProductScheduler {
     private static final String DATETIME = "datetime";
-    private static final long FIXED_DELAY_IN_MS = 60 * 60 * 24 * 30 * 1000L;
-
-    private final Job reportedProductApiJob;
-
+    private static final long FIXED_DELAY_IN_MS = 60 * 60 * 24 * 7 * 1000L;
+    private final Job fetchReportedProductJob;
     private final JobLauncher jobLauncher;
 
     @Autowired
-    public ReportedProductScheduler(Job reportedProductApiJob, JobLauncher jobLauncher) {
-        this.reportedProductApiJob = reportedProductApiJob;
+    public ReportedProductScheduler(Job fetchReportedProductJob,
+                                    JobLauncher jobLauncher) {
+        this.fetchReportedProductJob = fetchReportedProductJob;
         this.jobLauncher = jobLauncher;
     }
 
     @Scheduled(initialDelay = 0, fixedDelay = FIXED_DELAY_IN_MS)
     public void executeFetchReportedProductJob() {
+        executeJob(fetchReportedProductJob);
+    }
+
+    private void executeJob(Job job) {
         try {
-            log.info("Fetch reportedProduct job start");
             jobLauncher.run(
-                    reportedProductApiJob,
+                    job,
                     new JobParametersBuilder()
                             .addString(DATETIME, LocalDateTime.now().toString())
                             .toJobParameters()
@@ -42,4 +44,5 @@ public class ReportedProductScheduler {
             log.error("JobExecutionException Occurred", je);
         }
     }
+
 }
