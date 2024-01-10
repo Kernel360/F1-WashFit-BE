@@ -1,8 +1,7 @@
-package com.kernel360.modulebatch;
+package com.kernel360.modulebatch.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.kernel360.modulebatch.client.ReportedProductClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,4 +38,5 @@ class ReportedProductClientTest {
                                + System.getenv("API_AUTH_KEY")
                                + "&ServiceName=slfsfcfst02List&PageCount=20&PageNum=7");
     }
+
 }
