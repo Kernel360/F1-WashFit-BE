@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.ecolife.repository.ReportedProductRepository;
+import com.kernel360.modulebatch.dto.ReportedProductDetailListDto;
 import com.kernel360.modulebatch.dto.ReportedProductDto;
 import com.kernel360.modulebatch.dto.ReportedProductListDto;
 import java.util.Optional;
@@ -35,6 +36,10 @@ public class ReportedProductService {
         return xmlMapper.readValue(xml, ReportedProductListDto.class);
     }
 
+    public ReportedProductDetailListDto deserializeXml2DetailDto(String xml) throws JsonProcessingException {
+        return xmlMapper.readValue(xml, ReportedProductDetailListDto.class);
+    }
+
     public int getTotalPageCount(String response) throws JsonProcessingException {
         return deserializeXml2ListDto(response)
                 .count() / 20 + 1;
@@ -45,8 +50,8 @@ public class ReportedProductService {
     public void saveReportedProduct(ReportedProductDto dto) {
         ReportedProduct reportedProduct = ReportedProductDto.toEntity(dto);
         Optional<ReportedProduct> findReportedProduct = reportedProductRepository
-                .findByProductMasterId(reportedProduct.getProductMasterId());
-
+                .findById(reportedProduct.getId());
+        ;
         if (findReportedProduct.isEmpty()) {
             ReportedProduct saved = reportedProductRepository.save(reportedProduct);
             log.info("Saved entity : {} ", saved);
