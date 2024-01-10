@@ -4,10 +4,15 @@ import com.kernel360.base.BaseRawEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @MappedSuperclass
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReportedProductDetails extends BaseRawEntity {
     @Column(name = "inspct_org")
     private String inspectedOrganization;
@@ -24,13 +29,13 @@ public class ReportedProductDetails extends BaseRawEntity {
     @Column(name = "upper_item")
     private String upperItem;
     @Column(name = "kid_prt_pkg")
-    private String kidProductPackage; // 명명 변경 필요
+    private String kidProtectPackage; // 명명 변경 필요
     @Column(name = "df")
     private String productDefinition;
     @Column(name = "propos")
     private String productPropose;
     @Column(name = "dtrb_lmt")
-    private LocalDateTime distributeLimit;
+    private String distributeLimit;
     @Column(name = "wt_bulk")
     private String weightAndBulk;
     @Column(name = "icepnt")
