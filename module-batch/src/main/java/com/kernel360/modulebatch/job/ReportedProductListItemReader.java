@@ -27,7 +27,7 @@ public class ReportedProductListItemReader implements ItemReader<List<ReportedPr
     // FIXME :: 몇 페이지까지 요청을 해서 데이터를 가져왔는지 저장하고 다음 스케쥴에 잡을 실행할 때 진행하지 않은 부분만 작업하도록 변경이 필요
     @BeforeStep
     public void beforeStep() {
-        MAX_PAGES_PER_JOB = 75;
+        MAX_PAGES_PER_JOB = 25;
     }
 
     @Override
