@@ -6,7 +6,6 @@ import com.kernel360.modulebatch.dto.ReportedProductDto;
 import com.kernel360.modulebatch.service.ReportedProductService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemReader;
 
