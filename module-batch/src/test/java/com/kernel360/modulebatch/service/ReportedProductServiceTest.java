@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 class ReportedProductServiceTest {
-    // 요청은 한번만 보내고 재활용하도록 리팩터링 필요
+
     @MockBean
     private ReportedProductRepository repository;
     private ReportedProductService service;
@@ -512,7 +512,7 @@ class ReportedProductServiceTest {
     @DisplayName("신고대상 생활화학제품을 테이블에 저장하는 것에 성공한다")
     void 생활화학제품을_테이블에_저장_테스트() {
         // given
-        ReportedProductDto testReportedProductDto = ReportedProductDto.of("masterId",
+        ReportedProductDto testReportedProductDto = ReportedProductDto.of("masterId_01",
                 "테스트이름",
                 "테스트신고번호",
                 "테스트제품분류",
@@ -522,24 +522,20 @@ class ReportedProductServiceTest {
 
         ReportedProduct mockProduct = ReportedProductDto.toEntity(testReportedProductDto);
 
-        // set mocking behaviour
-        // return the product when save() is invoked
-        when(repository.save(any(ReportedProduct.class))).thenReturn(mockProduct);
 
-        // set mock behavior for findByProductMasterId
-        // when called with the same id, return the same product
-        when(repository.findByProductMasterId(mockProduct.getProductMasterId()))
+        when(repository.save(any(ReportedProduct.class))).thenReturn(mockProduct);
+        when(repository.findById(mockProduct.getId()))
                 .thenReturn(Optional.of(mockProduct));
 
         // when
         service.saveReportedProduct(testReportedProductDto);
-        ReportedProduct foundReportedProduct = repository.findByProductMasterId(
-                mockProduct.getProductMasterId()).orElseThrow();
+        ReportedProduct foundReportedProduct = repository.findById(
+                mockProduct.getId()).orElseThrow();
 
         // then
         assertThat(foundReportedProduct).isNotNull();
-        assertThat(foundReportedProduct.getProductMasterId())
-                .isEqualTo(mockProduct.getProductMasterId());
+        assertThat(foundReportedProduct.getId())
+                .isEqualTo(mockProduct.getId());
     }
 
 
