@@ -16,7 +16,8 @@ public record MemberDto(Integer memberNo,
                         LocalDate createdAt,
                         String createdBy,
                         LocalDate modifiedAt,
-                        String modifiedBy
+                        String modifiedBy,
+                        String jwtToken
 ) {
 
     public static MemberDto of(
@@ -29,7 +30,8 @@ public record MemberDto(Integer memberNo,
             LocalDate createdAt,
             String createdBy,
             LocalDate modifiedAt,
-            String modifiedBy
+            String modifiedBy,
+            String jwtToken
     ) {
         return new MemberDto(
                 memberNo,
@@ -41,7 +43,8 @@ public record MemberDto(Integer memberNo,
                 createdAt,
                 createdBy,
                 modifiedAt,
-                modifiedBy
+                modifiedBy,
+                jwtToken
         );
     }
 
@@ -56,7 +59,8 @@ public record MemberDto(Integer memberNo,
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
-                entity.getModifiedBy()
+                entity.getModifiedBy(),
+                null
         );
     }
 
@@ -68,6 +72,64 @@ public record MemberDto(Integer memberNo,
                 this.password,
                 this.gender,
                 this.birthdate
+        );
+    }
+
+    /** joinMember **/
+    public static MemberDto of(
+            String id,
+            String email,
+            String password
+    ){
+        return new MemberDto(
+                null,
+                id,
+                email,
+                password,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    /** Login Binding **/
+    public static MemberDto login(Member entity,String jwtToken) {
+        return MemberDto.of(
+                entity.getMemberNo(),
+                entity.getId(),
+                entity.getEmail(),
+                null,
+                entity.getGender(),
+                entity.getBirthdate(),
+                entity.getCreatedAt(),
+                entity.getCreatedBy(),
+                entity.getModifiedAt(),
+                entity.getModifiedBy(),
+                jwtToken
+        );
+    }
+
+    /** Request Login **/
+    public static MemberDto of(
+            String id,
+            String password
+    ){
+        return new MemberDto(
+                null,
+                id,
+                null,
+                password,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 }
