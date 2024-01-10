@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 
 @SpringBatchTest
-@SpringJUnitConfig(classes = {ReportedProductApiJobConfig.class, TestBatchConfiguration.class})
+@SpringJUnitConfig(classes = {ReportedProductApiJobConfig.class})
 class ReportedProductApiJobConfigTest {
 
     @Autowired
@@ -42,21 +42,4 @@ class ReportedProductApiJobConfigTest {
 
     }
 
-    //    List<ReportedProductDto> items = Arrays.asList(
-//            ReportedProductDto.of("testMasterId_01",
-//                    "testName01",
-//                    "1234",
-//                    "코팅제",
-//                    7,
-//                    "20231011",
-//                    "테스트회사1"),
-//            ReportedProductDto.of("testMasterId_02",
-//                    "testName03",
-//                    "1235",
-//                    "광택제",
-//                    7,
-//                    "20221010",
-//                    "테스트회사2")
-//
-//    );
 }
