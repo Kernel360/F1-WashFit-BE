@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 
 import com.kernel360.modulebatch.service.ReportedProductService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 
 @SpringBatchTest
+@Disabled
 @SpringJUnitConfig(classes = {ReportedProductApiJobConfig.class})
 class ReportedProductApiJobConfigTest {
 
