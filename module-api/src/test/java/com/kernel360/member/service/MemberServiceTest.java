@@ -130,4 +130,84 @@ class MemberServiceTest {
         assertEquals("D8A90363565890A7BD5E3FF42CFFDE851C8B532C60756EBBB837560DB3A011A7".toLowerCase(), encryptToken);
     }
 
+    @Test
+    @DisplayName("회원가입시_아이디_중복_있으면_TRUE")
+    void 회원가입_아이디_중복_검사_있으면_TRUE(){
+
+        /** given **/
+        String id = "test01";
+        Member memberEntity = Member.of(51, "test01", null, null, null, null);
+
+        /** stub **/
+        when(memberRepository.findOneById(anyString())).thenReturn(memberEntity);
+
+        /** when **/
+        Member member = memberRepository.findOneById(id);
+        boolean result = member != null ? true : false;
+
+        /** then **/
+        verify(memberRepository).findOneById(id);
+        assertTrue(result,"중복있으면TRUE이다.");
+    }
+
+    @Test
+    @DisplayName("회원가입시_아이디_중복_없으면_FALSE")
+    void 회원가입_아이디_중복_검사_없으면_FALSE(){
+
+        /** given **/
+        String id = "test01";
+
+        /** stub **/
+        when(memberRepository.findOneById(anyString())).thenReturn(null);
+
+        /** when **/
+        Member member = memberRepository.findOneById(id);
+        boolean result = member != null ? true : false;
+
+        /** then **/
+        verify(memberRepository).findOneById(id);
+        assertFalse(result,"중복없으면FALSE이다.");
+    }
+
+    @Test
+    @DisplayName("회원가입시_이메일_중복_검사_있으면_TRUE")
+    void 회원가입_이메일_중복_있으면_TRUE(){
+
+        /** given **/
+        String email = "kernel360@kernel360.co.kr";
+        Member memberEntity = Member.of(51, "test01", "kernel360@kernel360.co.kr", null, null, null);
+
+        /** stub **/
+        when(memberRepository.findOneByEmail(anyString())).thenReturn(memberEntity);
+
+        /** when **/
+        Member member = memberRepository.findOneByEmail(email);
+
+        boolean result = member != null ? true : false;
+
+        /** then **/
+        verify(memberRepository).findOneByEmail(email);
+        assertTrue(result,"중복있으면TRUE이다.");
+    }
+
+    @Test
+    @DisplayName("회원가입시_이메일_중복_검사_없으면_FALSE")
+    void 회원가입_이메일_중복_없으면_FALSE(){
+
+        /** given **/
+        String email = "kernel360@kernel360.co.kr";
+
+        /** stub **/
+        when(memberRepository.findOneByEmail(anyString())).thenReturn(null);
+
+        /** when **/
+        Member member = memberRepository.findOneByEmail(email);
+
+        boolean result = member != null ? true : false;
+
+        /** then **/
+        verify(memberRepository).findOneByEmail(email);
+        assertFalse(result,"중복없으면FALSE이다.");
+    }
+
 }

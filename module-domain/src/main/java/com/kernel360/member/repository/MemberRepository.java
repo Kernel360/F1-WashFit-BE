@@ -7,4 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemberRepository extends JpaRepository<Member, Id> {
 
     Member findOneByIdAndPassword(String id, String password);
+
+    Member findOneById(String id);
+
+    Member findOneByEmail(String email);
 }
