@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Entity
-@Table(name = "member")
+@Table(name = "member_view")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
     @Id
