@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -39,4 +36,18 @@ public class MemberController {
 
         return new ResponseEntity<>(memberInfo, HttpStatus.OK);
     }
+
+    @GetMapping("/duplicatedCheckId/{id}")
+    public boolean duplicatedCheckId (@PathVariable String id){
+
+        return memberService.duplicatedCheckId(id);
+    }
+
+    @GetMapping("/duplicatedCheckEmail/{email}")
+    public boolean duplicatedCheckEmail (@PathVariable String email){
+
+        return memberService.duplicatedCheckEmail(email);
+    }
+
+
 }
