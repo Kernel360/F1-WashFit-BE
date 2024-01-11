@@ -15,6 +15,9 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    #JPA보다 flyway 우선 실행
+    autoconfigure:
+      exclude: org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
 logging:
   file:
