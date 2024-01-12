@@ -8,4 +8,5 @@ public interface AuthRepository extends JpaRepository <Auth, Id> {
 
     Auth findOneByMemberNo(Integer memberNo);
 
+    Auth findOneAuthByJwt(String encryptToken);
 }

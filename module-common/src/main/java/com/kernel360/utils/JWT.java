@@ -6,6 +6,9 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Component
@@ -31,8 +34,21 @@ public class JWT {
         }
     }
 
-    public String extractUsername(String token) {
+    public Date extractTime(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
-        return claims.getSubject();
+        return claims.getExpiration();
     }
+
+    public String ownerId(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+        return claims.getId();
+    }
+
+    public long checkedTime(String requestToken) {
+        LocalDateTime requestTime = extractTime(requestToken).toInstant().atZone((ZoneId.systemDefault())).toLocalDateTime();
+        LocalDateTime timeNow = LocalDateTime.now();
+
+        return Duration.between(requestTime, timeNow).toMinutes();
+    }
+
 }

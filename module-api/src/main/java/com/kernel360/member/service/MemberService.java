@@ -61,7 +61,7 @@ public class MemberService {
         return MemberDto.login(memberEntity, token);
     }
 
-    protected Auth modifyAuthJwt(Auth modifyAuth, String encryptToken) {
+    public Auth modifyAuthJwt(Auth modifyAuth, String encryptToken) {
         modifyAuth.updateJwt(encryptToken);
 
         return modifyAuth;
@@ -90,5 +90,9 @@ public class MemberService {
         Member member = memberRepository.findOneByEmail(email);
 
         return member != null;
+    }
+
+    public Auth findOneAuthByJwt(String encryptToken){
+        return authRepository.findOneAuthByJwt(encryptToken);
     }
 }
