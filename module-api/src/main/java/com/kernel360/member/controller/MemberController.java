@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -21,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<String> joinMember(@ModelAttribute MemberDto joinRequestDto) {
+    public ResponseEntity<String> joinMember(@RequestBody MemberDto joinRequestDto) {
 
         try {
             memberService.joinMember(joinRequestDto);
@@ -33,10 +30,24 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MemberDto> login(@ModelAttribute MemberDto loginDto) {
+    public ResponseEntity<MemberDto> login(@RequestBody MemberDto loginDto) {
 
         MemberDto memberInfo = memberService.login(loginDto);
 
         return new ResponseEntity<>(memberInfo, HttpStatus.OK);
     }
+
+    @GetMapping("/duplicatedCheckId/{id}")
+    public boolean duplicatedCheckId (@PathVariable String id){
+
+        return memberService.duplicatedCheckId(id);
+    }
+
+    @GetMapping("/duplicatedCheckEmail/{email}")
+    public boolean duplicatedCheckEmail (@PathVariable String email){
+
+        return memberService.duplicatedCheckEmail(email);
+    }
+
+
 }

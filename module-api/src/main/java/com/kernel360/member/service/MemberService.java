@@ -80,4 +80,15 @@ public class MemberService {
     }
 
 
+    public boolean duplicatedCheckId(String id) {
+        Member member = memberRepository.findOneById(id);
+
+        return member != null;
+    }
+
+    public boolean duplicatedCheckEmail(String email) {
+        Member member = memberRepository.findOneByEmail(email);
+
+        return member != null;
+    }
 }
