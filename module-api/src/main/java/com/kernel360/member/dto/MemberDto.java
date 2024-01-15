@@ -7,7 +7,7 @@ import java.time.LocalDate;
 /**
  * DTO for {@link com.kernel360.member.entity.Member}
  */
-public record MemberDto(Integer memberNo,
+public record MemberDto(Long memberNo,
                         String id,
                         String email,
                         String password,
@@ -21,7 +21,7 @@ public record MemberDto(Integer memberNo,
 ) {
 
     public static MemberDto of(
-            Integer memberNo,
+            Long memberNo,
             String id,
             String email,
             String password,
@@ -66,12 +66,12 @@ public record MemberDto(Integer memberNo,
 
     public Member toEntity(MemberDto memberDto) {
         return Member.of(
-                this.memberNo,
-                this.id,
-                this.email,
-                this.password,
-                this.gender,
-                this.birthdate
+                memberDto.memberNo(),
+                memberDto.id(),
+                memberDto.email(),
+                memberDto.password(),
+                memberDto.gender(),
+                memberDto.birthdate()
         );
     }
 

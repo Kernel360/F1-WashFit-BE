@@ -7,7 +7,7 @@ import java.time.LocalDate;
 /**
  * DTO for {@link com.kernel360.commoncode.entity.CommonCode}
  */
-public record CommonCodeDto(Integer codeNo,
+public record CommonCodeDto(Long codeNo,
                             String codeName,
                             Integer upperNo,
                             String upperName,
@@ -25,7 +25,7 @@ public record CommonCodeDto(Integer codeNo,
      * **/
 
     public static CommonCodeDto of(
-            Integer codeNo,
+            Long codeNo,
             String codeName,
             Integer upperNo,
             String upperName,
