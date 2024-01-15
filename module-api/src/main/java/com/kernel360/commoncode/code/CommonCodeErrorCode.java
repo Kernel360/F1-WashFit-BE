@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 public enum CommonCodeErrorCode implements ErrorCode {
     INVALID_COMMON_CODE_NAME(HttpStatus.BAD_REQUEST.value(), "EC001", "존재하지 않는 공통코드");
 
-    private int status;
+    private final int status;
     private final String code;
     private final String message;
 

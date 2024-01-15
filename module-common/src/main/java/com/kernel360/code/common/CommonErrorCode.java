@@ -5,7 +5,7 @@ import com.kernel360.code.ErrorCode;
 public enum CommonErrorCode implements ErrorCode {
     INTERNAL_SERVER_ERROR(500, "E001", "Server Error");
 
-    private int status;
+    private final int status;
     private final String code;
     private final String message;
 

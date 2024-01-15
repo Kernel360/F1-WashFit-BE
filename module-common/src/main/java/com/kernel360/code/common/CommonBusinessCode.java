@@ -5,7 +5,7 @@ import com.kernel360.code.ErrorCode;
 public enum CommonBusinessCode implements ErrorCode {
     SAVED(200, "B001", "저장이 왼료되었습니다.");
 
-    private int status;
+    private final int status;
     private final String code;
     private final String message;
 

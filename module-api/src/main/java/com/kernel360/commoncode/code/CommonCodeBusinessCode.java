@@ -5,7 +5,7 @@ import com.kernel360.code.BusinessCode;
 public enum CommonCodeBusinessCode implements BusinessCode {
     GET_COMMON_CODE_SUCCESS(200, "BC001", "공통코드 조회 성공");
 
-    private int status;
+    private final int status;
     private final String code;
     private final String message;
 
