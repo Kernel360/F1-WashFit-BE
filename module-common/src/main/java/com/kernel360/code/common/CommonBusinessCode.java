@@ -1,9 +1,10 @@
 package com.kernel360.code.common;
 
 import com.kernel360.code.ErrorCode;
+import org.springframework.http.HttpStatus;
 
 public enum CommonBusinessCode implements ErrorCode {
-    SAVED(200, "B001", "저장이 왼료되었습니다.");
+    SAVED(HttpStatus.OK.value(), "B001", "저장이 왼료되었습니다.");
 
     private final int status;
     private final String code;

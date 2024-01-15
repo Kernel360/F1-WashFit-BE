@@ -1,9 +1,10 @@
 package com.kernel360.commoncode.code;
 
 import com.kernel360.code.BusinessCode;
+import org.springframework.http.HttpStatus;
 
 public enum CommonCodeBusinessCode implements BusinessCode {
-    GET_COMMON_CODE_SUCCESS(200, "BC001", "공통코드 조회 성공");
+    GET_COMMON_CODE_SUCCESS(HttpStatus.OK.value(), "BC001", "공통코드 조회 성공");
 
     private final int status;
     private final String code;

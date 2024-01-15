@@ -1,9 +1,10 @@
 package com.kernel360.code.common;
 
 import com.kernel360.code.ErrorCode;
+import org.springframework.http.HttpStatus;
 
 public enum CommonErrorCode implements ErrorCode {
-    INTERNAL_SERVER_ERROR(500, "E001", "Server Error");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "E001", "Server Error");
 
     private final int status;
     private final String code;
