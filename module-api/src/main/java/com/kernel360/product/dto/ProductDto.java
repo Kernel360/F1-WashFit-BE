@@ -8,7 +8,7 @@ import java.time.LocalDate;
  * DTO for {@link com.kernel360.product.entity.Product}
  */
 
-public record ProductDto(Integer productNo,
+public record ProductDto(Long productNo,
                          String productName,
                          String barcode,
                          String description,
@@ -22,7 +22,7 @@ public record ProductDto(Integer productNo,
 ) {
 
     public static ProductDto of(
-            Integer productNo,
+            Long productNo,
             String productName,
             String barcode,
             String description,
