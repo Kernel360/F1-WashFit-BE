@@ -17,9 +17,9 @@ public class WashInfo extends BaseEntity {
     @Column(name = "wash_no", nullable = false)
     private Integer washNo;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne
     @JoinColumn(name = "member_no", nullable = false)
-    private Member memberNo;
+    private Member member;
 
     @Column(name = "wash_count")
     private Integer washCount;

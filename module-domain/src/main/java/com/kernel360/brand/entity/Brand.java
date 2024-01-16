@@ -1,9 +1,12 @@
 package com.kernel360.brand.entity;
 
 import com.kernel360.base.BaseEntity;
+import com.kernel360.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +20,9 @@ public class Brand extends BaseEntity {
     private Integer brandNo;
     @Column(name = "brand_name", nullable = false, length = Integer.MAX_VALUE)
     private String brandName;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "brand")
+    private List<Product> productList;
 
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
