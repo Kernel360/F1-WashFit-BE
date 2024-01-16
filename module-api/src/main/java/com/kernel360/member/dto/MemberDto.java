@@ -64,14 +64,14 @@ public record MemberDto(Long memberNo,
         );
     }
 
-    public Member toEntity(MemberDto memberDto) {
+    public Member toEntity() {
         return Member.of(
-                memberDto.memberNo(),
-                memberDto.id(),
-                memberDto.email(),
-                memberDto.password(),
-                memberDto.gender(),
-                memberDto.birthdate()
+                this.memberNo(),
+                this.id(),
+                this.email(),
+                this.password(),
+                this.gender(),
+                this.birthdate()
         );
     }
 

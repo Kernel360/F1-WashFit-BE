@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberTest {
 
-    private Integer memberNo;
+    private Long memberNo;
     private String id;
     private String email;
     private String password;
@@ -20,7 +20,7 @@ class MemberTest {
 
     @BeforeEach
     void 테스트준비() {
-        memberNo = 1;
+        memberNo = 1L;
         id = "user123";
         email = "user123@example.com";
         password = "password123";

@@ -36,7 +36,7 @@ public class ProductController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @GetMapping("/products")
+    @GetMapping("/products/search")
     ResponseEntity<List<ProductDto>> findProductByKeyword(@RequestParam("keyword") String keyword){
         final List<ProductDto> list = productService.getProductListByKeyword(keyword);
 

@@ -81,7 +81,7 @@ class MemberServiceTest {
         /** given **/
         MemberDto loginDto = MemberDto.of("test03", "1234qwer");
         Member mockLoginEntity = Member.loginMember(loginDto.id(), loginDto.password());
-        Member mockEntity = Member.of(502, loginDto.id(), "test03@naver.com", "0eb9de69892882d54516e03e30098354a2e39cea36adab275b6300c737c942fd", null, null);
+        Member mockEntity = Member.of(502L, loginDto.id(), "test03@naver.com", "0eb9de69892882d54516e03e30098354a2e39cea36adab275b6300c737c942fd", null, null);
         String mockToken = "dummy_token";
 
         /** stub **/
@@ -105,13 +105,13 @@ class MemberServiceTest {
     void 토큰_발급_저장_테스트() {
 
         /** given **/
-        Member memberEntity = Member.of(502, "test03", null, null, null, null);
+        Member memberEntity = Member.of(502L, "test03", null, null, null, null);
         String mockToken = "mockToken";
-        Auth auth = Auth.jwt(null, 502, mockToken);
+        Auth auth = Auth.jwt(null, 502L, mockToken);
 
         /** stub **/
         when(jwt.generateToken(anyString())).thenReturn(mockToken);
-        when(authRepository.findOneByMemberNo(anyInt())).thenReturn(auth);
+        when(authRepository.findOneByMemberNo(anyLong())).thenReturn(auth);
 
         /** when **/
         String token = jwt.generateToken(memberEntity.getId()); //mockToken return 정상 수행 확인
@@ -136,7 +136,7 @@ class MemberServiceTest {
 
         /** given **/
         String id = "test01";
-        Member memberEntity = Member.of(51, "test01", null, null, null, null);
+        Member memberEntity = Member.of(51L, "test01", null, null, null, null);
 
         /** stub **/
         when(memberRepository.findOneById(anyString())).thenReturn(memberEntity);
@@ -175,7 +175,7 @@ class MemberServiceTest {
 
         /** given **/
         String email = "kernel360@kernel360.co.kr";
-        Member memberEntity = Member.of(51, "test01", "kernel360@kernel360.co.kr", null, null, null);
+        Member memberEntity = Member.of(51L, "test01", "kernel360@kernel360.co.kr", null, null, null);
 
         /** stub **/
         when(memberRepository.findOneByEmail(anyString())).thenReturn(memberEntity);
