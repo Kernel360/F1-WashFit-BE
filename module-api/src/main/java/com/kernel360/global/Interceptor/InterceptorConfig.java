@@ -1,4 +1,4 @@
-package com.kernel360.global.filter;
+package com.kernel360.global.Interceptor;
 
 import com.kernel360.global.Interceptor.AcceptInterceptor;
 import lombok.RequiredArgsConstructor;
