@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class CommonCode extends BaseEntity {
     @Id
     @Column(name = "code_no", nullable = false)
-    private Integer codeNo;
+    private Long codeNo;
 
     @Column(name = "code_name", nullable = false, length = Integer.MAX_VALUE)
     private String codeName;

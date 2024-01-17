@@ -67,7 +67,7 @@ class MemberControllerTest {
     void 로그인() throws Exception {
 
         MemberDto memberDto = MemberDto.of("testID", "testPassword");
-        MemberDto memberInfo = new MemberDto(1,
+        MemberDto memberInfo = new MemberDto(1L,
                                             "test01",
                                             "kernel360@kernel360.com",
                                             "",

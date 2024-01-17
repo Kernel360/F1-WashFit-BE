@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuthRepository extends JpaRepository <Auth, Id> {
 
-    Auth findOneByMemberNo(Integer memberNo);
+    Auth findOneByMemberNo(Long memberNo);
 
     Auth findOneAuthByJwt(String encryptToken);
 }

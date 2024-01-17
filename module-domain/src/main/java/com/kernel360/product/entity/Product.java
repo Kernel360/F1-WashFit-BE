@@ -16,7 +16,7 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_id_gen")
     @SequenceGenerator(name = "product_id_gen", sequenceName = "product_product_no_seq", allocationSize = 50)
     @Column(name = "product_no", nullable = false)
-    private Integer productNo;
+    private Long productNo;
 
     @Column(name = "product_name", nullable = false)
     private String productName;
@@ -24,7 +24,7 @@ public class Product extends BaseEntity {
     @Column(name = "barcode")
     private String barcode;
 
-    @Column(name = "description", length = Integer.MAX_VALUE)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "declare_no", nullable = false)
