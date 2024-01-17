@@ -1,6 +1,5 @@
 package com.kernel360.global.Interceptor;
 
-import com.kernel360.global.Interceptor.AcceptInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

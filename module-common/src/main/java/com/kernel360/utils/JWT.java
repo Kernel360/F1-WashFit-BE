@@ -48,7 +48,6 @@ public class JWT {
         return claims.getId();
     }
 
-    @SneakyThrows
     public long checkedTime(String requestToken) {
         LocalDateTime requestTime = extractTime(requestToken).toInstant().atZone((ZoneId.systemDefault())).toLocalDateTime();
         LocalDateTime timeNow = LocalDateTime.now();
