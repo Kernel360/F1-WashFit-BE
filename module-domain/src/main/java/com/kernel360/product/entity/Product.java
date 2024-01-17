@@ -33,7 +33,7 @@ public class Product extends BaseEntity {
     @Column(name = "barcode")
     private String barcode;
 
-    @Column(name = "description", length = Integer.MAX_VALUE)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "is_violation", nullable = false)

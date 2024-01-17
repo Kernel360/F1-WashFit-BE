@@ -18,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<String> joinMember(@ModelAttribute MemberDto joinRequestDto) {
+    public ResponseEntity<String> joinMember(@RequestBody MemberDto joinRequestDto) {
 
         try {
             memberService.joinMember(joinRequestDto);
@@ -30,7 +30,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MemberDto> login(@ModelAttribute MemberDto loginDto) {
+    public ResponseEntity<MemberDto> login(@RequestBody MemberDto loginDto) {
 
         MemberDto memberInfo = memberService.login(loginDto);
 

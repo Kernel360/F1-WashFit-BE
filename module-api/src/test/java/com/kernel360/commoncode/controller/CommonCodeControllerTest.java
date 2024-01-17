@@ -44,7 +44,7 @@ class CommonCodeControllerTest {
     void 상위코드명을_인수로_받는_공통코드_목록_조회() throws Exception {
 
         String pathVariable = "color";
-        Integer codeNo = 1;
+        Long codeNo = 1L;
         String codeName = "테스트용 코드";
         Integer upperNo = null;
         String upperName = null;

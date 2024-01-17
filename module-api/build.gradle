@@ -41,10 +41,15 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
+    // validataion
+    implementation 'org.springframework.boot:spring-boot-starter-validation:2.7.4'
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    // test - fixture Monkey
+    testImplementation 'net.jqwik:jqwik:1.7.3'
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.0")
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-jakarta-validation:1.0.0")
 }
 
 tasks.named('test') {

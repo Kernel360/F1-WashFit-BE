@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity {
+public abstract class BaseEntity {
 
     private static final int MAX_STRING_LENGTH = 255;
 
