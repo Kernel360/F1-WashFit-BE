@@ -1,12 +1,13 @@
 package com.kernel360.modulebatch.reportedproduct.job;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
-import com.kernel360.modulebatch.reportedproduct.job.ReportedProductApiJobConfig.FetchReportedProductExecutionListener;
 import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -35,7 +36,7 @@ public class ReportedProductDetailApiJobConfig {
         return new JobBuilder("fetchReportedProductDetailJob", jobRepository)
                 .start(fetchReportedProductDetailStep)
                 .incrementer(new RunIdIncrementer())
-                .listener(new FetchReportedProductExecutionListener())
+                .listener(new FetchReportedProductDetailExecutionListener())
                 .build();
     }
 
@@ -44,7 +45,7 @@ public class ReportedProductDetailApiJobConfig {
                                                PlatformTransactionManager transactionManager) {
         log.info("Fetch ReportedProduct detail Step Build Configuration");
         return new StepBuilder("fetchReportedProductDetailStep", jobRepository)
-                .<ReportedProduct, ReportedProduct>chunk(25, transactionManager)
+                .<ReportedProduct, ReportedProduct>chunk(10, transactionManager)
                 .reader(productDetailItemReader()) // reported_product 테이블 읽어서 엔티티를 전달
                 .processor(productDetailItemProcessor()) // 전달받은 엔티티로 detail 조회, 엔티티로 변환
                 .writer(productDetailJpaItemWriter(emf)) // 엔티티를 테이블에 업데이트
@@ -58,7 +59,7 @@ public class ReportedProductDetailApiJobConfig {
         JpaPagingItemReader<ReportedProduct> reader = new JpaPagingItemReader<>();
         reader.setQueryString(jpql);
         reader.setEntityManagerFactory(emf);
-        reader.setPageSize(1000);
+        reader.setPageSize(3000);
 
         return reader;
     }
@@ -76,6 +77,20 @@ public class ReportedProductDetailApiJobConfig {
         jpaItemWriter.setEntityManagerFactory(emf);
 
         return jpaItemWriter;
+    }
+
+    //-- Execution Listener --//
+
+    public static class FetchReportedProductDetailExecutionListener implements JobExecutionListener {
+        @Override
+        public void beforeJob(JobExecution jobExecution) {
+            log.info("{} starts", jobExecution.getJobInstance().getJobName());
+        }
+
+        @Override
+        public void afterJob(JobExecution jobExecution) {
+            log.info("{} ends", jobExecution.getJobInstance().getJobName());
+        }
     }
 
 }
