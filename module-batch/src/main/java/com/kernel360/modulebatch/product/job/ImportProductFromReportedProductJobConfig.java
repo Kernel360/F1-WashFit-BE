@@ -1,7 +1,6 @@
 package com.kernel360.modulebatch.product.job;
 
 import com.kernel360.brand.entity.Brand;
-import com.kernel360.brand.repository.BrandRepository;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.ecolife.repository.ReportedProductRepository;
 import com.kernel360.modulebatch.product.dto.ProductDto;
@@ -41,8 +40,6 @@ public class ImportProductFromReportedProductJobConfig {
     private final ProductRepository productRepository;
 
     private final ReportedProductRepository reportedProductRepository;
-
-    private final BrandRepository brandRepository;
 
     private final EntityManagerFactory emf;
 
@@ -99,42 +96,9 @@ public class ImportProductFromReportedProductJobConfig {
                             brand.getBrandName().replaceAll(" ", "%")
                     );
 
-//            // TODO :: 브랜드명과 제조사명으로 검색해 온 제품과 중복해서 들어가게 될 수 있으므로 검색 조건을 좀 더 생각해보아야 함
-//            // TODO :: 예를 들면 복합키를 만들어서 Unique Key 로 지정하기, 그리고 Unique 키로 유효성을 검증하기, 검색하기
-//            //-- ReportedProduct 테이블에서 제조사명으로 제품 검색 (브랜드명이 제품명에 포함되지 않는 경우) --//
-//            List<String> brandNamesToExclude = brandRepository.findByCompanyName(brand.getCompanyName())
-//                                                              .stream()
-//                                                              .map(Brand::getBrandName)
-//                                                              .toList();
-//            // 같은 회사, 이름이 다른 가장 최신의 제품
-//            List<ReportedProduct> reportedProductOfCompany = reportedProductRepository
-//                    .findByCompanyName(brand.getCompanyName().replaceAll(" ", "%"))
-//                    .stream()
-//                    .collect(Collectors.groupingBy(ReportedProduct::getProductName,
-//                            Collectors.maxBy(Comparator.comparing(ReportedProduct::getIssuedDate))))
-//                    .values().stream()
-//                    .filter(Optional::isPresent)
-//                    .map(Optional::get)
-//                    .toList();
-//
-//            for (ReportedProduct reportedProduct : reportedProductOfCompany) {
-//                boolean excludedBrandInProductName = brandNamesToExclude
-//                        .stream()
-//                        .anyMatch(brandToExclude -> reportedProduct.getProductName()
-//                                                                   .contains(brandToExclude));
-//                // false, 즉 해당 브랜드명들을 모두 포함하지 않는 경우에만
-//                if (!excludedBrandInProductName) {
-//                    Optional<Product> findProduct = productRepository.findProductByProductNameAndReportNumber(
-//                            reportedProduct.getProductName(), reportedProduct.getSafetyReportNumber());
-//
-//                    if (findProduct.isEmpty()) {
-//                        reportedProductList.add(reportedProduct);
-//                    }
-//                }
-//            }
-
             //-- 제품명이 같은 제품끼리 그룹을 짓고, issuedDate 기준으로 내림차순 정렬. 가장 최신의 제품정보 하나씩을 ProductDto 로 변환하여 리스트에 추가 --//
             List<ProductDto> productDtoList = reportedProductList.stream()
+                                                                 .filter(rp -> rp.getInspectedOrganization() != null)
                                                                  .collect(Collectors.groupingBy(
                                                                          ReportedProduct::getProductName,
                                                                          Collectors.maxBy(
