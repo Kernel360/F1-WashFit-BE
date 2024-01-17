@@ -54,13 +54,13 @@ public class ReportedProductFromBrandClient{
     }
 
 
-    public String buildUri(Brand parameter, int pageNumber) {
+    public String buildUri(Brand brand, int pageNumber) {
         return UriComponentsBuilder.fromHttpUrl("https://ecolife.me.go.kr/openapi/ServiceSvl")
                                    .queryParam("AuthKey", AUTH_KEY)
                                    .queryParam("ServiceName", "slfsfcfst02List")
                                    .queryParam("PageCount", "20")
                                    .queryParam("PageNum", String.valueOf(pageNumber))
-                                   .queryParam("compNm", parameter.getBrandName())
+                                   .queryParam("compNm", brand.getCompanyName())
                                    .build()
                                    .toUriString();
     }
