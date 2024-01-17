@@ -64,7 +64,7 @@ public class MemberService {
         return MemberDto.login(memberEntity, token);
     }
 
-    protected Auth modifyAuthJwt(Auth modifyAuth, String encryptToken) {
+    public Auth modifyAuthJwt(Auth modifyAuth, String encryptToken) {
         modifyAuth.updateJwt(encryptToken);
 
         return modifyAuth;
@@ -82,16 +82,24 @@ public class MemberService {
         return Member.loginMember(loginDto.id(), encodePassword);
     }
     @Transactional(readOnly = true)
-    public boolean duplicatedCheckId(String id) {
+    public boolean idDuplicationCheck (String id) {
         Member member = memberRepository.findOneById(id);
 
         return member != null;
     }
 
     @Transactional(readOnly = true)
-    public boolean duplicatedCheckEmail(String email) {
+    public boolean emailDuplicationCheck (String email) {
         Member member = memberRepository.findOneByEmail(email);
 
         return member != null;
+    }
+
+    public Auth findOneAuthByJwt(String encryptToken){
+        return authRepository.findOneByJwtToken(encryptToken);
+    }
+
+    public void reissuanceJwt(Auth storedAuthInfo) {
+        authRepository.save(storedAuthInfo);
     }
 }
