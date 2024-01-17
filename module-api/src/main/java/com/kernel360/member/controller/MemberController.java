@@ -40,13 +40,18 @@ public class MemberController {
     @GetMapping("/duplicatedCheckId/{id}")
     public boolean duplicatedCheckId (@PathVariable String id){
 
-        return memberService.duplicatedCheckId(id);
+        return memberService.idDuplicationCheck(id);
     }
 
     @GetMapping("/duplicatedCheckEmail/{email}")
     public boolean duplicatedCheckEmail (@PathVariable String email){
 
-        return memberService.duplicatedCheckEmail(email);
+        return memberService.emailDuplicationCheck(email);
+    }
+
+    @PostMapping("/testJwt")
+    public String testJwt (){
+        return "checked";
     }
 
 
