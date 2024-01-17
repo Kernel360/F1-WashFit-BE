@@ -1,11 +1,7 @@
-package com.kernel360.modulebatch.job;
+package com.kernel360.modulebatch.reportedproduct.job;
 
-import com.kernel360.ecolife.entity.ReportedProduct;
-import com.kernel360.modulebatch.dto.ReportedProductDto;
-import com.kernel360.modulebatch.service.ReportedProductService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
+import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
+import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +14,6 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,21 +26,17 @@ public class ReportedProductApiJobConfig {
 
     private final ReportedProductService service;
 
-    private final EntityManagerFactory emf;
-
-
     @Bean
     public Job fetchReportedProductJob(JobRepository jobRepository,
-                                       @Qualifier("fetchReportedProductListStep") Step fetchReportedProductListStep,
-                                       @Qualifier("fetchReportedProductDetailStep") Step fetchReportedProductDetailStep) {
+                                       @Qualifier("fetchReportedProductListStep") Step fetchReportedProductListStep) {
         log.info("Fetch ReportedProduct List Job Build Configuration");
         return new JobBuilder("fetchReportedProductJob", jobRepository)
                 .start(fetchReportedProductListStep)
-                .next(fetchReportedProductDetailStep)
                 .incrementer(new RunIdIncrementer())
                 .listener(new FetchReportedProductExecutionListener())
                 .build();
     }
+
 
     //-- List Step --//
     @Bean
@@ -72,48 +61,6 @@ public class ReportedProductApiJobConfig {
     public ReportedProductListItemWriter productListItemWriter() {
         return new ReportedProductListItemWriter(service);
     }
-
-    //-- Detail Step --//
-
-    @Bean
-    public Step fetchReportedProductDetailStep(JobRepository jobRepository,
-                                               PlatformTransactionManager transactionManager) {
-        log.info("Fetch ReportedProduct detail Step Build Configuration");
-        return new StepBuilder("fetchReportedProductDetailStep", jobRepository)
-                .<ReportedProduct, ReportedProduct>chunk(25, transactionManager)
-                .reader(productDetailItemReader()) // reported_product 테이블 읽어서 엔티티를 전달
-                .processor(productDetailItemProcessor()) // 전달받은 엔티티로 detail 조회, 엔티티로 변환
-                .writer(productDetailJpaItemWriter(emf)) // 엔티티를 테이블에 업데이트
-                .build();
-    }
-
-    @Bean
-    public JpaPagingItemReader<ReportedProduct> productDetailItemReader() {
-        String jpql = "SELECT rp FROM ReportedProduct rp ORDER BY rp.id.productMasterId, rp.id.estNumber";
-
-        JpaPagingItemReader<ReportedProduct> reader = new JpaPagingItemReader<>();
-        reader.setQueryString(jpql);
-        reader.setEntityManagerFactory(emf);
-        reader.setPageSize(1000);
-
-        return reader;
-    }
-
-    @Bean
-    @StepScope
-    public ReportedProductDetailItemProcessor productDetailItemProcessor() {
-        return new ReportedProductDetailItemProcessor(service);
-    }
-
-    @Bean
-    @StepScope // 여기를 바꿔서 변경점만 변경하도록 바꿔야 함.
-    public JpaItemWriter<ReportedProduct> productDetailJpaItemWriter(EntityManagerFactory emf) {
-        JpaItemWriter<ReportedProduct> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(emf);
-
-        return jpaItemWriter;
-    }
-
 
     //-- Execution Listener --//
 

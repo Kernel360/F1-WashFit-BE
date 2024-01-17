@@ -1,4 +1,4 @@
-package com.kernel360.modulebatch.client;
+package com.kernel360.modulebatch.reportedproduct.client;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
-public class ReportedProductDetailClient {
+public class ReportedProductDetailClient implements ApiClient<ReportedProduct> {
 
     private static final String AUTH_KEY = System.getenv("API_AUTH_KEY");
 
@@ -22,16 +22,16 @@ public class ReportedProductDetailClient {
                                     .build();
     }
 
-
+    @Override
     public String getXmlResponse(ReportedProduct reportedProduct) {
 
-        return restClient.get().uri(buildUrl(reportedProduct))
+        return restClient.get().uri(buildUri(reportedProduct))
                          .accept(MediaType.APPLICATION_XML)
                          .acceptCharset(StandardCharsets.UTF_8)
                          .retrieve()
                          .onStatus(HttpStatusCode::is4xxClientError,
                                  ((request, response) -> {
-                                     log.debug("[ERROR] :: 4XX 에러 발생"
+                                     log.error("[ERROR] :: 4XX 에러 발생"
                                              + response.getStatusText());
                                      throw new RuntimeException(
                                              response.getStatusCode()
@@ -40,7 +40,7 @@ public class ReportedProductDetailClient {
                                  }))
                          .onStatus(HttpStatusCode::is5xxServerError,
                                  (request, response) -> {
-                                     log.debug("[ERROR] :: 5XX 에러 발생"
+                                     log.error("[ERROR] :: 5XX 에러 발생"
                                              + response.getStatusText());
                                      throw new RuntimeException(
                                              response.getStatusCode()
@@ -48,12 +48,13 @@ public class ReportedProductDetailClient {
                                                                .toString());
                                  })
                          .onStatus(HttpStatusCode::is2xxSuccessful,
-                                 ((request, response) -> log.info("[INFO] :: 2XX API 요청 성공"
+                                 ((request, response) -> log.debug("[INFO] :: 2XX API 요청 성공"
                                          + response.getBody())))
                          .body(String.class);
     }
 
-    public String buildUrl(ReportedProduct reportedProduct) {
+    @Override
+    public String buildUri(ReportedProduct reportedProduct) {
 
         return UriComponentsBuilder.fromHttpUrl("https://ecolife.me.go.kr/openapi/ServiceSvl")
                                    .queryParam("AuthKey", AUTH_KEY)
