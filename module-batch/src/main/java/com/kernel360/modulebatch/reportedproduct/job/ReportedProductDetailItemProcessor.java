@@ -51,8 +51,8 @@ public class ReportedProductDetailItemProcessor implements ItemProcessor<Reporte
         return removeInvalidXmlCharacters(xmlResponse);
     }
 
-    public String removeInvalidXmlCharacters(String xmlString) { // XML 1.0 Specification을 준수하는 ASCII printable characters (REPLACEMENT_CHARACTER)
-        String pattern = "[^\u0009\r\n\u0020-\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]";
+    public String removeInvalidXmlCharacters(String xmlString) { // XML 1.0 Specification 을 준수하는 ASCII printable characters (REPLACEMENT_CHARACTER)
+        String pattern = "[^\t\r\n -\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]";
         return xmlString.replaceAll(pattern, "");
     }
 }
