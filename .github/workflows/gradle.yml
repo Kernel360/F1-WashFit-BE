@@ -35,12 +35,8 @@ jobs:
         run: chmod +x ./gradlew
 
       # Gradle Build (test 제외)
-      - name: Build with Gradle (module-api)
+      - name: Build with Gradle
         working-directory: ./module-api
-        run: ./gradlew clean build -x test
-
-      - name: Build with Gradle (module-batch)
-        working-directory: ./module-batch
         run: ./gradlew clean build -x test
 
       # DockerHub 로그인
@@ -56,13 +52,9 @@ jobs:
         with:
           files: ./docker-compose.yml
         env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
-          POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
-#          services.db-edit.environment.POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
-#          services.db-edit.environment.POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
-#          services.webapp.image: ${{ secrets.DOCKER_IMAGE }}
+          services.db-edit.environment.POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
+          services.db-edit.environment.POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
+          services.webapp.image: ${{ secrets.DOCKER_IMAGE }}
 
       # Docker 이미지 빌드
       - name: Docker Compose Build
@@ -72,3 +64,26 @@ jobs:
       - name: DockerHub Push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:latest
 
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:cd
+#
+#      - name: Application Run
+#        uses: appleboy/ssh-action@v0.1.6
+#        with:
+#          host: ${{ secrets.VULTR_IP }}
+#          username: ${{ secrets.VULTR_USER_NAME }}
+#          key: ${{ secrets.VULTR_SSH_KEY }}
+#          password: ${{ secrets.VULTR_PASSWORD }}
+
+
+#      - name: Run shell script with secrets
+#        run: |
+#          export SECRET_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+#          export SECRET_DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
+#          export SECRET_PROJECT_NAME=${{ secrets.PROJECT_NAME }}
+#          export SECRET_VULTR_API_KEY=${{ secrets.VULTR_API_KEY }}
+#          export SECRET_VULTR_IP=${{ secrets.VULTR_IP }}
+#          export SECRET_VULTR_SSH_KEY=${{ secrets.VULTR_SSH_KEY }}
+#          export SECRET_VULTR_USER_NAME=${{ secrets.VULTR_USER_NAME }}
+#          ./scripts/deploy.sh

@@ -8,13 +8,13 @@ services:
     depends_on:
       - db-edit
 
-  batch:
-    build: ./module-batch
-    image: ${IMAGE}
-    ports:
-      - "8082:8082"
-    depends_on:
-      - db-edit
+#  batch:
+#    build: ./module-batch
+#    image: ${IMAGE}
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - db-edit
 #
 #  admin:
 #    build: ./module-admin
@@ -27,37 +27,23 @@ services:
     image: younglong/pg-washpedia:latest
     volumes:
       - ./postgreReadOnlyDB:/var/lib/postgresql/data
-    restart: always
     environment:
       POSTGRES_DB: edit_db
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
     ports:
-      - "5433:5433"
+      - "5432:5432"
 
-  db-read:
-    image: younglong/pg-washpedia:latest
-    volumes:
-      - ./postgreEditDB:/var/lib/postgresql/data
-    restart: always
-    environment:
-      POSTGRES_DB: read_db
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5434:5434"
-
-  flyway:
-    image: flyway/flyway
-    command: migrate
-    depends_on:
-      - db-edit
-    volumes:
-      - ./sql:/flyway/sql
-    environment:
-      FLYWAY_URL: jdbc:postgresql://db-edit:5432/edit_db
-      FLYWAY_USER: ${POSTGRES_USER}
-      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
+#  db-read:
+#    image: younglong/pg-washpedia:latest
+#    volumes:
+#      - ./postgreEditDB:/var/lib/postgresql/data
+#    environment:
+#      POSTGRES_DB: read_db
+#      POSTGRES_USER: ${{ secrets.PROJECT_USER }}
+#      POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
+#    ports:
+#      - "5433:5433"
 
 volumes:
   db-read-volume: {}
