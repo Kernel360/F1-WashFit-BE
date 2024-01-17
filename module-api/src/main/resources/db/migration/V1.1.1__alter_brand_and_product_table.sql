@@ -1,18 +1,20 @@
+-- Brand 에 company_name 컬럼 추가
 drop table if exists product;
-drop table if exists brand;
+drop TABLE if exists Brand;
 
 CREATE TABLE if not exists Brand
 (
     brand_no     BIGSERIAL PRIMARY KEY,
-    brand_name   VARCHAR NOT NULL,
-    company_name VARCHAR NOT NULL,
+    brand_name   VARCHAR      NOT NULL,
+    company_name VARCHAR      NOT NULL,
     description  VARCHAR,
     nation_name  VARCHAR,
-    created_at   DATE    NOT NULL,
-    created_by   VARCHAR NOT NULL,
+    created_at   DATE         NOT NULL,
+    created_by   VARCHAR      NOT NULL,
     modified_at  DATE,
     modified_by  VARCHAR
 );
+
 
 Insert Into brand (brand_no, brand_name, company_name, nation_name, created_at, created_by)
 VALUES (1, '더클래스', '코스메디슨(CosMedicine)', '대한민국', current_date, 'admin'),
@@ -61,7 +63,7 @@ CREATE SEQUENCE IF NOT EXISTS product_product_no_seq START WITH 1 INCREMENT BY 5
 
 CREATE TABLE product
 (
-    product_no                 BIGSERIAL      NOT NULL,
+    product_no                 BIGSERIAL    NOT NULL,
     created_at                 date         NOT NULL,
     created_by                 VARCHAR(255) NOT NULL,
     modified_at                date,
@@ -91,7 +93,7 @@ CREATE TABLE product
     manufacture_country        VARCHAR(255),
     is_violation               BOOLEAN      NOT NULL,
     view_count                 INTEGER      NOT NULL,
-    brand_no                   SERIAL,
+    brand_no                   BIGSERIAL,
     CONSTRAINT pk_product PRIMARY KEY (product_no)
 );
 
