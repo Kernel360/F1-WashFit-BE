@@ -4,12 +4,10 @@ import com.kernel360.base.BaseEntity;
 import com.kernel360.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "brand")
 public class Brand extends BaseEntity {

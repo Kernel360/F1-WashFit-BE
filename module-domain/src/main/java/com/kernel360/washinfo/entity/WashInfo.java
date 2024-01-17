@@ -17,7 +17,7 @@ public class WashInfo extends BaseEntity {
     @Column(name = "wash_no", nullable = false)
     private Integer washNo;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_no", nullable = false)
     private Member member;
 
