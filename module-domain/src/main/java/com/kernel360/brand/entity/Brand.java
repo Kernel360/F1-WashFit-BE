@@ -22,7 +22,7 @@ public class Brand extends BaseEntity {
     @Column(name = "brand_no", nullable = false)
     @SequenceGenerator(name = "brand_id_gen", sequenceName = "brand_brand_no_seq")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_id_gen")
-    private Integer brandNo;
+    private Long brandNo;
 
     @Column(name = "brand_name", nullable = false)
     private String brandName;
