@@ -34,6 +34,8 @@ public class MemberController {
 
         MemberDto memberInfo = memberService.login(loginDto);
 
+        //부가정보가 입력 되어있는가 > 차량정보, 세차정보, boolean (감싸서 보내든 말든 노상관)
+
         return new ResponseEntity<>(memberInfo, HttpStatus.OK);
     }
 

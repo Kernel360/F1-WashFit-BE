@@ -39,12 +39,12 @@ public class Member extends BaseEntity {
     @Column(name = "gender")
     private String gender;
 
-    @Column(name = "birthdate")
-    private LocalDate birthdate;
+    @Column(name = "age")
+    private String age;
 
-    public static Member of(Long memberNo, String id, String email, String password, String gender, LocalDate birthdate) {
+    public static Member of(Long memberNo, String id, String email, String password, String gender, String age) {
 
-        return new Member(memberNo, id, email, password, gender, birthdate);
+        return new Member(memberNo, id, email, password, gender, age);
     }
 
     /**
@@ -56,14 +56,14 @@ public class Member extends BaseEntity {
             String email,
             String password,
             String gender,
-            LocalDate birthdate
+            String age
     ) {
         this.memberNo = memberNo;
         this.id = id;
         this.email = email;
         this.password = password;
         this.gender = gender;
-        this.birthdate = birthdate;
+        this.age = age;
     }
 
     /**
