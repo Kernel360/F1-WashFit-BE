@@ -11,4 +11,6 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM Product WHERE product_name LIKE CONCAT('%', :keyword, '%') OR barcode LIKE CONCAT('%', :keyword, '%') OR description LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
     List<Product> findByKeyword(@Param("keyword") String keyword);
+
+    List<Product> findAllByOrderByViewCountDesc();
 }

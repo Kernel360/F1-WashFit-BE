@@ -1,6 +1,7 @@
 package com.kernel360.product.entity;
 
 import com.kernel360.base.BaseEntity;
+import com.kernel360.brand.entity.Brand;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +21,10 @@ public class Product extends BaseEntity {
 
     @Column(name = "product_name", nullable = false)
     private String productName;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_no")
+    private Brand brand;
 
     @Column(name = "barcode")
     private String barcode;
