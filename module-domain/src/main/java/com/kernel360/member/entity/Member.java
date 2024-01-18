@@ -1,6 +1,8 @@
 package com.kernel360.member.entity;
 
 import com.kernel360.base.BaseEntity;
+import com.kernel360.carinfo.entity.CarInfo;
+import com.kernel360.washinfo.entity.WashInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +24,12 @@ public class Member extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
+    @OneToOne(mappedBy = "member")
+    private CarInfo carInfo;
+
+    @OneToOne(mappedBy = "member")
+    private WashInfo washInfo;
+
     @Column(name = "email", nullable = false)
     private String email;
 
@@ -39,7 +47,9 @@ public class Member extends BaseEntity {
         return new Member(memberNo, id, email, password, gender, birthdate);
     }
 
-    /** All Binding **/
+    /**
+     * All Binding
+     **/
     private Member(
             Long memberNo,
             String id,
@@ -47,7 +57,7 @@ public class Member extends BaseEntity {
             String password,
             String gender,
             LocalDate birthdate
-    )    {
+    ) {
         this.memberNo = memberNo;
         this.id = id;
         this.email = email;
@@ -56,27 +66,35 @@ public class Member extends BaseEntity {
         this.birthdate = birthdate;
     }
 
-    /** joinMember **/
-    public static Member createJoinMember(String id, String email, String password){
+    /**
+     * joinMember
+     **/
+    public static Member createJoinMember(String id, String email, String password) {
 
-        return new Member(id,email,password);
+        return new Member(id, email, password);
     }
 
-    /** joinMember Binding **/
-    private Member(String id, String email, String password){
+    /**
+     * joinMember Binding
+     **/
+    private Member(String id, String email, String password) {
         this.id = id;
         this.email = email;
         this.password = password;
     }
 
-    /** loginMember **/
-    public static Member loginMember(String id, String password){
+    /**
+     * loginMember
+     **/
+    public static Member loginMember(String id, String password) {
 
-        return new Member(id,password);
+        return new Member(id, password);
     }
 
-    /** loginMember Binding **/
-    private Member(String id, String password){
+    /**
+     * loginMember Binding
+     **/
+    private Member(String id, String password) {
         this.id = id;
         this.password = password;
     }

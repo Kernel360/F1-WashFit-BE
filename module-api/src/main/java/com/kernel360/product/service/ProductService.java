@@ -34,4 +34,11 @@ public class ProductService {
 
         return products.stream().map(ProductDto::from).toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<ProductDto> getProductListOrderByViewCount(){
+        List<Product> products = productRepository.findAllByOrderByViewCountDesc();
+
+        return products.stream().map(ProductDto::from).toList();
+    }
 }
