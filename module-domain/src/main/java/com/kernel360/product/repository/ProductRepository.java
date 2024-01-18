@@ -16,6 +16,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByOrderByViewCountDesc();
 
     @Query(value = "SELECT p FROM Product  p WHERE p.productName = :productName AND p.reportNumber = :reportNumber")
-    Optional<Product> findProductByProductNameAndReportNumber(@Param("productName") String productName,
-                                                              @Param("reportNumber") String reportNumber);
+    Optional<Product> findByProductNameAndReportNumber(@Param("productName") String productName,
+                                                       @Param("reportNumber") String reportNumber);
 }

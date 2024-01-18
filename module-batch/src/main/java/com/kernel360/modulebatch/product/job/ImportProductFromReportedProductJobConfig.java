@@ -137,7 +137,7 @@ public class ImportProductFromReportedProductJobConfig {
         List<Product> productList = new ArrayList<>();
 
         for (ProductDto productDto : productDtoList) {
-            Optional<Product> existingProduct = productRepository.findProductByProductNameAndReportNumber(
+            Optional<Product> existingProduct = productRepository.findByProductNameAndReportNumber(
                     productDto.productName(),
                     productDto.reportNumber());
 
