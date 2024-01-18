@@ -29,12 +29,16 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@ComponentScan("com.kernel360.product")
 public class ImportProductFromReportedProductJobConfig {
 
     private final ProductRepository productRepository;
@@ -66,6 +70,11 @@ public class ImportProductFromReportedProductJobConfig {
                 .reader(brandReader())
                 .processor(reportedProductToProductListProcessor())
                 .writer(productListWriter())
+                .faultTolerant()
+                .retryLimit(2)
+                .retry(ResourceAccessException.class)
+                .skipLimit(10)
+                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 
