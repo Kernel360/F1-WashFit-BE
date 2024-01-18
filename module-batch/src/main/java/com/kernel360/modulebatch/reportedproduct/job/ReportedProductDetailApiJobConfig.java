@@ -19,7 +19,9 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @Configuration
@@ -49,6 +51,11 @@ public class ReportedProductDetailApiJobConfig {
                 .reader(productDetailItemReader()) // reported_product 테이블 읽어서 엔티티를 전달
                 .processor(productDetailItemProcessor()) // 전달받은 엔티티로 detail 조회, 엔티티로 변환
                 .writer(productDetailJpaItemWriter(emf)) // 엔티티를 테이블에 업데이트
+                .faultTolerant()
+                .retryLimit(2)
+                .retry(ResourceAccessException.class)
+                .skipLimit(10)
+                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 

@@ -17,7 +17,9 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @Configuration
@@ -47,6 +49,11 @@ public class ReportedProductApiJobConfig {
                 .<List<ReportedProductDto>, List<ReportedProductDto>>chunk(25, transactionManager)
                 .reader(productListItemReader()) // API 요청, 응답을 DTO 리스트로 반환
                 .writer(productListItemWriter()) // DTO 리스트 입력, 저장
+                .faultTolerant()
+                .retryLimit(2)
+                .retry(ResourceAccessException.class)
+                .skipLimit(10)
+                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 
