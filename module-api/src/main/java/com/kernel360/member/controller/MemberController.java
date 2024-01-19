@@ -3,11 +3,14 @@ package com.kernel360.member.controller;
 
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.service.MemberService;
+import com.kernel360.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.kernel360.member.code.MemberBusinessCode.SUCCESS_REQUEST_JOIN_MEMBER_CREATED;
+import static com.kernel360.member.code.MemberBusinessCode.SUCCESS_REQUEST_LOGIN_MEMBER;
 
 @Slf4j
 @RestController
@@ -18,23 +21,21 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<String> joinMember(@RequestBody MemberDto joinRequestDto) {
+    public ResponseEntity<?> joinMember(@RequestBody MemberDto joinRequestDto) {
 
-        try {
-            memberService.joinMember(joinRequestDto);
-        } catch (IllegalArgumentException args) {
-            log.error("가입에러발생", args);
-        }
+        memberService.joinMember(joinRequestDto);
 
-        return new ResponseEntity<>("", HttpStatus.CREATED);
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_JOIN_MEMBER_CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MemberDto> login(@RequestBody MemberDto loginDto) {
+    public ResponseEntity<?> login(@RequestBody MemberDto loginDto) {
 
         MemberDto memberInfo = memberService.login(loginDto);
 
-        return new ResponseEntity<>(memberInfo, HttpStatus.OK);
+        //부가정보가 입력 되어있는가 > 차량정보, 세차정보, boolean (감싸서 보내든 말든 노상관)
+
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, memberInfo);
     }
 
     @GetMapping("/duplicatedCheckId/{id}")

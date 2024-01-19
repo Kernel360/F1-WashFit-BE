@@ -20,6 +20,7 @@ public class SafetyStatusConverter implements AttributeConverter<SafetyStatus, I
         if (dbData == null) {
             return null;
         }
+
         return Stream.of(SafetyStatus.values())
                      .filter(safetyStatus -> safetyStatus.getCode().equals(dbData))
                      .findFirst()

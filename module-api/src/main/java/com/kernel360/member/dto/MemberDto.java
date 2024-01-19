@@ -1,6 +1,8 @@
 package com.kernel360.member.dto;
 
 import com.kernel360.member.entity.Member;
+import com.kernel360.member.enumset.Age;
+import com.kernel360.member.enumset.Gender;
 
 import java.time.LocalDate;
 
@@ -12,7 +14,7 @@ public record MemberDto(Long memberNo,
                         String email,
                         String password,
                         String gender,
-                        LocalDate birthdate,
+                        String age,
                         LocalDate createdAt,
                         String createdBy,
                         LocalDate modifiedAt,
@@ -26,7 +28,7 @@ public record MemberDto(Long memberNo,
             String email,
             String password,
             String gender,
-            LocalDate birthdate,
+            String age,
             LocalDate createdAt,
             String createdBy,
             LocalDate modifiedAt,
@@ -39,7 +41,7 @@ public record MemberDto(Long memberNo,
                 email,
                 password,
                 gender,
-                birthdate,
+                age,
                 createdAt,
                 createdBy,
                 modifiedAt,
@@ -54,8 +56,8 @@ public record MemberDto(Long memberNo,
                 entity.getId(),
                 entity.getEmail(),
                 entity.getPassword(),
-                entity.getGender(),
-                entity.getBirthdate(),
+                Gender.ordinalToName(entity.getGender()),
+                Age.ordinalToValue(entity.getAge()),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
@@ -70,8 +72,8 @@ public record MemberDto(Long memberNo,
                 this.id(),
                 this.email(),
                 this.password(),
-                this.gender(),
-                this.birthdate()
+                Gender.valueOf(this.gender()).ordinal(),
+                Age.valueOf(this.age()).ordinal()
         );
     }
 
@@ -79,15 +81,17 @@ public record MemberDto(Long memberNo,
     public static MemberDto of(
             String id,
             String email,
-            String password
+            String password,
+            String gender,
+            String   age
     ){
         return new MemberDto(
                 null,
                 id,
                 email,
                 password,
-                null,
-                null,
+                gender,
+                age,
                 null,
                 null,
                 null,
@@ -97,14 +101,14 @@ public record MemberDto(Long memberNo,
     }
 
     /** Login Binding **/
-    public static MemberDto login(Member entity,String jwtToken) {
+    public static MemberDto login(Member entity, String jwtToken) {
         return MemberDto.of(
                 entity.getMemberNo(),
                 entity.getId(),
                 entity.getEmail(),
                 null,
-                entity.getGender(),
-                entity.getBirthdate(),
+                Gender.ordinalToName(entity.getGender()),
+                Age.ordinalToValue(entity.getAge()),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
