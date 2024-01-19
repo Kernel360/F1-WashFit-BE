@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum MemberBusinessCode implements BusinessCode {
 
-    SUCCESS_REQUEST_JOIN_MEMBER_CREATED(HttpStatus.CREATED.value(), "BMEC001", "회원가입 성공"),
-    SUCCESS_REQUEST_LOGIN_MEMBER(HttpStatus.OK.value(), "BMEC002", "로그인 성공");
+    SUCCESS_REQUEST_JOIN_MEMBER_CREATED(HttpStatus.CREATED.value(), "BMC001", "회원가입 성공"),
+    SUCCESS_REQUEST_LOGIN_MEMBER(HttpStatus.OK.value(), "BMC002", "로그인 성공");
 
 
     private final int status;

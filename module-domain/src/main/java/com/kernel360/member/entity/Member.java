@@ -34,7 +34,6 @@ public class Member extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-
     @Column(name = "gender")
     private int gender;
 
