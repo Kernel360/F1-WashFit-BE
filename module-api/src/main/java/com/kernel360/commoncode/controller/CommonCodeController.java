@@ -32,7 +32,7 @@ public class CommonCodeController {
         return commonCodeService.getCodes(codeName);
     }
 
-    // !!! 아래 메서드는 추후 삭제 예정입니다 !!!
+    // FIXME :: 아래 메서드는 추후 삭제 예정입니다
     @GetMapping("/test/{codeName}")
     public ResponseEntity<ApiResponse> getCommonCode_1 (@PathVariable String codeName){
         List<CommonCodeDto> codes = commonCodeService.getCodes(codeName);

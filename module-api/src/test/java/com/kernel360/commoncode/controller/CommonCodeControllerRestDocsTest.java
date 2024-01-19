@@ -19,7 +19,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// !!! 삭제 예정 파일입니다 !!!
+// FIXME :: 삭제 예정 파일입니다
 class CommonCodeControllerRestDocsTest extends ControllerTest {
 
     @Test
@@ -71,7 +71,7 @@ class CommonCodeControllerRestDocsTest extends ControllerTest {
                       pathParameters(
                               parameterWithName("codeName").description("코드명")
                       ),
-//                      pathParameters(
+//                      queryParameters(
 //                              parameterWithName("size").description("size").optional(),
 //                              parameterWithName("page").description("page").optional()
 //                      ),

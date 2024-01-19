@@ -8,4 +8,4 @@
 
 include::overview.adoc[]
 include::sample-api.adoc[]
-// !!! 위 라인 1줄은 추후 삭제 예정입니다 !!!
+// FIXME :: 위 라인 1줄은 추후 삭제 예정입니다
