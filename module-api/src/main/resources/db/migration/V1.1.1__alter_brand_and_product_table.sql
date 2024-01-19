@@ -62,7 +62,7 @@ CREATE SEQUENCE IF NOT EXISTS product_product_no_seq START WITH 1 INCREMENT BY 5
 
 CREATE TABLE product
 (
-    product_no                 BIGINT       NOT NULL,
+    product_no                 BIGSERIAL       NOT NULL,
     created_at                 date         NOT NULL,
     created_by                 VARCHAR(255) NOT NULL,
     modified_at                date,
@@ -93,7 +93,7 @@ CREATE TABLE product
     fluorescent_whitening      TEXT,
     manufacture_type           VARCHAR(255),
     manufacture_method         VARCHAR(255),
-    brand_no                   BIGINT,
+    brand_no                   BIGSERIAL,
     CONSTRAINT pk_product PRIMARY KEY (product_no)
 );
 
