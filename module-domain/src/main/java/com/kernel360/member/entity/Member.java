@@ -8,8 +8,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Getter
 @Entity
 @Table(name = "member_view")
@@ -37,14 +35,14 @@ public class Member extends BaseEntity {
     private String password;
 
     @Column(name = "gender")
-    private String gender;
+    private int gender;
 
-    @Column(name = "birthdate")
-    private LocalDate birthdate;
+    @Column(name = "age")
+    private int age;
 
-    public static Member of(Long memberNo, String id, String email, String password, String gender, LocalDate birthdate) {
+    public static Member of(Long memberNo, String id, String email, String password, int gender, int age) {
 
-        return new Member(memberNo, id, email, password, gender, birthdate);
+        return new Member(memberNo, id, email, password, gender, age);
     }
 
     /**
@@ -55,32 +53,34 @@ public class Member extends BaseEntity {
             String id,
             String email,
             String password,
-            String gender,
-            LocalDate birthdate
+            int gender,
+            int age
     ) {
         this.memberNo = memberNo;
         this.id = id;
         this.email = email;
         this.password = password;
         this.gender = gender;
-        this.birthdate = birthdate;
+        this.age = age;
     }
 
     /**
      * joinMember
      **/
-    public static Member createJoinMember(String id, String email, String password) {
+    public static Member createJoinMember(String id, String email, String password, int gender, int age) {
 
-        return new Member(id, email, password);
+        return new Member(id, email, password, gender, age);
     }
 
     /**
      * joinMember Binding
      **/
-    private Member(String id, String email, String password) {
+    private Member(String id, String email, String password, int gender, int age) {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.gender = gender;
+        this.age = age;
     }
 
     /**
