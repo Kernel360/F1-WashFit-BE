@@ -1,4 +1,4 @@
-package com.kernel360.modulebatch.dto;
+package com.kernel360.modulebatch.reportedproduct.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;

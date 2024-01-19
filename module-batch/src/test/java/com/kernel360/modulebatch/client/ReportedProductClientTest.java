@@ -2,6 +2,7 @@ package com.kernel360.modulebatch.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.kernel360.modulebatch.reportedproduct.client.ReportedProductClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +33,7 @@ class ReportedProductClientTest {
     @Test  // 클라이언트 테스트로 이동
     @DisplayName("API 요청을 위한 URI를 만드는 것에 성공한다")
     public void 페이지_번호로_URL_만들기_테스트() {
-        String url = client.buildUrl(7);
+        String url = client.buildUri(7);
 
         assertThat(url).isNotNull()
                        .isEqualTo("https://ecolife.me.go.kr/openapi/ServiceSvl?AuthKey="

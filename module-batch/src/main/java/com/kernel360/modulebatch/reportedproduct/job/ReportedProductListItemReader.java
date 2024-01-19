@@ -1,9 +1,9 @@
-package com.kernel360.modulebatch.job;
+package com.kernel360.modulebatch.reportedproduct.job;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kernel360.modulebatch.client.ReportedProductClient;
-import com.kernel360.modulebatch.dto.ReportedProductDto;
-import com.kernel360.modulebatch.service.ReportedProductService;
+import com.kernel360.modulebatch.reportedproduct.client.ReportedProductClient;
+import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
+import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.annotation.BeforeStep;
@@ -27,7 +27,7 @@ public class ReportedProductListItemReader implements ItemReader<List<ReportedPr
     // FIXME :: 몇 페이지까지 요청을 해서 데이터를 가져왔는지 저장하고 다음 스케쥴에 잡을 실행할 때 진행하지 않은 부분만 작업하도록 변경이 필요
     @BeforeStep
     public void beforeStep() {
-        MAX_PAGES_PER_JOB = 25;
+        MAX_PAGES_PER_JOB = 100 ;
     }
 
     @Override
