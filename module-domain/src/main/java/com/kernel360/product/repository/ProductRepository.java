@@ -13,7 +13,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM Product WHERE product_name LIKE CONCAT('%', :keyword, '%') OR barcode LIKE CONCAT('%', :keyword, '%') OR description LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
     List<Product> findByKeyword(@Param("keyword") String keyword);
 
+    List<Product> findAllByOrderByViewCountDesc();
+
     @Query(value = "SELECT p FROM Product  p WHERE p.productName = :productName AND p.reportNumber = :reportNumber")
-    Optional<Product> findProductByProductNameAndReportNumber(@Param("productName") String productName,
-                                                              @Param("reportNumber") String reportNumber);
+    Optional<Product> findByProductNameAndReportNumber(@Param("productName") String productName,
+                                                       @Param("reportNumber") String reportNumber);
 }

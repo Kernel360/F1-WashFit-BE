@@ -39,5 +39,8 @@ out/
 ### MAC ###
 .DS_Store
 
+### rest docs ###
+!**/src/main/**/static/docs
+
 ### log ###
 *.log
