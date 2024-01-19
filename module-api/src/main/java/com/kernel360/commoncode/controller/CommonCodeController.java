@@ -36,8 +36,7 @@ public class CommonCodeController {
     @GetMapping("/test/{codeName}")
     public ResponseEntity<ApiResponse> getCommonCode_1 (@PathVariable String codeName){
         List<CommonCodeDto> codes = commonCodeService.getCodes(codeName);
-        ApiResponse<List<CommonCodeDto>> response = ApiResponse.of(GET_COMMON_CODE_SUCCESS, codes);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ApiResponse.toResponseEntity(GET_COMMON_CODE_SUCCESS, codes);
     }
 }
