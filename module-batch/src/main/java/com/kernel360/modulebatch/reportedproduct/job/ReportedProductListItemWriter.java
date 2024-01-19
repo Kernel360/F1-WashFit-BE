@@ -1,7 +1,7 @@
-package com.kernel360.modulebatch.job;
+package com.kernel360.modulebatch.reportedproduct.job;
 
-import com.kernel360.modulebatch.dto.ReportedProductDto;
-import com.kernel360.modulebatch.service.ReportedProductService;
+import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
+import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import java.util.List;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -20,7 +20,11 @@ public class ReportedProductListItemWriter implements ItemWriter<List<ReportedPr
      * @param chunk 신고대상 제품 리스트의 chunk
      */
     @Override
-    public void write(Chunk<? extends List<ReportedProductDto>> chunk) {
-        chunk.forEach(c -> c.forEach(apiService::saveReportedProduct));
+    public void write(Chunk<? extends List<ReportedProductDto>> chunk) throws Exception {
+        for (List<ReportedProductDto> c : chunk) {
+            for (ReportedProductDto reportedProductDto : c) {
+                apiService.saveReportedProduct(reportedProductDto);
+            }
+        }
     }
 }

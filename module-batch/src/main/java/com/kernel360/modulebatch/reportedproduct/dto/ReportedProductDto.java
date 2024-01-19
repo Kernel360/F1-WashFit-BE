@@ -1,4 +1,4 @@
-package com.kernel360.modulebatch.dto;
+package com.kernel360.modulebatch.reportedproduct.dto;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.kernel360.ecolife.entity.ReportedProduct;

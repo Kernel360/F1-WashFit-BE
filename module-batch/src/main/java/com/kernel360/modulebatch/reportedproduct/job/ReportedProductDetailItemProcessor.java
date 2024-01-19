@@ -1,10 +1,10 @@
-package com.kernel360.modulebatch.job;
+package com.kernel360.modulebatch.reportedproduct.job;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
-import com.kernel360.modulebatch.client.ReportedProductDetailClient;
-import com.kernel360.modulebatch.dto.ReportedProductDetailDto;
-import com.kernel360.modulebatch.dto.ReportedProductDto;
-import com.kernel360.modulebatch.service.ReportedProductService;
+import com.kernel360.modulebatch.reportedproduct.client.ReportedProductDetailClient;
+import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDetailDto;
+import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
+import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -26,9 +26,13 @@ public class ReportedProductDetailItemProcessor implements ItemProcessor<Reporte
      */
     @Override
     public ReportedProduct process(@NonNull ReportedProduct item) throws Exception {
+        if (item.getInspectedOrganization() != null) {
+            return null;
+        }
         String response = fetchXmlResponse(item);
         ReportedProductDetailDto detailDto = service.deserializeXml2DetailDto(response)
-                                                    .reportedProductDetailDtoList().get(0); // 리팩터링 필요함
+                                                    .reportedProductDetailDtoList().get(0);
+
         ReportedProductDto productDto = ReportedProductDto.of(item.getId().getProductMasterId(),
                 item.getProductName(),
                 item.getSafetyReportNumber(),
@@ -44,6 +48,11 @@ public class ReportedProductDetailItemProcessor implements ItemProcessor<Reporte
         log.info("Fetch item Id = {}", reportedProduct);
         String xmlResponse = client.getXmlResponse(reportedProduct);
         log.info("Response accepted : {}", xmlResponse);
-        return xmlResponse;
+        return removeInvalidXmlCharacters(xmlResponse);
+    }
+
+    public String removeInvalidXmlCharacters(String xmlString) { // XML 1.0 Specification 을 준수하는 ASCII printable characters (REPLACEMENT_CHARACTER)
+        String pattern = "[^\t\r\n -\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]";
+        return xmlString.replaceAll(pattern, "");
     }
 }
