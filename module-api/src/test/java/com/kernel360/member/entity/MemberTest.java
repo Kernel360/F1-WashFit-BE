@@ -3,8 +3,6 @@ package com.kernel360.member.entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -14,8 +12,8 @@ class MemberTest {
     private String id;
     private String email;
     private String password;
-    private String gender;
-    private LocalDate birthdate;
+    private int gender;
+    private int age;
     private Member member;
 
     @BeforeEach
@@ -24,10 +22,10 @@ class MemberTest {
         id = "user123";
         email = "user123@example.com";
         password = "password123";
-        gender = "Female";
-        birthdate = LocalDate.of(1990, 1, 1);
+        gender = 0;
+        age = 3;
 
-        member = Member.of(memberNo, id, email, password, gender, birthdate);
+        member = Member.of(memberNo, id, email, password, gender, age);
     }
 
     @Test
@@ -37,6 +35,6 @@ class MemberTest {
         assertThat(member.getEmail()).isEqualTo(email);
         assertThat(member.getPassword()).isEqualTo(password);
         assertThat(member.getGender()).isEqualTo(gender);
-        assertThat(member.getBirthdate()).isEqualTo(birthdate);
+        assertThat(member.getAge()).isEqualTo(age);
     }
 }
