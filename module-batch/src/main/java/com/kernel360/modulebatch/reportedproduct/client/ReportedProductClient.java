@@ -1,6 +1,5 @@
-package com.kernel360.modulebatch.client;
+package com.kernel360.modulebatch.reportedproduct.client;
 
-import com.kernel360.ecolife.entity.ReportedProduct;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -11,21 +10,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
-public class ReportedProductDetailClient {
-
+public class ReportedProductClient implements ApiClient<Integer> {
     private static final String AUTH_KEY = System.getenv("API_AUTH_KEY");
 
     private final RestClient restClient;
 
-    public ReportedProductDetailClient() {
+
+    public ReportedProductClient() {
         this.restClient = RestClient.builder()
                                     .build();
     }
 
+    /**
+     * @param pageNumber 요청할 페이지
+     * @return 해당 페이지에 대한 xml String
+     */
+    @Override
+    public String getXmlResponse(Integer pageNumber) {
 
-    public String getXmlResponse(ReportedProduct reportedProduct) {
-
-        return restClient.get().uri(buildUrl(reportedProduct))
+        return restClient.post().uri(buildUri(pageNumber))
                          .accept(MediaType.APPLICATION_XML)
                          .acceptCharset(StandardCharsets.UTF_8)
                          .retrieve()
@@ -48,19 +51,23 @@ public class ReportedProductDetailClient {
                                                                .toString());
                                  })
                          .onStatus(HttpStatusCode::is2xxSuccessful,
-                                 ((request, response) -> log.info("[INFO] :: 2XX API 요청 성공"
+                                 ((request, response) -> log.info("[INFO] :: api 요청 성공"
                                          + response.getBody())))
                          .body(String.class);
     }
 
-    public String buildUrl(ReportedProduct reportedProduct) {
+    @Override
+
+    public String buildUri(Integer pageNumber) {
 
         return UriComponentsBuilder.fromHttpUrl("https://ecolife.me.go.kr/openapi/ServiceSvl")
                                    .queryParam("AuthKey", AUTH_KEY)
-                                   .queryParam("ServiceName", "slfsfcfst02Detail")
-                                   .queryParam("mstId", reportedProduct.getId().getProductMasterId())
-                                   .queryParam("estNo", reportedProduct.getId().getEstNumber())
+                                   .queryParam("ServiceName", "slfsfcfst02List")
+                                   .queryParam("PageCount", "20")
+                                   .queryParam("PageNum", String.valueOf(pageNumber))
+                                   .build()
                                    .toUriString();
     }
+
 
 }
