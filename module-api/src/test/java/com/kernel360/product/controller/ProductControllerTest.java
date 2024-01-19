@@ -95,7 +95,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.productName", is(mockProduct.getProductName())))
                 .andExpect(jsonPath("$.barcode", is(mockProduct.getBarcode())))
                 .andExpect(jsonPath("$.description", is(mockProduct.getDescription())))
-                .andExpect(jsonPath("$.declareNo", is(mockProduct.getDeclareNo())))
+                .andExpect(jsonPath("$.declareNo", is(mockProduct.getReportNumber())))
                 .andExpect(jsonPath("$.isViolation", is(mockProduct.getIsViolation())))
                 .andExpect(jsonPath("$.viewCount", is(mockProduct.getViewCount())));
 
