@@ -5,12 +5,12 @@ drop TABLE if exists Brand;
 CREATE TABLE if not exists Brand
 (
     brand_no     BIGSERIAL PRIMARY KEY,
-    brand_name   VARCHAR      NOT NULL,
-    company_name VARCHAR      NOT NULL,
+    brand_name   VARCHAR NOT NULL,
+    company_name VARCHAR NOT NULL,
     description  VARCHAR,
     nation_name  VARCHAR,
-    created_at   DATE         NOT NULL,
-    created_by   VARCHAR      NOT NULL,
+    created_at   DATE    NOT NULL,
+    created_by   VARCHAR NOT NULL,
     modified_at  DATE,
     modified_by  VARCHAR
 );
@@ -58,23 +58,26 @@ VALUES (1, '더클래스', '코스메디슨(CosMedicine)', '대한민국', curre
        (1551, '보닉스', '대흥아이앤씨', '브라질', current_date, 'admin'),
        (1651, '루미너스', '루미너스코리아', '대한민국', current_date, 'admin');
 
-
 CREATE SEQUENCE IF NOT EXISTS product_product_no_seq START WITH 1 INCREMENT BY 50;
 
 CREATE TABLE product
 (
-    product_no                 BIGSERIAL    NOT NULL,
+    product_no                 BIGINT       NOT NULL,
     created_at                 date         NOT NULL,
     created_by                 VARCHAR(255) NOT NULL,
     modified_at                date,
     modified_by                VARCHAR(255),
     product_name               VARCHAR(255) NOT NULL,
-    barcode                    VARCHAR(255),
-    description                TEXT,
-    company_name               VARCHAR(255),
     report_no                  VARCHAR(255),
     product_type               VARCHAR(255),
-    safety_inspection_standard VARCHAR(255),
+    manufacture_nation         VARCHAR(255),
+    company_name               VARCHAR(255),
+    safety_status              INTEGER      NOT NULL,
+    issued_date                date         NOT NULL,
+    barcode                    VARCHAR(255),
+    img_src                    VARCHAR(255),
+    view_count                 INTEGER      NOT NULL,
+    safety_inspection_standard TEXT,
     upper_item                 VARCHAR(255),
     item                       VARCHAR(255),
     propose                    TEXT,
@@ -90,12 +93,12 @@ CREATE TABLE product
     fluorescent_whitening      TEXT,
     manufacture_type           VARCHAR(255),
     manufacture_method         VARCHAR(255),
-    manufacture_country        VARCHAR(255),
-    is_violation               BOOLEAN      NOT NULL,
-    view_count                 INTEGER      NOT NULL,
-    brand_no                   BIGSERIAL,
+    brand_no                   BIGINT,
     CONSTRAINT pk_product PRIMARY KEY (product_no)
 );
+
+ALTER TABLE product
+    ADD CONSTRAINT uc_02c8a49d7a577a0f3d2735397 UNIQUE (product_name, report_no, product_type, manufacture_nation);
 
 ALTER TABLE product
     ADD CONSTRAINT FK_PRODUCT_ON_BRAND_NO FOREIGN KEY (brand_no) REFERENCES brand (brand_no);

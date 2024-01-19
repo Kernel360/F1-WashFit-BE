@@ -1,18 +1,18 @@
 package com.kernel360.product.dto;
 
 import com.kernel360.product.entity.Product;
+import com.kernel360.product.entity.SafetyStatus;
 import java.time.LocalDate;
 
 /**
  * DTO for {@link com.kernel360.product.entity.Product}
  */
-// FIXME :: Product 테이블 변경에 따라서 toEntity 또한 변경되어야 함.
 public record ProductDto(Long productNo,
                          String productName,
                          String barcode,
                          String description,
                          String declareNo,
-                         Boolean isViolation,
+                         SafetyStatus safetyStatus,
                          Integer viewCount,
                          LocalDate createdAt,
                          String createdBy,
@@ -26,7 +26,7 @@ public record ProductDto(Long productNo,
             String barcode,
             String description,
             String declareNo,
-            Boolean isViolation,
+            SafetyStatus safetyStatus,
             Integer viewCount,
             LocalDate createdAt,
             String createdBy,
@@ -39,7 +39,7 @@ public record ProductDto(Long productNo,
                 barcode,
                 description,
                 declareNo,
-                isViolation,
+                safetyStatus,
                 viewCount,
                 createdAt,
                 createdBy,
@@ -53,9 +53,9 @@ public record ProductDto(Long productNo,
                 entity.getProductNo(),
                 entity.getProductName(),
                 entity.getBarcode(),
-                entity.getDescription(),
+                entity.getImage(),
                 entity.getReportNumber(),
-                entity.getIsViolation(),
+                entity.getSafetyStatus(),
                 entity.getViewCount(),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
