@@ -63,18 +63,4 @@ public record ProductDto(Long productNo,
                 entity.getModifiedBy()
         );
     }
-
-// FIXME :: 현재 기준 사용하는 곳이 없는 메서드라서 주석처리
-
-//    public static Product toEntity(ProductDto productDto) {
-//        return Product.of(
-//                productDto.productName,
-//                productDto.barcode,
-//                productDto.description,
-//                productDto.declareNo,
-//                productDto.isViolation,
-//                productDto.viewCount
-//        );
-//    }
-
 }

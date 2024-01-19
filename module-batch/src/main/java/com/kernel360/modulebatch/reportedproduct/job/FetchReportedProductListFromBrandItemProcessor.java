@@ -19,14 +19,14 @@ public class FetchReportedProductListFromBrandItemProcessor implements ItemProce
     private final ReportedProductFromBrandClient client;
 
     private final ReportedProductService service;
-    private int maxPageNumber = 100;
 
     @Override
     public List<ReportedProductDto> process(@Nonnull Brand brand) throws Exception {
         List<ReportedProductDto> list = new ArrayList<>();
         int nextPage = -1;
 
-        while (nextPage != maxPageNumber) {
+        int maxPageNumber;
+        do {
             nextPage++;
             String xmlResponse = fetchXmlResponse(brand, nextPage);
 
@@ -36,7 +36,7 @@ public class FetchReportedProductListFromBrandItemProcessor implements ItemProce
                 break;
             }
             list.addAll(reportedProductListDto.reportedProductDtoList());
-        }
+        } while (nextPage < maxPageNumber);
 
         return list;
     }
