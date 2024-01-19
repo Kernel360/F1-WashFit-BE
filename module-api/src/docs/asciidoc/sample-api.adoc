@@ -1,0 +1,22 @@
+== 샘플 API
+
+// [[]] 안에는 a 태그 이름 들어갑니다 (http://localhost:8080/docs/index#공통코드-조회)
+[[공통코드-조회]]
+=== 공통코드 조회
+
+// [Request] 실제로 API 에서 필요한 내용들만 아래 내용을 추가합니다
+==== Request
+include::{snippets}/commoncode/get-common-codes/path-parameters.adoc[]
+// include::{snippets}/commoncode/get-common-codes/query-parameters.adoc[]
+// include::{snippets}/commoncode/get-common-codes/request-fields.adoc[]
+
+===== HTTP Request 예시
+include::{snippets}/commoncode/get-common-codes/http-request.adoc[]
+
+// [Response] 실제로 API 에서 필요한 내용들만 아래 내용을 추가합니다
+==== Response
+// include::{snippets}/commoncode/get-common-codes/response-fields.adoc[]
+include::{snippets}/commoncode/get-common-codes/response-fields-value.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/commoncode/get-common-codes/http-response.adoc[]
