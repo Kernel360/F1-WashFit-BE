@@ -3,6 +3,8 @@ package com.kernel360.modulebatch.reportedproduct.job;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import jakarta.persistence.EntityManagerFactory;
+import java.net.ConnectException;
+import java.nio.channels.ClosedChannelException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -54,6 +56,8 @@ public class ReportedProductDetailApiJobConfig {
                 .faultTolerant()
                 .retryLimit(2)
                 .retry(ResourceAccessException.class)
+                .retry(ConnectException.class)
+                .retry(ClosedChannelException.class)
                 .skipLimit(10)
                 .skip(DataIntegrityViolationException.class)
                 .build();
