@@ -57,7 +57,8 @@ public class ReportedProductService {
             ReportedProduct newReportedProduct = reportedProductRepository.save(reportedProduct);
             log.info("Saved entity : {} ", newReportedProduct.getProductName());
         } else {
-            log.info("Existing entity : {}", reportedProduct.getProductName());
+            throw new JobExecutionException(
+                    "Existing entity found: {}. Stopping execution." + reportedProduct.getProductName());
         }
     }
 

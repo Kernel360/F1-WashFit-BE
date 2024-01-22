@@ -87,10 +87,11 @@ public class QuartzConfig {
     //-- Scheduler --//
 
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean(JobDetail fetchReportedProductWithBrand,
-                                                     Trigger fetchReportedProductWithBrandExecuteTrigger,
-                                                     JobDetail importProductFromReportedProduct,
-                                                     Trigger importProductFromReportedProductExecuteTrigger) {
+    public SchedulerFactoryBean schedulerFactoryBean(
+            @Qualifier("fetchReportedProductWithBrand") JobDetail fetchReportedProductWithBrand,
+            @Qualifier("fetchReportedProductWithBrandExecuteTrigger") Trigger fetchReportedProductWithBrandExecuteTrigger,
+            @Qualifier("importProductFromReportedProduct") JobDetail importProductFromReportedProduct,
+            @Qualifier("importProductFromReportedProductExecuteTrigger") Trigger importProductFromReportedProductExecuteTrigger) {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
         schedulerFactoryBean.setJobDetails(fetchReportedProductWithBrand, importProductFromReportedProduct);
         schedulerFactoryBean.setTriggers(fetchReportedProductWithBrandExecuteTrigger,
