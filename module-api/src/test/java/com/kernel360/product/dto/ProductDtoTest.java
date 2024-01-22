@@ -38,10 +38,10 @@ class ProductDtoTest {
         assertEquals(product.getProductName(), productDto.productName());
         assertEquals(product.getProductNo(), productDto.productNo());
         assertEquals(product.getViewCount(), productDto.viewCount());
-        assertEquals(product.getIsViolation(), productDto.isViolation());
+        assertEquals(product.getSafetyStatus(), productDto.safetyStatus());
         assertEquals(product.getBarcode(), productDto.barcode());
-        assertEquals(product.getDeclareNo(), productDto.declareNo());
-        assertEquals(product.getDescription(), productDto.description());
+        assertEquals(product.getReportNumber(), productDto.reportNumber());
+        assertEquals(product.getImage(), productDto.imageSource());
 
     }
 }
