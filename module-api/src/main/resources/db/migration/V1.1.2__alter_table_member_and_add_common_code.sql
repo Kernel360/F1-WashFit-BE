@@ -1,15 +1,17 @@
 -- 복호화 view 삭제
-drop view member_view;
+drop view IF EXISTS member_view;
 
 -- 함수 삭제
-drop function member_view_delete_trigger;
-drop function member_view_insert_trigger;
-drop function member_view_update_trigger;
+drop function IF EXISTS member_view_delete_trigger;
+drop function IF EXISTS member_view_insert_trigger;
+drop function IF EXISTS member_view_update_trigger;
+
 
 -- member 테이블 컬럼 자료형 변경
-ALTER TABLE public."member" RENAME COLUMN birthdate TO age;
-ALTER TABLE public."member" ALTER COLUMN age TYPE INT;
-ALTER TABLE public."member" ALTER COLUMN gender TYPE INT;
+ALTER TABLE public."member" DROP COLUMN IF EXISTS birthdate;
+ALTER TABLE public."member" DROP COLUMN IF EXISTS gender;
+ALTER TABLE public."member" ADD COLUMN IF NOT EXISTS age int;
+ALTER TABLE public."member" ADD COLUMN IF NOT EXISTS gender int;
 
 -- 복호화 뷰 생성
 CREATE
