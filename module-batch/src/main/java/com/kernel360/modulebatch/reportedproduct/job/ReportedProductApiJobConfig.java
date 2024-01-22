@@ -46,7 +46,7 @@ public class ReportedProductApiJobConfig {
                                              PlatformTransactionManager transactionManager) {
         log.info("Fetch ReportedProduct List Step Build Configuration");
         return new StepBuilder("fetchReportedProductListStep", jobRepository)
-                .<List<ReportedProductDto>, List<ReportedProductDto>>chunk(25, transactionManager)
+                .<List<ReportedProductDto>, List<ReportedProductDto>>chunk(10, transactionManager)
                 .reader(productListItemReader()) // API 요청, 응답을 DTO 리스트로 반환
                 .writer(productListItemWriter()) // DTO 리스트 입력, 저장
                 .faultTolerant()
