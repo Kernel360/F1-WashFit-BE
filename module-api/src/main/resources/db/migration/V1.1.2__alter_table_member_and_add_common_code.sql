@@ -1,23 +1,23 @@
 -- 복호화 view 삭제
-drop view member_view;
+drop view IF EXISTS member_view;
 
 -- 함수 삭제
-drop function member_view_delete_trigger;
-drop function member_view_insert_trigger;
-drop function member_view_update_trigger;
+drop function IF EXISTS member_view_delete_trigger;
+drop function IF EXISTS member_view_insert_trigger;
+drop function IF EXISTS member_view_update_trigger;
 
--- member 테이블 컬럼 자료형 변경
-ALTER TABLE public."member" RENAME COLUMN birthdate TO age;
-ALTER TABLE public."member" ALTER COLUMN age TYPE INT;
-ALTER TABLE public."member" ALTER COLUMN gender TYPE INT;
+ALTER TABLE public."member" DROP COLUMN IF EXISTS birthdate;
+ALTER TABLE public."member" DROP COLUMN IF EXISTS gender;
+ALTER TABLE public."member" ADD COLUMN IF NOT EXISTS age int;
+ALTER TABLE public."member" ADD COLUMN IF NOT EXISTS gender int;
 
 -- 복호화 뷰 생성
 CREATE
 OR REPLACE VIEW member_view AS
 SELECT member_no,
        id,
-       encode(pgp_sym_decrypt(password, 'changedRequired')::bytea, 'escape') as password,
-       encode(pgp_sym_decrypt(email, 'changedRequired')::bytea, 'escape')    as email,
+       encode(pgp_sym_decrypt(password, 'changeRequired')::bytea, 'escape') as password,
+       encode(pgp_sym_decrypt(email, 'changeRequired')::bytea, 'escape')    as email,
        gender,
        age,
        created_at,
@@ -34,8 +34,8 @@ OR REPLACE FUNCTION member_view_insert_trigger()
     RETURNS TRIGGER AS $$
 BEGIN
 INSERT INTO member (member_no, id, "password", email, gender, age, created_at, created_by, modified_at, modified_by)
-VALUES (nextval('member_member_no_seq'::regclass), NEW.id, pgp_sym_encrypt(NEW.password::TEXT, 'changedRequired'),
-        pgp_sym_encrypt(NEW.email::TEXT, 'changedRequired'), NEW.gender, NEW.age, NEW.created_at, NEW.created_by,
+VALUES (nextval('member_member_no_seq'::regclass), NEW.id, pgp_sym_encrypt(NEW.password::TEXT, 'changeRequired'),
+        pgp_sym_encrypt(NEW.email::TEXT, 'changeRequired'), NEW.gender, NEW.age, NEW.created_at, NEW.created_by,
         NEW.modified_at, NEW.modified_by);
 
 RETURN NEW;
@@ -58,8 +58,8 @@ OR REPLACE FUNCTION member_view_update_trigger()
 BEGIN
 UPDATE member
 SET id          = NEW.id,
-    "password"  = pgp_sym_encrypt(NEW.password::TEXT, 'changedRequired'),
-    email       = pgp_sym_encrypt(NEW.email::TEXT, 'changedRequired'),
+    "password"  = pgp_sym_encrypt(NEW.password::TEXT, 'changeRequired'),
+    email       = pgp_sym_encrypt(NEW.email::TEXT, 'changeRequired'),
     gender      = NEW.gender,
     age         = NEW.age,
     created_at  = NEW.created_at,
