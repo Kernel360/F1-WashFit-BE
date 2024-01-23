@@ -12,8 +12,8 @@ public record ProductDto(String productName, String barcode, String imageSource,
                          String upperItem, String item,
                          String propose, String weight, String usage, String usagePrecaution, String firstAid,
                          String mainSubstance, String allergicSubstance, String otherSubstance, String preservative,
-                         String Surfactant, String fluorescentWhitening, String manufactureType,
-                         String manufactureMethod, String manufactureCountry,
+                         String surfactant, String fluorescentWhitening, String manufactureType,
+                         String manufactureMethod, String manufactureNation,
                          Brand brand) {
 
     public static ProductDto of(String productName, String barcode, String imageSource,
@@ -49,8 +49,8 @@ public record ProductDto(String productName, String barcode, String imageSource,
                 productDto.item(),
                 productDto.propose(), productDto.weight(), productDto.usage(), productDto.usagePrecaution(),
                 productDto.firstAid(), productDto.mainSubstance(), productDto.allergicSubstance(),
-                productDto.otherSubstance(), productDto.preservative(), productDto.Surfactant(),
+                productDto.otherSubstance(), productDto.preservative(), productDto.surfactant(),
                 productDto.fluorescentWhitening(), productDto.manufactureType(), productDto.manufactureMethod(),
-                productDto.manufactureCountry(), productDto.brand());
+                productDto.manufactureNation(), productDto.brand());
     }
 }
