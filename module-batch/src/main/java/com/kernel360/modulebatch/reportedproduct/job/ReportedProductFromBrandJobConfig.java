@@ -19,7 +19,6 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -40,8 +39,8 @@ public class ReportedProductFromBrandJobConfig {
                                                 @Qualifier("fetchReportedProductFromBrandStep") Step fetchReportedProductFromBrandStep) {
 
         return new JobBuilder("fetchReportedProductFromBrandJob", jobRepository)
-                .start(fetchReportedProductFromBrandStep)
                 .incrementer(new RunIdIncrementer())
+                .start(fetchReportedProductFromBrandStep)
                 .build();
     }
 
@@ -58,8 +57,6 @@ public class ReportedProductFromBrandJobConfig {
                 .faultTolerant()
                 .retryLimit(2)
                 .retry(ResourceAccessException.class)
-                .skipLimit(10)
-                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 
