@@ -94,9 +94,9 @@ class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.productName", is(mockProduct.getProductName())))
                 .andExpect(jsonPath("$.barcode", is(mockProduct.getBarcode())))
-                .andExpect(jsonPath("$.description", is(mockProduct.getDescription())))
-                .andExpect(jsonPath("$.declareNo", is(mockProduct.getDeclareNo())))
-                .andExpect(jsonPath("$.isViolation", is(mockProduct.getIsViolation())))
+                .andExpect(jsonPath("$.image", is(mockProduct.getImage())))
+                .andExpect(jsonPath("$.declareNo", is(mockProduct.getReportNumber())))
+                .andExpect(jsonPath("$.safetyStatus", is(mockProduct.getSafetyStatus())))
                 .andExpect(jsonPath("$.viewCount", is(mockProduct.getViewCount())));
 
         verify(productService).getProductById(1L);

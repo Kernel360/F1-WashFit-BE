@@ -210,4 +210,100 @@ public class Product extends BaseEntity {
                 fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, brand);
     }
 
+    private Product(
+            Long productNo,
+            String productName,
+            String barcode,
+            String imageSource,
+            String reportNumber,
+            String safetyStatus,
+            Integer viewCount,
+            String companyName,
+            String productType,
+            LocalDate issuedDate,
+            String safetyInspectionStandard,
+            String upperItem,
+            String item,
+            String propose,
+            String weight,
+            String usage,
+            String usagePrecaution,
+            String firstAid,
+            String mainSubstance,
+            String allergicSubstance,
+            String otherSubstance,
+            String preservative,
+            String surfactant,
+            String fluorescentWhitening,
+            String manufactureType,
+            String manufactureMethod,
+            String manufactureNation,
+            Brand brand
+    ) {
+        this.productNo = productNo;
+        this.productName = productName;
+        this.barcode = barcode;
+        this.image = imageSource;
+        this.reportNumber = reportNumber;
+        this.safetyStatus = SafetyStatus.valueOf(safetyStatus);
+        this.viewCount = viewCount;
+        this.brand = brand;
+        this.companyName = companyName;
+        this.productType = productType;
+        this.issuedDate = issuedDate;
+        this.safetyInspectionStandard = safetyInspectionStandard;
+        this.upperItem = upperItem;
+        this.item = item;
+        this.propose = propose;
+        this.weight = weight;
+        this.usage = usage;
+        this.usagePrecaution = usagePrecaution;
+        this.firstAid = firstAid;
+        this.mainSubstance = mainSubstance;
+        this.allergicSubstance = allergicSubstance;
+        this.otherSubstance = otherSubstance;
+        this.preservative = preservative;
+        this.surfactant = surfactant;
+        this.fluorescentWhitening = fluorescentWhitening;
+        this.manufactureType = manufactureType;
+        this.manufactureMethod = manufactureMethod;
+        this.manufactureNation = manufactureNation;
+    }
+
+    public static Product of(Long productNo, String productName,
+                             String barcode,
+                             String imageSource,
+                             String reportNumber,
+                             String safetyStatus,
+                             Integer viewCount,
+                             String companyName,
+                             String productType,
+                             LocalDate issuedDate,
+                             String safetyInspectionStandard,
+                             String upperItem,
+                             String item,
+                             String propose,
+                             String weight,
+                             String usage,
+                             String usagePrecaution,
+                             String firstAid,
+                             String mainSubstance,
+                             String allergicSubstance,
+                             String otherSubstance,
+                             String preservative,
+                             String surfactant,
+                             String fluorescentWhitening,
+                             String manufactureType,
+                             String manufactureMethod,
+                             String manufactureNation,
+                             Brand brand) {
+        return new Product(productNo, productName, barcode, imageSource, reportNumber, safetyStatus, viewCount,
+                companyName,
+                productType, issuedDate, safetyInspectionStandard, upperItem,
+                item, propose, weight, usage, usagePrecaution, firstAid, mainSubstance, allergicSubstance,
+                otherSubstance, preservative, surfactant,
+                fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, brand);
+
+    }
+
 }

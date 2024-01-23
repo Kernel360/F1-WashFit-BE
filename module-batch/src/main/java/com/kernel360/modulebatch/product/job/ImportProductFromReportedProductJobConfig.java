@@ -5,8 +5,10 @@ import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.ecolife.repository.ReportedProductRepository;
 import com.kernel360.modulebatch.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
+import com.kernel360.product.entity.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;
 import jakarta.persistence.EntityManagerFactory;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,12 +31,16 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@ComponentScan("com.kernel360.product")
 public class ImportProductFromReportedProductJobConfig {
 
     private final ProductRepository productRepository;
@@ -66,6 +72,11 @@ public class ImportProductFromReportedProductJobConfig {
                 .reader(brandReader())
                 .processor(reportedProductToProductListProcessor())
                 .writer(productListWriter())
+                .faultTolerant()
+                .retryLimit(2)
+                .retry(ResourceAccessException.class)
+                .skipLimit(10)
+                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 
@@ -110,11 +121,13 @@ public class ImportProductFromReportedProductJobConfig {
                                                                  .map(rp -> ProductDto.of(rp.getProductName(),
                                                                          "barcode",
                                                                          "description",
-                                                                         false,
+                                                                         SafetyStatus.SAFE,
                                                                          0,
                                                                          rp.getCompanyName(),
                                                                          rp.getSafetyReportNumber(),
-                                                                         rp.getProductType(), rp.getSafeStandard()
+                                                                         rp.getProductType(),
+                                                                         LocalDate.from(rp.getIssuedDate()),
+                                                                         rp.getSafeStandard()
                                                                          , rp.getUpperItem(), rp.getItem(),
                                                                          rp.getProductPropose(), rp.getWeightAndBulk(),
                                                                          rp.getUseMethod(),
@@ -137,28 +150,61 @@ public class ImportProductFromReportedProductJobConfig {
         List<Product> productList = new ArrayList<>();
 
         for (ProductDto productDto : productDtoList) {
-            Optional<Product> existingProduct = productRepository.findByProductNameAndReportNumber(
-                    productDto.productName(),
-                    productDto.reportNumber());
+            Optional<Product> existingProduct = productRepository.findProductByProductNameAndReportNumber(
+                    productDto.productName(), productDto.reportNumber(), productDto.productType(),
+                    productDto.manufactureCountry());
 
-            if (existingProduct.isEmpty()) {
+            boolean isProductInList = productList.stream().anyMatch(
+                    prod -> prod.getProductName().equals(productDto.productName()) &&
+                            prod.getReportNumber().equals(productDto.reportNumber()) &&
+                            prod.getProductType().equals(productDto.productType())
+                            && prod.getManufactureNation().equals(productDto.manufactureCountry()));
+
+            String nation;
+            if (productDto.manufactureType().equals("수입")) {
+                nation = productDto.brand().getNationName();
+            } else {
+                nation = "대한민국";
+            }
+
+            if (existingProduct.isEmpty() || !isProductInList) {
                 Product newProduct = Product.of(productDto.productName(), productDto.barcode(),
-                        productDto.description(),
-                        productDto.reportNumber(), productDto.isViolation(), productDto.viewCount(),
+                        productDto.imageSource(),
+                        productDto.reportNumber(), String.valueOf(productDto.safetyStatus()), productDto.viewCount(),
                         productDto.companyName(),
-                        productDto.productType(),
+                        productDto.productType(), productDto.issuedDate(),
                         productDto.safetyInspectionStandard(), productDto.upperItem(), productDto.item(),
                         productDto.propose(), productDto.weight(), productDto.usage(), productDto.usagePrecaution(),
                         productDto.firstAid(), productDto.mainSubstance(), productDto.allergicSubstance(),
                         productDto.otherSubstance(), productDto.preservative(), productDto.Surfactant(),
                         productDto.fluorescentWhitening(), productDto.manufactureType(), productDto.manufactureMethod(),
-                        productDto.manufactureCountry(), productDto.brand());
-
+                        nation, productDto.brand());
                 productList.add(newProduct);
+
                 log.info("New product added : ProductNo = {}, Brand = {}, ProductName = {}",
                         newProduct.getProductNo(), newProduct.getBrand().getBrandName(), newProduct.getProductName());
+            } else {
+                Product updatingProduct = existingProduct.get();
+
+                Product updatedProduct = Product.of(updatingProduct.getProductNo(), updatingProduct.getProductName(),
+                        productDto.barcode(),
+                        productDto.imageSource(),
+                        updatingProduct.getReportNumber(), String.valueOf(productDto.safetyStatus()),
+                        productDto.viewCount(),
+                        productDto.companyName(),
+                        productDto.productType(), productDto.issuedDate(),
+                        productDto.safetyInspectionStandard(), productDto.upperItem(), productDto.item(),
+                        productDto.propose(), productDto.weight(), productDto.usage(), productDto.usagePrecaution(),
+                        productDto.firstAid(), productDto.mainSubstance(), productDto.allergicSubstance(),
+                        productDto.otherSubstance(), productDto.preservative(), productDto.Surfactant(),
+                        productDto.fluorescentWhitening(), productDto.manufactureType(), productDto.manufactureMethod(),
+                        nation, updatingProduct.getBrand());
+
+                productList.add(updatedProduct);
+                log.info("Product updated : ProductNo = {}, Brand = {}, ProductName = {}",
+                        updatingProduct.getProductNo(), updatingProduct.getBrand().getBrandName(),
+                        updatingProduct.getProductName());
             }
-            // TODO :: 업데이트 될 컬럼이 Product 에 존재하게 되면 이 아래에 추가
         }
 
         return productList;
@@ -170,7 +216,6 @@ public class ImportProductFromReportedProductJobConfig {
     private JpaProductListWriter<Product> productListWriter() {
         JpaItemWriter<Product> writer = new JpaItemWriter<>();
         writer.setEntityManagerFactory(emf);
-        writer.setUsePersist(true);
 
         return new JpaProductListWriter<>(writer);
     }
