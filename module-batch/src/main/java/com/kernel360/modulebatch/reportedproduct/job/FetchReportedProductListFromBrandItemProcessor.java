@@ -19,7 +19,6 @@ public class FetchReportedProductListFromBrandItemProcessor implements ItemProce
     private final ReportedProductFromBrandClient client;
 
     private final ReportedProductService service;
-
     @Override
     public List<ReportedProductDto> process(@Nonnull Brand brand) throws Exception {
         List<ReportedProductDto> list = new ArrayList<>();
@@ -32,7 +31,8 @@ public class FetchReportedProductListFromBrandItemProcessor implements ItemProce
 
             maxPageNumber = service.getTotalPageCount(xmlResponse);
             ReportedProductListDto reportedProductListDto = service.deserializeXml2ListDto(xmlResponse);
-            if (reportedProductListDto.count() == 0) {
+            // TODO reportedProductListDto.reportedProductDtoList() == null 이 되는 조건에 대해서 자세히 살펴보아야 함
+            if (reportedProductListDto.count() == 0 ||reportedProductListDto.reportedProductDtoList() == null ) {
                 break;
             }
             list.addAll(reportedProductListDto.reportedProductDtoList());
