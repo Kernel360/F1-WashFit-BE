@@ -53,7 +53,7 @@ public class ImportProductFromReportedProductJobConfig {
                                                    @Qualifier("importProductFromReportedProductStep") Step importProductFromReportedProductStep) {
         log.info("Import Product from ReportedProduct by Brand Job Build Configuration");
 
-        return new JobBuilder("importProductFromReportedProductJob", jobRepository)
+        return new JobBuilder("ImportProductFromReportedProductJob", jobRepository)
                 .start(importProductFromReportedProductStep)
                 .incrementer(new RunIdIncrementer())
                 .listener(new ImportProductFromReportedProductListener())
@@ -66,7 +66,7 @@ public class ImportProductFromReportedProductJobConfig {
                                                      PlatformTransactionManager transactionManager) throws Exception {
         log.info("Import Product from ReportedProduct by Brand Step Build Configuration");
 
-        return new StepBuilder("importProductFromReportedProductStep", jobRepository)
+        return new StepBuilder("ImportProductFromReportedProductStep", jobRepository)
                 .<Brand, List<Product>>chunk(10, transactionManager)
                 .reader(brandReader())
                 .processor(reportedProductToProductListProcessor())
