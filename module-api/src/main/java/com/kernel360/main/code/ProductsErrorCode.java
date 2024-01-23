@@ -4,8 +4,8 @@ import com.kernel360.code.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum ProductsErrorCode implements ErrorCode {
-    INVALID_RECOMMEND_PRODUCT_CODE_NAME(HttpStatus.BAD_REQUEST.value(), "ERPMB001", "추천제품 데이터가 존재하지 않습니다."),
-    INVALID_PRODUCT_CODE_NAME(HttpStatus.BAD_REQUEST.value(), "EPMB001", "제품 데이터가 존재하지 않습니다.");
+    NOT_FOUND_RECOMMEND_PRODUCT(HttpStatus.BAD_REQUEST.value(), "ERPMB001", "추천제품 데이터가 존재하지 않습니다."),
+    NOT_FOUND_PRODUCT(HttpStatus.BAD_REQUEST.value(), "EPMB001", "제품 데이터가 존재하지 않습니다.");
 
     private final int status;
     private final String code;

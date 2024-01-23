@@ -1,7 +1,7 @@
 package com.kernel360.main.controller;
 
-import com.kernel360.main.code.BannerResponse;
-import com.kernel360.main.code.ProductsResponse;
+import com.kernel360.main.code.BannerBusinessCode;
+import com.kernel360.main.code.ProductsBusinessCode;
 import com.kernel360.main.dto.BannerDto;
 import com.kernel360.main.dto.RecommendProductsDto;
 import com.kernel360.main.service.MainService;
@@ -24,21 +24,21 @@ public class MainContoller {
     @GetMapping("/banner")
     ResponseEntity<ApiResponse<BannerDto>> getBanner() {
 
-        return ApiResponse.toResponseEntity(BannerResponse.GET_BANNER_DATA_SUCCESS, MainService.getSampleBanner());
+        return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, MainService.getSampleBanner());
     }
 
     @GetMapping("/recommend_products")
     ResponseEntity<ApiResponse<List<RecommendProductsDto>>> getRecommendProducts() {
         List<RecommendProductsDto> recommendProductList = productService.getRecommendProductList();
 
-        return ApiResponse.toResponseEntity(ProductsResponse.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProductList);
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProductList);
 
     }
     @GetMapping("/products/")
     ResponseEntity<ApiResponse<List<ProductDto>>> getProducts(@RequestParam(name ="sortType", defaultValue = "viewCnt_order") Sort sortType){
         List<ProductDto> productDtos = sortType.sort(productService);
 
-        return ApiResponse.toResponseEntity(ProductsResponse.GET_PRODUCT_DATA_SUCCESS, productDtos);
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productDtos);
     }
 
 }

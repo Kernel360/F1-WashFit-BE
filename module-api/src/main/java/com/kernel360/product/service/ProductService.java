@@ -22,35 +22,24 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDto getProductById(Long id) {
 
-        return
-                productRepository.findById(id)
-                        .map(ProductDto::from)
-                        .orElseThrow(() -> new BusinessException(ProductsErrorCode.INVALID_PRODUCT_CODE_NAME));
+        return productRepository.findById(id)
+                .map(ProductDto::from)
+                .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
 
     }
 
     @Transactional(readOnly = true)
     public List<ProductDto> getProductList() {
 
-        List<ProductDto> productDtos = productRepository.findAll()
+        return productRepository.findAll()
                 .stream()
                 .map(ProductDto::from)
                 .toList();
-
-        if (productDtos.isEmpty()) {
-            throw new BusinessException(ProductsErrorCode.INVALID_PRODUCT_CODE_NAME);
-        }
-
-        return productDtos;
     }
 
     @Transactional(readOnly = true)
     public List<ProductDto> getProductListByKeyword(String keyword) {
         List<Product> products = productRepository.findByKeyword(keyword);
-
-        if (products.isEmpty()) {
-            throw new BusinessException(ProductsErrorCode.INVALID_PRODUCT_CODE_NAME);
-        }
 
         return products.stream().map(ProductDto::from).toList();
     }
@@ -58,10 +47,6 @@ public class ProductService {
     @Transactional(readOnly = true)
     public List<ProductDto> getProductListOrderByViewCount() {
         List<Product> products = productRepository.findAllByOrderByViewCountDesc();
-
-        if (products.isEmpty()) {
-            throw new BusinessException(ProductsErrorCode.INVALID_PRODUCT_CODE_NAME);
-        }
 
         return products.stream().map(ProductDto::from).toList();
     }
@@ -75,29 +60,19 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductDto> getViolationProducts() {
-        List<ProductDto> productDtoList = productRepository.findAllBySafetyStatusEquals(SafetyStatus.DANGER)
+
+        return productRepository.findAllBySafetyStatusEquals(SafetyStatus.DANGER)
                 .stream()
                 .map(ProductDto::from)
                 .toList();
-
-        if (productDtoList.isEmpty()) {
-            throw new BusinessException(ProductsErrorCode.INVALID_PRODUCT_CODE_NAME);
-        }
-
-        return  productDtoList;
     }
 
     @Transactional(readOnly = true)
     public List<ProductDto> getRecentProducts() {
-        List<ProductDto> dtoList = productRepository.findAllByOrderByCreatedAtDesc()
+
+        return productRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
                 .map(ProductDto::from)
                 .toList();
-
-        if (dtoList.isEmpty()) {
-            throw new BusinessException(ProductsErrorCode.INVALID_PRODUCT_CODE_NAME);
-        }
-
-        return  dtoList;
     }
 }
