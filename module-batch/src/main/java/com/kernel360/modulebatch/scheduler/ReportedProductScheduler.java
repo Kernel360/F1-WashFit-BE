@@ -39,7 +39,6 @@ public class ReportedProductScheduler {
      * Brand 테이블의 brand 정보에 매칭되는 신고대상 생활화학제품 목록 정보 읽어오기
      */
     @Scheduled(cron = "0 0 1 * * WED", zone = "Asia/Seoul")
-//    @Scheduled(initialDelay = 1000L)
     public void fetchReportedProductFromBrandJob() {
         executeJob(fetchReportedProductFromBrandJob);
     }
@@ -49,9 +48,7 @@ public class ReportedProductScheduler {
      */
     @Scheduled(cron = "0 0 2,14 * * WED", zone = "Asia/Seoul")
     public void executeFetchReportedProductDetailJob() {
-        for (int i = 0; i < 3; i++) {
-            executeJob(fetchReportedProductDetailJob);
-        }
+        executeJob(fetchReportedProductDetailJob);
     }
 
     /**
