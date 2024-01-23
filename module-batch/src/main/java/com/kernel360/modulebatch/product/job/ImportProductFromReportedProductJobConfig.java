@@ -67,7 +67,7 @@ public class ImportProductFromReportedProductJobConfig {
         log.info("Import Product from ReportedProduct by Brand Step Build Configuration");
 
         return new StepBuilder("ImportProductFromReportedProductStep", jobRepository)
-                .<Brand, List<Product>>chunk(10, transactionManager)
+                .<Brand, List<Product>>chunk(1, transactionManager)
                 .reader(brandReader())
                 .processor(reportedProductToProductListProcessor())
                 .writer(productListWriter())
@@ -102,15 +102,17 @@ public class ImportProductFromReportedProductJobConfig {
             //-- ReportedProduct 테이블에서 브랜드명과 제조사명으로 제품 검색 --//
             List<ReportedProduct> reportedProductList = reportedProductRepository
                     .findByBrandNameAndCompanyName(
-                            brand.getCompanyName().replaceAll(" ", "%"),
-                            brand.getBrandName().replaceAll(" ", "%")
+                            "%" + brand.getCompanyName().replaceAll(" ", "%") + "%",
+                            "%" + brand.getBrandName().replaceAll(" ", "%") + "%"
                     );
             List<ProductDto> productDtoList = reportedProductList.stream()
                                                                  .filter(rp -> rp.getInspectedOrganization() != null)
                                                                  .map(rp -> ProductDto.of(rp.getProductName(),
                                                                          null,
                                                                          null,
-                                                                         "취하".equals(rp.getRenewType()) ? SafetyStatus.CONCERN : SafetyStatus.SAFE,
+                                                                         "취하".equals(rp.getRenewType())
+                                                                                 ? SafetyStatus.CONCERN
+                                                                                 : SafetyStatus.SAFE,
                                                                          0,
                                                                          rp.getCompanyName(),
                                                                          rp.getSafetyReportNumber(),

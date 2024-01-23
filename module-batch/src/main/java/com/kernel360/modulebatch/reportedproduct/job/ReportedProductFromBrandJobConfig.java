@@ -49,7 +49,7 @@ public class ReportedProductFromBrandJobConfig {
                                                   PlatformTransactionManager transactionManager) throws Exception {
 
         return new StepBuilder("fetchReportedProductFromBrandStep", jobRepository)
-                .<Brand, List<ReportedProductDto>>chunk(5, transactionManager)
+                .<Brand, List<ReportedProductDto>>chunk(1, transactionManager)
                 .reader(readBrand()) // brand 목록을 읽어와서 전달
                 .processor(itemProcessor()) // 브랜드 정보를 통해서 API 요청, reportedProductDto 리스트 반환
                 .writer(reportedProductListItemWriter())
