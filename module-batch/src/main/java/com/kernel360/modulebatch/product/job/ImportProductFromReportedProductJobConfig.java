@@ -145,7 +145,7 @@ public class ImportProductFromReportedProductJobConfig {
 
         for (ProductDto productDto : productDtoList) {
             Optional<Product> foundProduct = productRepository.findProductByProductNameAndReportNumber(
-                    productDto.productName(), productDto.companyName());
+                    productDto.productName(), "%" + getCompanyNameWithoutSlash(productDto.companyName()) + "%");
 
             boolean foundInList = productList.stream().anyMatch(
                     product -> product.getProductName().equals(productDto.productName()) &&
