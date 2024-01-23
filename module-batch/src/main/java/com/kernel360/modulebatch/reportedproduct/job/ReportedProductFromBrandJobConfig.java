@@ -19,7 +19,9 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @Configuration
@@ -53,6 +55,11 @@ public class ReportedProductFromBrandJobConfig {
                 .reader(readBrand()) // brand 목록을 읽어와서 전달
                 .processor(itemProcessor()) // 브랜드 정보를 통해서 API 요청, reportedProductDto 리스트 반환
                 .writer(reportedProductListItemWriter())
+                .faultTolerant()
+                .retryLimit(2)
+                .retry(ResourceAccessException.class)
+                .skipLimit(10)
+                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 

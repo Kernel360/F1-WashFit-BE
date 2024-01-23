@@ -89,6 +89,7 @@ public record ReportedProductDetailDto(
 ) {
 
     public static ReportedProduct toEntity(ReportedProductDetailDto detailDto, ReportedProductDto dto) {
+
         return ReportedProduct.of(new ReportedProductId(detailDto.productMasterId, detailDto.estNumber),
                 dto.productName(), dto.safetyReportNumber(), dto.item(),
                 LocalDate.parse(dto.registeredDate(), DateTimeFormatter.ofPattern("yyyyMMdd")).atStartOfDay(),

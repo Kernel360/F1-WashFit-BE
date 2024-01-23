@@ -62,7 +62,7 @@ CREATE SEQUENCE IF NOT EXISTS product_product_no_seq START WITH 1 INCREMENT BY 5
 
 CREATE TABLE product
 (
-    product_no                 BIGSERIAL       NOT NULL,
+    product_no                 BIGSERIAL    NOT NULL,
     created_at                 date         NOT NULL,
     created_by                 VARCHAR(255) NOT NULL,
     modified_at                date,
@@ -98,7 +98,8 @@ CREATE TABLE product
 );
 
 ALTER TABLE product
-    ADD CONSTRAINT uc_02c8a49d7a577a0f3d2735397 UNIQUE (product_name, report_no, product_type, manufacture_nation);
+    ADD CONSTRAINT uc_02c8a49d7a577a0f3d2735397 UNIQUE (product_name, report_no, issued_date, product_type,
+                                                        manufacture_nation);
 
 ALTER TABLE product
     ADD CONSTRAINT FK_PRODUCT_ON_BRAND_NO FOREIGN KEY (brand_no) REFERENCES brand (brand_no);

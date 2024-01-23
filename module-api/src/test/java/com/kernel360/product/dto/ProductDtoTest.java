@@ -41,5 +41,9 @@ class ProductDtoTest {
         assertEquals(product.getBarcode(), productDto.barcode());
         assertEquals(product.getReportNumber(), productDto.reportNumber());
         assertEquals(product.getSafetyStatus(), productDto.safetyStatus());
+        assertEquals(product.getSafetyStatus(), productDto.safetyStatus());
+        assertEquals(product.getBarcode(), productDto.barcode());
+        assertEquals(product.getReportNumber(), productDto.reportNumber());
+        assertEquals(product.getImage(), productDto.imageSource());
     }
 }
