@@ -104,8 +104,7 @@ public class ImportProductFromReportedProductJobConfig {
             List<ReportedProduct> reportedProductList = reportedProductRepository
                     .findByBrandNameAndCompanyName(
                             brand.getCompanyName().replaceAll(" ", "%"),
-                            brand.getBrandName().replaceAll(" ", "%"),
-                            now.minusWeeks(1), now
+                            brand.getBrandName().replaceAll(" ", "%")
                     );
 
             List<ProductDto> productDtoList = reportedProductList.stream()
