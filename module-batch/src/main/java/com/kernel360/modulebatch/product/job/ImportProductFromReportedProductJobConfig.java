@@ -195,13 +195,22 @@ public class ImportProductFromReportedProductJobConfig {
     private static Product generateNewProduct(ProductDto productDto) {
         return Product.of(productDto.productName(), productDto.barcode(),
                 productDto.imageSource(), productDto.reportNumber(), String.valueOf(productDto.safetyStatus()),
-                productDto.viewCount(), productDto.companyName(), productDto.productType(),
+                productDto.viewCount(), getCompanyNameWithoutSlash(productDto.companyName()), productDto.productType(),
                 productDto.issuedDate(), productDto.safetyInspectionStandard(), productDto.upperItem(),
                 productDto.item(), productDto.propose(), productDto.weight(), productDto.usage(),
                 productDto.usagePrecaution(), productDto.firstAid(), productDto.mainSubstance(),
                 productDto.allergicSubstance(), productDto.otherSubstance(), productDto.preservative(),
                 productDto.surfactant(), productDto.fluorescentWhitening(), productDto.manufactureType(),
                 productDto.manufactureMethod(), getNation(productDto), productDto.brand());
+    }
+
+    public static String getCompanyNameWithoutSlash(String companyName) {
+        int index = companyName.indexOf("/");
+        if (index != -1) {
+            return companyName.substring(0, index);
+        }
+        return companyName;
+
     }
 
     private static String getNation(ProductDto productDto) {
