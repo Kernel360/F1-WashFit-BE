@@ -24,7 +24,7 @@ public interface ReportedProductRepository extends JpaRepository<ReportedProduct
      *
      * @return List<ReportedProduct>
      */
-    @Query("SELECT rp FROM ReportedProduct rp WHERE rp.companyName LIKE %:companyName% AND rp.productName LIKE %:brandName%")
+    @Query("SELECT rp FROM ReportedProduct rp WHERE rp.companyName LIKE %:companyName% AND rp.productName LIKE %:brandName% AND rp.isRenewed not like '취하'")
     List<ReportedProduct> findByBrandNameAndCompanyName(@Param("companyName") String companyName,
                                                         @Param("brandName") String brandName);
 

@@ -11,15 +11,16 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@ComponentScan("com.kernel360.ecolife")
 public class ReportedProductService {
 
     private final XmlMapper xmlMapper;
-
     private final ReportedProductRepository reportedProductRepository;
 
     @Autowired
@@ -56,7 +57,8 @@ public class ReportedProductService {
             ReportedProduct newReportedProduct = reportedProductRepository.save(reportedProduct);
             log.info("Saved entity : {} ", newReportedProduct.getProductName());
         } else {
-            log.info("Existing entity : {}", reportedProduct.getProductName());
+            throw new JobExecutionException(
+                    "Existing entity found: {}. Stopping execution." + reportedProduct.getProductName());
         }
     }
 
