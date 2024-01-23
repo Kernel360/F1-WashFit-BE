@@ -24,8 +24,11 @@ public interface ReportedProductRepository extends JpaRepository<ReportedProduct
      *
      * @return List<ReportedProduct>
      */
-    @Query("SELECT rp FROM ReportedProduct rp WHERE rp.companyName LIKE %:companyName% "
-            + "AND rp.productName LIKE %:brandName% ORDER BY rp.issuedDate DESC")
+    @Query(value = "SELECT rp.* FROM reported_product rp "
+            + "JOIN (SELECT prdt_nm, MAX(issu_date) AS max_issu_date "
+            + "FROM reported_product WHERE comp_nm LIKE :companyName AND prdt_nm LIKE :brandName GROUP BY prdt_nm) max_dates "
+            + "ON rp.prdt_nm = max_dates.prdt_nm AND rp.issu_date = max_dates.max_issu_date "
+            + "ORDER BY max_dates.max_issu_date DESC", nativeQuery = true)
     List<ReportedProduct> findByBrandNameAndCompanyName(@Param("companyName") String companyName,
                                                         @Param("brandName") String brandName);
 
