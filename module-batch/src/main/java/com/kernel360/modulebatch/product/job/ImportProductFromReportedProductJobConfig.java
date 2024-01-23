@@ -100,19 +100,17 @@ public class ImportProductFromReportedProductJobConfig {
     public ItemProcessor<Brand, List<Product>> reportedProductToProductListProcessor() throws Exception {
         return brand -> {
             //-- ReportedProduct 테이블에서 브랜드명과 제조사명으로 제품 검색 --//
-            LocalDate now = LocalDate.now().atStartOfDay().toLocalDate();
             List<ReportedProduct> reportedProductList = reportedProductRepository
                     .findByBrandNameAndCompanyName(
                             brand.getCompanyName().replaceAll(" ", "%"),
                             brand.getBrandName().replaceAll(" ", "%")
                     );
-
             List<ProductDto> productDtoList = reportedProductList.stream()
                                                                  .filter(rp -> rp.getInspectedOrganization() != null)
                                                                  .map(rp -> ProductDto.of(rp.getProductName(),
                                                                          null,
                                                                          null,
-                                                                         SafetyStatus.SAFE,
+                                                                         "취하".equals(rp.getRenewType()) ? SafetyStatus.CONCERN : SafetyStatus.SAFE,
                                                                          0,
                                                                          rp.getCompanyName(),
                                                                          rp.getSafetyReportNumber(),
