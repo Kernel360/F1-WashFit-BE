@@ -3,6 +3,7 @@ package com.kernel360.common;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.commoncode.controller.CommonCodeController;
 import com.kernel360.commoncode.service.CommonCodeService;
+import com.kernel360.global.Interceptor.AcceptInterceptor;
 import com.kernel360.member.controller.MemberController;
 import com.kernel360.member.service.MemberService;
 import com.kernel360.product.controller.ProductController;
@@ -26,6 +27,9 @@ public abstract class ControllerTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected AcceptInterceptor acceptInterceptor;
 
     @MockBean
     protected CommonCodeService commonCodeService;
