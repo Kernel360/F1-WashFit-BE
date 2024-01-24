@@ -1,8 +1,11 @@
 package com.kernel360.product.repository;
 
 import com.kernel360.product.entity.Product;
+
 import java.util.List;
 import java.util.Optional;
+
+import com.kernel360.product.entity.SafetyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,12 +18,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findAllByOrderByViewCountDesc();
 
-    @Query(value = "SELECT p FROM Product  p WHERE p.productName = :productName "
-            + "AND p.reportNumber = :reportNumber "
-            + "AND p.productType =:productType "
-            + "AND p.manufactureNation = :manufactureNation")
+    List<Product> findTop5ByOrderByProductNameDesc();
+
+    List<Product> findAllBySafetyStatusEquals(SafetyStatus safetyStatus);
+
+    List<Product> findAllByOrderByCreatedAtDesc();
+
+    @Query(value = "SELECT p FROM Product p WHERE p.productName = :productName "
+            + "AND p.companyName like :companyName")
     Optional<Product> findProductByProductNameAndReportNumber(@Param("productName") String productName,
-                                                              @Param("reportNumber") String reportNumber,
-                                                              @Param("productType") String productType,
-                                                              @Param("manufactureNation") String manufactureNation);
+                                                              @Param("companyName") String companyName);
 }

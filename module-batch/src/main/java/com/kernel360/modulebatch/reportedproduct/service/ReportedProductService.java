@@ -8,25 +8,21 @@ import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDetailListDt
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductListDto;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@ComponentScan("com.kernel360.ecolife")
+@RequiredArgsConstructor
 public class ReportedProductService {
 
-    private final XmlMapper xmlMapper;
-
     private final ReportedProductRepository reportedProductRepository;
-
-    @Autowired
-    public ReportedProductService(ReportedProductRepository reportedProductRepository) {
-        this.reportedProductRepository = reportedProductRepository;
-        this.xmlMapper = new XmlMapper();
-    }
+    private final XmlMapper xmlMapper = new XmlMapper();
 
     /**
      * @param xml 신고대상 생활화학제품 목록 요청에 대한 응답
@@ -46,6 +42,9 @@ public class ReportedProductService {
     }
 
 
+    /**
+     * Dto 를 입력으로 받아 ReportedProduct 테이블에 동일한 제품이 존재하는지 확인한 후 저장.
+     */
     @Transactional
     public void saveReportedProduct(ReportedProductDto dto) throws JobExecutionException {
         ReportedProduct reportedProduct = ReportedProductDto.toEntity(dto);
@@ -55,9 +54,10 @@ public class ReportedProductService {
         if (findReportedProduct.isEmpty()) {
             ReportedProduct newReportedProduct = reportedProductRepository.save(reportedProduct);
             log.info("Saved entity : {} ", newReportedProduct.getProductName());
-        } else {
-            log.info("Existing entity : {}", reportedProduct.getProductName());
+            return;
         }
+        log.info("Existing entity found: {}. Continuing without save", reportedProduct.getProductName());
+
     }
 
 }

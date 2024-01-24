@@ -1,8 +1,15 @@
-name: Java CI with Gradle WashPedia Project
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle and Docker for WashPedia Project
 
 on:
   push:
-    branches: [ "develop_CI" ]
+    branches: [ "feature/docker" ]
 
 permissions:
   contents: read
@@ -30,34 +37,64 @@ jobs:
       # Gradle Build (test 제외)
       - name: Build with Gradle
         working-directory: ./module-api
-        #run: ./gradlew build -x test
-        run: ./gradlew build
+        run: ./gradlew clean build -x test
 
-      # INSTALL SSH-PASS
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+      # Gradle Build를 위한 권한 부여
+      - name: Grant execute permission for gradlew
+        working-directory: ./module-batch
+        run: chmod +x ./gradlew
 
-      #SEND JAR
-      - name: Copy JAR file to remote server using SCP
-        run: |
-          cd module-api/build/libs/ && \
-          export PASSWORD="${{ secrets.VULTR_PW }}" && \
-          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no -P 22 module-api-0.0.1-SNAPSHOT.jar ${{ secrets.VULTR_USER_NAME }}@${{ secrets.VULTR_IP }}:/root
+      # Gradle Build (test 제외)
+      - name: Build with Gradle
+        working-directory: ./module-batch
+        run: ./gradlew clean build -x test
 
-      # CONNECT TERMINAL
-      - name: Application Run
-        run: |
-          sshpass -p ${{ secrets.VULTR_PW }} \
-          ssh -o StrictHostKeyChecking=no -A ${{ secrets.VULTR_USER_NAME }}@${{ secrets.VULTR_IP }} \
-          "JAR_NAME='module-api-0.0.1-SNAPSHOT.jar'; \
-          echo '> 현재 실행 중인 애플리케이션 pid 확인' && \
-          CURRENT_PID=\$(pgrep -f \$JAR_NAME) && \
-          if [ -z \"\$CURRENT_PID\" ]; then \
-            echo '> kill -9 \$CURRENT_PID' && \
-            sudo kill -9 \$CURRENT_PID && \
-            sleep 5 && \
-            echo '> 이전 애플리케이션이 종료되었습니다.'; \
-          fi && \
-          nohup java -jar \$JAR_NAME --jasypt.encryptor.password="${{ secrets.PUBLIC_KEY }}" >> ~/deploy.log 2> ~/deploy_err.log & \
-          echo '> 새로운 애플리케이션이 실행되었습니다.'"
-    
+      # DockerHub 로그인
+      - name: DockerHub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # DockerCompose 세팅
+      - name: Set up Docker Compose
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./docker-compose.yml
+        env:
+          services.db-edit.environment.POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
+          services.db-edit.environment.POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
+          services.webapp.image: ${{ secrets.DOCKER_IMAGE }}
+          services.batch.image: ${{ secrets.DOCKER_BATCH_IMAGE }}
+
+      # Docker 이미지 빌드
+      - name: Docker Compose Build
+        run: docker-compose build
+
+      # DockerHub Push
+      - name: DockerHub Push
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:latest
+
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:cd
+#
+#      - name: Application Run
+#        uses: appleboy/ssh-action@v0.1.6
+#        with:
+#          host: ${{ secrets.VULTR_IP }}
+#          username: ${{ secrets.VULTR_USER_NAME }}
+#          key: ${{ secrets.VULTR_SSH_KEY }}
+#          password: ${{ secrets.VULTR_PASSWORD }}
+
+
+#      - name: Run shell script with secrets
+#        run: |
+#          export SECRET_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+#          export SECRET_DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
+#          export SECRET_PROJECT_NAME=${{ secrets.PROJECT_NAME }}
+#          export SECRET_VULTR_API_KEY=${{ secrets.VULTR_API_KEY }}
+#          export SECRET_VULTR_IP=${{ secrets.VULTR_IP }}
+#          export SECRET_VULTR_SSH_KEY=${{ secrets.VULTR_SSH_KEY }}
+#          export SECRET_VULTR_USER_NAME=${{ secrets.VULTR_USER_NAME }}
+#          ./scripts/deploy.sh

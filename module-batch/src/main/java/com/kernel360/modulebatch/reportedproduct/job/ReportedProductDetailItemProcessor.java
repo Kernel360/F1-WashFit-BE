@@ -48,11 +48,13 @@ public class ReportedProductDetailItemProcessor implements ItemProcessor<Reporte
         log.info("Fetch item Id = {}", reportedProduct);
         String xmlResponse = client.getXmlResponse(reportedProduct);
         log.info("Response accepted : {}", xmlResponse);
+
         return removeInvalidXmlCharacters(xmlResponse);
     }
 
     public String removeInvalidXmlCharacters(String xmlString) { // XML 1.0 Specification 을 준수하는 ASCII printable characters (REPLACEMENT_CHARACTER)
         String pattern = "[^\t\r\n -\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]";
+
         return xmlString.replaceAll(pattern, "");
     }
 }

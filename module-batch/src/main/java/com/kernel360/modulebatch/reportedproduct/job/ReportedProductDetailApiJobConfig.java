@@ -3,6 +3,8 @@ package com.kernel360.modulebatch.reportedproduct.job;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import jakarta.persistence.EntityManagerFactory;
+import java.net.ConnectException;
+import java.nio.channels.ClosedChannelException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -19,7 +21,9 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @Configuration
@@ -49,17 +53,23 @@ public class ReportedProductDetailApiJobConfig {
                 .reader(productDetailItemReader()) // reported_product 테이블 읽어서 엔티티를 전달
                 .processor(productDetailItemProcessor()) // 전달받은 엔티티로 detail 조회, 엔티티로 변환
                 .writer(productDetailJpaItemWriter(emf)) // 엔티티를 테이블에 업데이트
+                .faultTolerant()
+                .retryLimit(2)
+                .retry(ResourceAccessException.class)
+                .retry(ConnectException.class)
+                .retry(ClosedChannelException.class)
+                .skipLimit(10)
+                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 
     @Bean
     public JpaPagingItemReader<ReportedProduct> productDetailItemReader() {
-        String jpql = "SELECT rp FROM ReportedProduct rp";
-
+        String jpql = "SELECT rp FROM ReportedProduct rp WHERE rp.inspectedOrganization IS null";
         JpaPagingItemReader<ReportedProduct> reader = new JpaPagingItemReader<>();
         reader.setQueryString(jpql);
         reader.setEntityManagerFactory(emf);
-        reader.setPageSize(3000);
+        reader.setPageSize(1000);
 
         return reader;
     }

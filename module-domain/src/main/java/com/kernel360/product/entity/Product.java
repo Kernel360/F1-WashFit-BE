@@ -11,7 +11,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,9 +19,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "product",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"product_name", "report_no", "product_type", "manufacture_nation"})})
+@Table(name = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
     @Id
@@ -208,6 +205,55 @@ public class Product extends BaseEntity {
                 item, propose, weight, usage, usagePrecaution, firstAid, mainSubstance, allergicSubstance,
                 otherSubstance, preservative, surfactant,
                 fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, brand);
+    }
+
+    public void updateDetail(
+            String barcode,
+            String imageSource,
+            String reportNumber,
+            String safetyStatus,
+            LocalDate issuedDate,
+            String safetyInspectionStandard,
+            String upperItem,
+            String item,
+            String propose,
+            String weight,
+            String usage,
+            String usagePrecaution,
+            String firstAid,
+            String mainSubstance,
+            String allergicSubstance,
+            String otherSubstance,
+            String preservative,
+            String surfactant,
+            String fluorescentWhitening,
+            String manufactureType,
+            String manufactureMethod,
+            String manufactureNation,
+            Brand brand) {
+        this.barcode = barcode;
+        this.image = imageSource;
+        this.reportNumber = reportNumber;
+        this.safetyStatus = SafetyStatus.valueOf(safetyStatus);
+        this.issuedDate = issuedDate;
+        this.safetyInspectionStandard = safetyInspectionStandard;
+        this.upperItem = upperItem;
+        this.item = item;
+        this.propose = propose;
+        this.weight = weight;
+        this.usage = usage;
+        this.usagePrecaution = usagePrecaution;
+        this.firstAid = firstAid;
+        this.mainSubstance = mainSubstance;
+        this.allergicSubstance = allergicSubstance;
+        this.otherSubstance = otherSubstance;
+        this.preservative = preservative;
+        this.surfactant = surfactant;
+        this.fluorescentWhitening = fluorescentWhitening;
+        this.manufactureType = manufactureType;
+        this.manufactureMethod = manufactureMethod;
+        this.manufactureNation = manufactureNation;
+        this.brand = brand;
     }
 
 }
