@@ -1,16 +1,44 @@
 package com.kernel360.main.controller;
 
-import org.springframework.http.HttpStatus;
+import com.kernel360.main.code.BannerBusinessCode;
+import com.kernel360.main.code.ProductsBusinessCode;
+import com.kernel360.main.dto.BannerDto;
+import com.kernel360.main.dto.RecommendProductsDto;
+import com.kernel360.main.service.MainService;
+import com.kernel360.product.dto.ProductDto;
+import com.kernel360.product.service.ProductService;
+import com.kernel360.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
+@RequestMapping
+@RequiredArgsConstructor
 public class MainContoller {
-    @GetMapping("")
-    ResponseEntity<String> mainPage(){
-        return ResponseEntity.status(HttpStatus.OK).body("main page입니다.");
+    private final ProductService productService;
+
+    @GetMapping("/banner")
+    ResponseEntity<ApiResponse<BannerDto>> getBanner() {
+
+        return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, MainService.getSampleBanner());
+    }
+
+    @GetMapping("/recommend_products")
+    ResponseEntity<ApiResponse<List<RecommendProductsDto>>> getRecommendProducts() {
+        List<RecommendProductsDto> recommendProductList = productService.getRecommendProductList();
+
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProductList);
+
+    }
+    @GetMapping("/products/")
+    ResponseEntity<ApiResponse<List<ProductDto>>> getProducts(@RequestParam(name ="sortType", defaultValue = "viewCnt_order") Sort sortType){
+        List<ProductDto> productDtos = sortType.sort(productService);
+
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productDtos);
     }
 
 }

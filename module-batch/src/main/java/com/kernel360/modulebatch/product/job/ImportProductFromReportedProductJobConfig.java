@@ -10,7 +10,6 @@ import com.kernel360.product.repository.ProductRepository;
 import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,7 +53,7 @@ public class ImportProductFromReportedProductJobConfig {
                                                    @Qualifier("importProductFromReportedProductStep") Step importProductFromReportedProductStep) {
         log.info("Import Product from ReportedProduct by Brand Job Build Configuration");
 
-        return new JobBuilder("importProductFromReportedProductJob", jobRepository)
+        return new JobBuilder("ImportProductFromReportedProductJob", jobRepository)
                 .start(importProductFromReportedProductStep)
                 .incrementer(new RunIdIncrementer())
                 .listener(new ImportProductFromReportedProductListener())
@@ -67,8 +66,8 @@ public class ImportProductFromReportedProductJobConfig {
                                                      PlatformTransactionManager transactionManager) throws Exception {
         log.info("Import Product from ReportedProduct by Brand Step Build Configuration");
 
-        return new StepBuilder("importProductFromReportedProductStep", jobRepository)
-                .<Brand, List<Product>>chunk(10, transactionManager)
+        return new StepBuilder("ImportProductFromReportedProductStep", jobRepository)
+                .<Brand, List<Product>>chunk(1, transactionManager)
                 .reader(brandReader())
                 .processor(reportedProductToProductListProcessor())
                 .writer(productListWriter())
@@ -103,32 +102,24 @@ public class ImportProductFromReportedProductJobConfig {
             //-- ReportedProduct 테이블에서 브랜드명과 제조사명으로 제품 검색 --//
             List<ReportedProduct> reportedProductList = reportedProductRepository
                     .findByBrandNameAndCompanyName(
-                            brand.getCompanyName().replaceAll(" ", "%"),
-                            brand.getBrandName().replaceAll(" ", "%")
+                            "%" + brand.getCompanyName().replaceAll(" ", "%") + "%",
+                            "%" + brand.getBrandName().replaceAll(" ", "%") + "%"
                     );
-
-            //-- 제품명이 같은 제품끼리 그룹을 짓고, issuedDate 기준으로 내림차순 정렬. 가장 최신의 제품정보 하나씩을 ProductDto 로 변환하여 리스트에 추가 --//
             List<ProductDto> productDtoList = reportedProductList.stream()
                                                                  .filter(rp -> rp.getInspectedOrganization() != null)
-                                                                 .collect(Collectors.groupingBy(
-                                                                         ReportedProduct::getProductName,
-                                                                         Collectors.maxBy(
-                                                                                 Comparator.comparing(
-                                                                                         ReportedProduct::getIssuedDate))))
-                                                                 .values().stream()
-                                                                 .filter(Optional::isPresent)
-                                                                 .map(Optional::get)
                                                                  .map(rp -> ProductDto.of(rp.getProductName(),
-                                                                         "barcode",
-                                                                         "description",
-                                                                         SafetyStatus.SAFE,
+                                                                         null,
+                                                                         null,
+                                                                         "취하".equals(rp.getRenewType())
+                                                                                 ? SafetyStatus.CONCERN
+                                                                                 : SafetyStatus.SAFE,
                                                                          0,
                                                                          rp.getCompanyName(),
                                                                          rp.getSafetyReportNumber(),
                                                                          rp.getProductType(),
                                                                          LocalDate.from(rp.getIssuedDate()),
-                                                                         rp.getSafeStandard()
-                                                                         , rp.getUpperItem(), rp.getItem(),
+                                                                         rp.getSafeStandard(), rp.getUpperItem(),
+                                                                         rp.getItem(),
                                                                          rp.getProductPropose(), rp.getWeightAndBulk(),
                                                                          rp.getUseMethod(),
                                                                          rp.getUsageAttentionReport(),
@@ -146,68 +137,89 @@ public class ImportProductFromReportedProductJobConfig {
     }
 
 
+    /**
+     * entity 로 변환할 dto 에 해당하는 제품이 있는지 검사하기 위해 product 테이블에서 제품을 검색한 이후, 없으면 새 제품 추가 있으면 업데이트
+     */
     private List<Product> convertToProductList(List<ProductDto> productDtoList) {
         List<Product> productList = new ArrayList<>();
 
         for (ProductDto productDto : productDtoList) {
-            Optional<Product> existingProduct = productRepository.findProductByProductNameAndReportNumber(
-                    productDto.productName(), productDto.reportNumber(), productDto.productType(),
-                    productDto.manufactureCountry());
+            Optional<Product> foundProduct = productRepository.findProductByProductNameAndReportNumber(
+                    productDto.productName(), "%" + getCompanyNameWithoutSlash(productDto.companyName()) + "%");
 
-            boolean isProductInList = productList.stream().anyMatch(
-                    prod -> prod.getProductName().equals(productDto.productName()) &&
-                            prod.getReportNumber().equals(productDto.reportNumber()) &&
-                            prod.getProductType().equals(productDto.productType())
-                            && prod.getManufactureNation().equals(productDto.manufactureCountry()));
+            boolean foundInList = productList.stream().anyMatch(
+                    product -> product.getProductName().equals(productDto.productName()) &&
+                            product.getCompanyName().equals(productDto.companyName()));
 
-            String nation;
-            if (productDto.manufactureType().equals("수입")) {
-                nation = productDto.brand().getNationName();
-            } else {
-                nation = "대한민국";
+            if (foundInList) { // 현재 처리할 데이터에 이미 추가가 되어 있다면
+                continue;
             }
 
-            if (existingProduct.isEmpty() || !isProductInList) {
-                Product newProduct = Product.of(productDto.productName(), productDto.barcode(),
-                        productDto.imageSource(),
-                        productDto.reportNumber(), String.valueOf(productDto.safetyStatus()), productDto.viewCount(),
-                        productDto.companyName(),
-                        productDto.productType(), productDto.issuedDate(),
-                        productDto.safetyInspectionStandard(), productDto.upperItem(), productDto.item(),
-                        productDto.propose(), productDto.weight(), productDto.usage(), productDto.usagePrecaution(),
-                        productDto.firstAid(), productDto.mainSubstance(), productDto.allergicSubstance(),
-                        productDto.otherSubstance(), productDto.preservative(), productDto.Surfactant(),
-                        productDto.fluorescentWhitening(), productDto.manufactureType(), productDto.manufactureMethod(),
-                        nation, productDto.brand());
+            if (foundProduct.isEmpty()) {
+                Product newProduct = generateNewProduct(productDto);
                 productList.add(newProduct);
+                continue;
+            }
 
-                log.info("New product added : ProductNo = {}, Brand = {}, ProductName = {}",
-                        newProduct.getProductNo(), newProduct.getBrand().getBrandName(), newProduct.getProductName());
-            } else {
-                Product updatingProduct = existingProduct.get();
-
-                Product updatedProduct = Product.of(updatingProduct.getProductNo(), updatingProduct.getProductName(),
-                        productDto.barcode(),
+            if (productDto.issuedDate().isAfter(foundProduct.get().getIssuedDate())) { // 저장된 데이터보다 최신의 제품 데이터라면
+                foundProduct.get().updateDetail(productDto.barcode(),
                         productDto.imageSource(),
-                        updatingProduct.getReportNumber(), String.valueOf(productDto.safetyStatus()),
-                        productDto.viewCount(),
-                        productDto.companyName(),
-                        productDto.productType(), productDto.issuedDate(),
-                        productDto.safetyInspectionStandard(), productDto.upperItem(), productDto.item(),
-                        productDto.propose(), productDto.weight(), productDto.usage(), productDto.usagePrecaution(),
-                        productDto.firstAid(), productDto.mainSubstance(), productDto.allergicSubstance(),
-                        productDto.otherSubstance(), productDto.preservative(), productDto.Surfactant(),
-                        productDto.fluorescentWhitening(), productDto.manufactureType(), productDto.manufactureMethod(),
-                        nation, updatingProduct.getBrand());
-
-                productList.add(updatedProduct);
-                log.info("Product updated : ProductNo = {}, Brand = {}, ProductName = {}",
-                        updatingProduct.getProductNo(), updatingProduct.getBrand().getBrandName(),
-                        updatingProduct.getProductName());
+                        productDto.reportNumber(),
+                        String.valueOf(productDto.safetyStatus()),
+                        productDto.issuedDate(),
+                        productDto.safetyInspectionStandard(),
+                        productDto.upperItem(),
+                        productDto.item(),
+                        productDto.propose(),
+                        productDto.weight(),
+                        productDto.usage(),
+                        productDto.usagePrecaution(),
+                        productDto.firstAid(),
+                        productDto.mainSubstance(),
+                        productDto.allergicSubstance(),
+                        productDto.otherSubstance(),
+                        productDto.preservative(),
+                        productDto.surfactant(),
+                        productDto.fluorescentWhitening(),
+                        productDto.manufactureType(),
+                        productDto.manufactureMethod(),
+                        getNation(productDto),
+                        productDto.brand());
             }
         }
 
         return productList;
+    }
+
+    private static Product generateNewProduct(ProductDto productDto) {
+        return Product.of(productDto.productName(), productDto.barcode(),
+                productDto.imageSource(), productDto.reportNumber(), String.valueOf(productDto.safetyStatus()),
+                productDto.viewCount(), getCompanyNameWithoutSlash(productDto.companyName()), productDto.productType(),
+                productDto.issuedDate(), productDto.safetyInspectionStandard(), productDto.upperItem(),
+                productDto.item(), productDto.propose(), productDto.weight(), productDto.usage(),
+                productDto.usagePrecaution(), productDto.firstAid(), productDto.mainSubstance(),
+                productDto.allergicSubstance(), productDto.otherSubstance(), productDto.preservative(),
+                productDto.surfactant(), productDto.fluorescentWhitening(), productDto.manufactureType(),
+                productDto.manufactureMethod(), getNation(productDto), productDto.brand());
+    }
+
+    public static String getCompanyNameWithoutSlash(String companyName) {
+        int index = companyName.indexOf("/");
+        if (index != -1) {
+            return companyName.substring(0, index);
+        }
+        return companyName;
+
+    }
+
+    private static String getNation(ProductDto productDto) {
+        String nation;
+        if (productDto.manufactureType().equals("수입")) {
+            nation = productDto.brand().getNationName();
+        } else {
+            nation = "대한민국";
+        }
+        return nation;
     }
 
     /**
@@ -220,7 +232,7 @@ public class ImportProductFromReportedProductJobConfig {
         return new JpaProductListWriter<>(writer);
     }
 
-    //-- Execution Listener --//
+//-- Execution Listener --//
 
     public static class ImportProductFromReportedProductListener implements JobExecutionListener {
         @Override

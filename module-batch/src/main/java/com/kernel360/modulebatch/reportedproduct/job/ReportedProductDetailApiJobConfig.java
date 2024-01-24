@@ -65,12 +65,11 @@ public class ReportedProductDetailApiJobConfig {
 
     @Bean
     public JpaPagingItemReader<ReportedProduct> productDetailItemReader() {
-        String jpql = "SELECT rp FROM ReportedProduct rp";
-
+        String jpql = "SELECT rp FROM ReportedProduct rp WHERE rp.inspectedOrganization IS null";
         JpaPagingItemReader<ReportedProduct> reader = new JpaPagingItemReader<>();
         reader.setQueryString(jpql);
         reader.setEntityManagerFactory(emf);
-        reader.setPageSize(3000);
+        reader.setPageSize(1000);
 
         return reader;
     }

@@ -39,6 +39,16 @@ jobs:
         working-directory: ./module-api
         run: ./gradlew clean build -x test
 
+      # Gradle Build를 위한 권한 부여
+      - name: Grant execute permission for gradlew
+        working-directory: ./module-batch
+        run: chmod +x ./gradlew
+
+      # Gradle Build (test 제외)
+      - name: Build with Gradle
+        working-directory: ./module-batch
+        run: ./gradlew clean build -x test
+
       # DockerHub 로그인
       - name: DockerHub Login
         uses: docker/login-action@v2
@@ -55,6 +65,7 @@ jobs:
           services.db-edit.environment.POSTGRES_USER: ${{ secrets.POSTGRE_USER }}
           services.db-edit.environment.POSTGRES_PASSWORD: ${{ secrets.POSTGRE_PASSWORD }}
           services.webapp.image: ${{ secrets.DOCKER_IMAGE }}
+          services.batch.image: ${{ secrets.DOCKER_BATCH_IMAGE }}
 
       # Docker 이미지 빌드
       - name: Docker Compose Build

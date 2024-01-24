@@ -19,7 +19,6 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -34,14 +33,13 @@ public class ReportedProductFromBrandJobConfig {
 
     private final EntityManagerFactory emf;
 
-
     @Bean
     public Job fetchReportedProductFromBrandJob(JobRepository jobRepository,
                                                 @Qualifier("fetchReportedProductFromBrandStep") Step fetchReportedProductFromBrandStep) {
 
         return new JobBuilder("fetchReportedProductFromBrandJob", jobRepository)
-                .start(fetchReportedProductFromBrandStep)
                 .incrementer(new RunIdIncrementer())
+                .start(fetchReportedProductFromBrandStep)
                 .build();
     }
 
@@ -51,15 +49,13 @@ public class ReportedProductFromBrandJobConfig {
                                                   PlatformTransactionManager transactionManager) throws Exception {
 
         return new StepBuilder("fetchReportedProductFromBrandStep", jobRepository)
-                .<Brand, List<ReportedProductDto>>chunk(10, transactionManager)
+                .<Brand, List<ReportedProductDto>>chunk(1, transactionManager)
                 .reader(readBrand()) // brand 목록을 읽어와서 전달
                 .processor(itemProcessor()) // 브랜드 정보를 통해서 API 요청, reportedProductDto 리스트 반환
                 .writer(reportedProductListItemWriter())
                 .faultTolerant()
                 .retryLimit(2)
                 .retry(ResourceAccessException.class)
-                .skipLimit(10)
-                .skip(DataIntegrityViolationException.class)
                 .build();
     }
 
