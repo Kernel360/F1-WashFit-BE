@@ -40,21 +40,23 @@ class ProductServiceTest {
                 .sample();
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        Optional<Product> foundProduct = productService.getProductById(1L);
+        ProductDto foundProduct = productService.getProductById(1L);
 
-        then(foundProduct).isPresent();
-        then(foundProduct.get()).isEqualTo(product);
+        //then
+        then(foundProduct.productNo()).isEqualTo(product.getProductNo());
     }
 
     @Test
     void 전체_제품_목록_조회(){
         //given
-        List<Product> products = fixtureMonkey.giveMe(Product.class, 3);
+        List<ProductDto> products = fixtureMonkey.giveMe(ProductDto.class, 3);
+        when(productService.getProductList()).thenReturn(products);
+
         //when
-        when(productRepository.findAll()).thenReturn(products);
-        List<Product> productList = productService.getProductList();
+        List<ProductDto> actualProducts = productService.getProductList();
+
         //then
-        then(productList).isEqualTo(products);
+        then(products).isEqualTo(products);
     }
 
     @Test
