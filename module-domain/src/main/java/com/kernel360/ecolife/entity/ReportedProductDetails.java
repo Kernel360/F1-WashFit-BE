@@ -24,7 +24,7 @@ public class ReportedProductDetails extends BaseRawEntity {
     private LocalDateTime issuedDate;
 
     @Column(name = "renew_yn")
-    private String isRenewed;
+    private String renewType;
 
     @Column(name = "safe_sd")
     private String safeStandard;
