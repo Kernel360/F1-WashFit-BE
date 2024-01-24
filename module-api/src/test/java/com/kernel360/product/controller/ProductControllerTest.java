@@ -21,7 +21,6 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
@@ -68,7 +67,7 @@ class ProductControllerTest {
                 .collect(Collectors.toList());
 
         //when
-        when(productService.getProductList()).thenReturn(products);
+        when(productService.getProductList()).thenReturn(expectedDtos);
 
         // then
         mockMvc.perform(get("/products"))
@@ -86,7 +85,7 @@ class ProductControllerTest {
                 .set("productId", 1L)
                 .sample();
 
-        when(productService.getProductById(1L)).thenReturn(Optional.of(mockProduct));
+        when(productService.getProductById(1L)).thenReturn(ProductDto.from(mockProduct));
 
         // when & then
         mockMvc.perform(get("/product/{id}", 1L))
@@ -95,6 +94,29 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.productName", is(mockProduct.getProductName())))
                 .andExpect(jsonPath("$.barcode", is(mockProduct.getBarcode())))
                 .andExpect(jsonPath("$.image", is(mockProduct.getImage())))
+                .andExpect(jsonPath("$.reportNumber", is(mockProduct.getReportNumber())))
+                .andExpect(jsonPath("$.productType", is(mockProduct.getProductType())))
+                .andExpect(jsonPath("$.companyName", is(mockProduct.getCompanyName())))
+                .andExpect(jsonPath("$.manufactureNation", is(mockProduct.getManufactureNation())))
+                .andExpect(jsonPath("$.safetyStatus", is(mockProduct.getSafetyStatus().toString())))
+                .andExpect(jsonPath("$.issuedDate", is(mockProduct.getIssuedDate().toString())))
+                .andExpect(jsonPath("$.viewCount", is(mockProduct.getViewCount())))
+                .andExpect(jsonPath("$.safetyInspectionStandard", is(mockProduct.getSafetyInspectionStandard())))
+                .andExpect(jsonPath("$.upperItem", is(mockProduct.getUpperItem())))
+                .andExpect(jsonPath("$.item", is(mockProduct.getItem())))
+                .andExpect(jsonPath("$.propose", is(mockProduct.getPropose())))
+                .andExpect(jsonPath("$.weight", is(mockProduct.getWeight())))
+                .andExpect(jsonPath("$.usage", is(mockProduct.getUsage())))
+                .andExpect(jsonPath("$.usagePrecaution", is(mockProduct.getUsagePrecaution())))
+                .andExpect(jsonPath("$.firstAid", is(mockProduct.getFirstAid())))
+                .andExpect(jsonPath("$.mainSubstance", is(mockProduct.getMainSubstance())))
+                .andExpect(jsonPath("$.allergicSubstance", is(mockProduct.getAllergicSubstance())))
+                .andExpect(jsonPath("$.otherSubstance", is(mockProduct.getOtherSubstance())))
+                .andExpect(jsonPath("$.preservative", is(mockProduct.getPreservative())))
+                .andExpect(jsonPath("$.surfactant", is(mockProduct.getSurfactant())))
+                .andExpect(jsonPath("$.fluorescentWhitening", is(mockProduct.getFluorescentWhitening())))
+                .andExpect(jsonPath("$.manufactureType", is(mockProduct.getManufactureType())))
+                .andExpect(jsonPath("$.manufactureMethod", is(mockProduct.getManufactureMethod())));
                 .andExpect(jsonPath("$.declareNo", is(mockProduct.getReportNumber())))
                 .andExpect(jsonPath("$.safetyStatus", is(mockProduct.getSafetyStatus())))
                 .andExpect(jsonPath("$.viewCount", is(mockProduct.getViewCount())));

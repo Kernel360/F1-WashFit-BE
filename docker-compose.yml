@@ -2,19 +2,19 @@ version: '3.8'
 services:
   webapp:
     build: ./module-api
-    image: ${IMAGE}
+    image: ${WEBAPP_IMAGE}
     ports:
       - "8080:8080"
     depends_on:
       - db-edit
 
-#  batch:
-#    build: ./module-batch
-#    image: ${IMAGE}
-#    ports:
-#      - "8082:8082"
-#    depends_on:
-#      - db-edit
+  batch:
+    build: ./module-batch
+    image: ${BATCH_IMAGE}
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db-edit
 #
 #  admin:
 #    build: ./module-admin
