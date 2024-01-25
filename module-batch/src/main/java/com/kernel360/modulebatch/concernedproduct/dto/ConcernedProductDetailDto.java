@@ -9,10 +9,10 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "row")
 public record ConcernedProductDetailDto(
+        @JacksonXmlProperty(localName = "prdt_no")
+        String productNo,
         @JacksonXmlProperty(localName = "prdt_nm")
         String productName,
-        @JacksonXmlProperty(localName = "prdt_no")
-        String productMasterId,
         @JacksonXmlProperty(localName = "inspct_org")
         String inspectedOrganization,
         @JacksonXmlProperty(localName = "issu_date")
