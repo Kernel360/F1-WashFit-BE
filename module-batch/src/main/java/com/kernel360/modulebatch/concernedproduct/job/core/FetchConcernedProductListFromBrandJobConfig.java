@@ -1,11 +1,9 @@
 package com.kernel360.modulebatch.concernedproduct.job.core;
 
 import com.kernel360.brand.entity.Brand;
-import com.kernel360.modulebatch.concernedproduct.client.ConcernedProductListClient;
 import com.kernel360.modulebatch.concernedproduct.dto.ConcernedProductDto;
 import com.kernel360.modulebatch.concernedproduct.job.infra.ConcernedProductListItemProcessor;
 import com.kernel360.modulebatch.concernedproduct.job.infra.ConcernedProductListItemWriter;
-import com.kernel360.modulebatch.concernedproduct.service.ConcernedProductService;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +25,17 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @RequiredArgsConstructor
 public class FetchConcernedProductListFromBrandJobConfig {
-    private final ConcernedProductListClient client;
-    private final ConcernedProductService service;
-    private final EntityManagerFactory emf;
 
+    private final ConcernedProductListItemProcessor concernedProductListItemProcessor;
+
+    private final ConcernedProductListItemWriter concernedProductListItemWriter;
+
+    private final EntityManagerFactory emf;
 
     @Bean
     public Job fetchConcernedProductListFromBrandJob(JobRepository jobRepository,
-                                            @Qualifier("fetchConcernedProductListFromBrandStep") Step fetchConcernedProductListStep) {
+                                                     @Qualifier("fetchConcernedProductListFromBrandStep") Step fetchConcernedProductListStep) {
+        log.info("FetchConcernedProductListFromBrandJobConfig initialized");
 
         return new JobBuilder("fetchConcernedProductListFromBrandJob", jobRepository)
                 .start(fetchConcernedProductListStep)
@@ -45,16 +46,15 @@ public class FetchConcernedProductListFromBrandJobConfig {
     //-- List Step --//
     @Bean
     public Step fetchConcernedProductListFromBrandStep(JobRepository jobRepository,
-                                              PlatformTransactionManager transactionManager) throws Exception {
+                                                       PlatformTransactionManager transactionManager) throws Exception {
 
         return new StepBuilder("fetchConcernedProductListFromBrandStep", jobRepository)
                 .<Brand, List<ConcernedProductDto>>chunk(1, transactionManager)
                 .reader(readBrandForConcernedProduct())
-                .processor(concernedProductListItemProcessor())
-                .writer(concernedProductListItemWriter())
+                .processor(concernedProductListItemProcessor)
+                .writer(concernedProductListItemWriter)
                 .build();
     }
-
 
     @Bean
     @StepScope
@@ -68,15 +68,4 @@ public class FetchConcernedProductListFromBrandJobConfig {
         return jpaPagingItemReader;
     }
 
-    @Bean
-    @StepScope
-    public ConcernedProductListItemProcessor concernedProductListItemProcessor() {
-        return new ConcernedProductListItemProcessor(client, service);
-    }
-
-    @Bean
-    @StepScope
-    public ConcernedProductListItemWriter concernedProductListItemWriter() {
-        return new ConcernedProductListItemWriter(service);
-    }
 }
