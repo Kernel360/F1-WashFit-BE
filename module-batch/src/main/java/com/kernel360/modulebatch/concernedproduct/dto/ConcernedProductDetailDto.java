@@ -40,26 +40,6 @@ public record ConcernedProductDetailDto(
         String manufacture,
         @JacksonXmlProperty(localName = "comp_nm")
         String companyName) {
-    public static ConcernedProductDetailDto of(
-            String productName,
-            String productMasterId,
-            String inspectedOrganization,
-            String issuedDate,
-            String upperItem,
-            String productType,
-            String renewedType,
-            String reportNumber,
-            String safetyInspectionStandard,
-            String kidProtectPackage,
-            String manufactureNation,
-            String productDefinition,
-            String item,
-            String manufacture,
-            String companyName) {
-        return new ConcernedProductDetailDto(productName, productMasterId, inspectedOrganization, issuedDate,
-                upperItem, productType, renewedType, reportNumber, safetyInspectionStandard, kidProtectPackage,
-                manufactureNation, productDefinition, item, manufacture, companyName);
-    }
 
     public static ConcernedProduct toEntity(ConcernedProductDetailDto detailDto, ConcernedProductDto productDto) {
         return ConcernedProduct.of(productDto.productNo(), productDto.productName(), productDto.reportNumber(),
