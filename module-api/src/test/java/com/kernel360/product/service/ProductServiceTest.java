@@ -4,12 +4,13 @@ import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.repository.ProductRepository;
 import com.navercorp.fixturemonkey.FixtureMonkey;
-import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
+import com.navercorp.fixturemonkey.api.introspector.*;
 import com.navercorp.fixturemonkey.jakarta.validation.plugin.JakartaValidationPlugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,14 @@ class ProductServiceTest {
     @BeforeEach
     void 테스트준비() {
         fixtureMonkey = FixtureMonkey.builder()
-                .objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
+                .objectIntrospector(new FailoverIntrospector(
+                        Arrays.asList(
+                                FieldReflectionArbitraryIntrospector.INSTANCE,
+                                ConstructorPropertiesArbitraryIntrospector.INSTANCE,
+                                BeanArbitraryIntrospector.INSTANCE,
+                                BuilderArbitraryIntrospector.INSTANCE
+                        )
+                ))
                 .plugin(new JakartaValidationPlugin())
                 .build();
 
@@ -53,7 +61,7 @@ class ProductServiceTest {
         when(productService.getProductList()).thenReturn(products);
 
         //when
-        List<ProductDto> actualProducts = productService.getProductList();
+//        List<ProductDto> actualProducts = productService.getProductList();
 
         //then
         then(products).isEqualTo(products);

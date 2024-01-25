@@ -6,6 +6,7 @@ import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.global.Interceptor.AcceptInterceptor;
 import com.kernel360.member.controller.MemberController;
 import com.kernel360.member.service.MemberService;
+import com.kernel360.mypage.controller.MyPageController;
 import com.kernel360.product.controller.ProductController;
 import com.kernel360.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest({
         CommonCodeController.class,
         MemberController.class,
+        MyPageController.class,
         ProductController.class
 })
 @AutoConfigureRestDocs
