@@ -1,10 +1,11 @@
 package com.kernel360.modulebatch.concernedproduct.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.kernel360.ecolife.entity.ConcernedProduct;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "row")
@@ -16,8 +17,7 @@ public record ConcernedProductDetailDto(
         @JacksonXmlProperty(localName = "inspct_org")
         String inspectedOrganization,
         @JacksonXmlProperty(localName = "issu_date")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-        LocalDate issuedDate,
+        String issuedDate,
         @JacksonXmlProperty(localName = "upper_item")
         String upperItem,
         @JacksonXmlProperty(localName = "prdt_type")
@@ -44,7 +44,7 @@ public record ConcernedProductDetailDto(
             String productName,
             String productMasterId,
             String inspectedOrganization,
-            LocalDate issuedDate,
+            String issuedDate,
             String upperItem,
             String productType,
             String renewedType,
@@ -61,4 +61,13 @@ public record ConcernedProductDetailDto(
                 manufactureNation, productDefinition, item, manufacture, companyName);
     }
 
+    public static ConcernedProduct toEntity(ConcernedProductDetailDto detailDto, ConcernedProductDto productDto) {
+        return ConcernedProduct.of(productDto.productNo(), productDto.productName(), productDto.reportNumber(),
+                productDto.item(), productDto.companyName(), detailDto.inspectedOrganization,
+                LocalDate.parse(detailDto.issuedDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                detailDto.upperItem, detailDto.productType,
+                detailDto.renewedType(), detailDto.safetyInspectionStandard(), detailDto.kidProtectPackage,
+                detailDto.manufactureNation(),
+                detailDto.productDefinition(), detailDto.manufacture());
+    }
 }
