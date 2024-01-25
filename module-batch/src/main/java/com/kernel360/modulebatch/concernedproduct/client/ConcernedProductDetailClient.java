@@ -58,7 +58,7 @@ public class ConcernedProductDetailClient {
                                                                .toString());
                                  })
                          .onStatus(HttpStatusCode::is2xxSuccessful,
-                                 ((request, response) -> log.debug("[INFO] :: 2XX API 요청 성공"
+                                 ((request, response) -> log.info("[INFO] :: 2XX API 요청 성공"
                                          + response.getBody())))
                          .body(String.class);
     }
