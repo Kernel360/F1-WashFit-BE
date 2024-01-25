@@ -25,6 +25,11 @@ spring:
       validation-timeout: 5000
       minimum-idle: 5
 
+external:
+  ecolife-api:
+    path: ENC(HJqiuwP4Iq/lc0Furr8PuwJpi07wqbRey6GxynTWONBeBI1AZc6GACvq/nKi9K1T6OHzr7Cw7VO3rD/SACeQ4w==)
+    service-key: ENC(ZPvWVqCPl2z8+967U8+BdPdcy9orRW8AEW6AgdM4TO+KuWRw5ziDJ0Dr3omhh2BGVVJQGpdOxEU=)
+
 
 logging:
   file:

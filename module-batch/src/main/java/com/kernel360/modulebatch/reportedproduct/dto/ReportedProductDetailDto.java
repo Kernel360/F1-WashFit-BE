@@ -59,7 +59,7 @@ public record ReportedProductDetailDto(
         @JacksonXmlProperty(localName = "sum3")
         String allergicSubstance,
         @JacksonXmlProperty(localName = "sum4")
-        String Surfactant,
+        String surfactant,
         @JacksonXmlProperty(localName = "sum5")
         String otherSubstance,
         @JacksonXmlProperty(localName = "sum6")
@@ -105,7 +105,7 @@ public record ReportedProductDetailDto(
                 detailDto.useMethod,
                 detailDto.usageAttentionReport, detailDto.firstAid, detailDto.mainSubstance, detailDto.preservative,
                 detailDto.allergicSubstance,
-                detailDto.Surfactant, detailDto.otherSubstance, detailDto.FluorescentWhiteningAgent,
+                detailDto.surfactant, detailDto.otherSubstance, detailDto.FluorescentWhiteningAgent,
                 detailDto.manufacture, detailDto.manufactureMethod,
                 detailDto.manufactureNation, detailDto.companyAddress, detailDto.companyTel,
                 detailDto.importedCompanyName, detailDto.importedCompanyAddress,
