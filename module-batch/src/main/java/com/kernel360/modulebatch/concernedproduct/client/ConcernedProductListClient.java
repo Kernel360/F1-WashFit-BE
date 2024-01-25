@@ -34,7 +34,7 @@ public class ConcernedProductListClient {
                          .retrieve()
                          .onStatus(HttpStatusCode::is4xxClientError,
                                  ((request, response) -> {
-                                     log.debug("[ERROR] :: 4XX 에러 발생"
+                                     log.error("[ERROR] :: 4XX 에러 발생"
                                              + response.getStatusText());
                                      throw new RuntimeException(
                                              response.getStatusCode()
@@ -43,7 +43,7 @@ public class ConcernedProductListClient {
                                  }))
                          .onStatus(HttpStatusCode::is5xxServerError,
                                  (request, response) -> {
-                                     log.debug("[ERROR] :: 5XX 에러 발생"
+                                     log.error("[ERROR] :: 5XX 에러 발생"
                                              + response.getStatusText());
                                      throw new RuntimeException(
                                              response.getStatusCode()
