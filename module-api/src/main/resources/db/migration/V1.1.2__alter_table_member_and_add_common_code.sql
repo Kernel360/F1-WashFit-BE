@@ -18,8 +18,8 @@ CREATE
 OR REPLACE VIEW member_view AS
 SELECT member_no,
        id,
-       encode(pgp_sym_decrypt(password, 'changedRequired')::bytea, 'escape') as password,
-       encode(pgp_sym_decrypt(email, 'changedRequired')::bytea, 'escape')    as email,
+       encode(pgp_sym_decrypt(password, 'changeRequired')::bytea, 'escape') as password,
+       encode(pgp_sym_decrypt(email, 'changeRequired')::bytea, 'escape')    as email,
        gender,
        age,
        created_at,
@@ -36,8 +36,8 @@ OR REPLACE FUNCTION member_view_insert_trigger()
     RETURNS TRIGGER AS $$
 BEGIN
 INSERT INTO member (member_no, id, "password", email, gender, age, created_at, created_by, modified_at, modified_by)
-VALUES (nextval('member_member_no_seq'::regclass), NEW.id, pgp_sym_encrypt(NEW.password::TEXT, 'changedRequired'),
-        pgp_sym_encrypt(NEW.email::TEXT, 'changedRequired'), NEW.gender, NEW.age, NEW.created_at, NEW.created_by,
+VALUES (nextval('member_member_no_seq'::regclass), NEW.id, pgp_sym_encrypt(NEW.password::TEXT, 'changeRequired'),
+        pgp_sym_encrypt(NEW.email::TEXT, 'changeRequired'), NEW.gender, NEW.age, NEW.created_at, NEW.created_by,
         NEW.modified_at, NEW.modified_by);
 
 RETURN NEW;
@@ -60,8 +60,8 @@ OR REPLACE FUNCTION member_view_update_trigger()
 BEGIN
 UPDATE member
 SET id          = NEW.id,
-    "password"  = pgp_sym_encrypt(NEW.password::TEXT, 'changedRequired'),
-    email       = pgp_sym_encrypt(NEW.email::TEXT, 'changedRequired'),
+    "password"  = pgp_sym_encrypt(NEW.password::TEXT, 'changeRequired'),
+    email       = pgp_sym_encrypt(NEW.email::TEXT, 'changeRequired'),
     gender      = NEW.gender,
     age         = NEW.age,
     created_at  = NEW.created_at,

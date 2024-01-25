@@ -3,6 +3,7 @@ package com.kernel360.ecolife.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Table(name = "reported_product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReportedProduct extends ReportedProductDetails {
 

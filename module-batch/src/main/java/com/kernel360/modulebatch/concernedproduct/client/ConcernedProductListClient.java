@@ -1,0 +1,68 @@
+package com.kernel360.modulebatch.concernedproduct.client;
+
+import com.kernel360.brand.entity.Brand;
+import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
+
+@Slf4j
+@Component
+public class ConcernedProductListClient {
+
+    @Value("${external.ecolife-api.path}")
+    private String BASE_PATH;
+
+    @Value("${external.ecolife-api.service-key}")
+    private String AUTH_KEY;
+    private final RestClient restClient;
+    public ConcernedProductListClient() {
+        this.restClient = RestClient.builder()
+                                    .build();
+    }
+    public String getXmlResponse(Brand brand, Long pageNumber) {
+        return restClient.post().uri(buildUri(brand, pageNumber))
+                         .accept(MediaType.APPLICATION_XML)
+                         .acceptCharset(StandardCharsets.UTF_8)
+                         .retrieve()
+                         .onStatus(HttpStatusCode::is4xxClientError,
+                                 ((request, response) -> {
+                                     log.error("[ERROR] :: 4XX 에러 발생"
+                                             + response.getStatusText());
+                                     throw new RuntimeException(
+                                             response.getStatusCode()
+                                                     + response.getHeaders()
+                                                               .toString());
+                                 }))
+                         .onStatus(HttpStatusCode::is5xxServerError,
+                                 (request, response) -> {
+                                     log.error("[ERROR] :: 5XX 에러 발생"
+                                             + response.getStatusText());
+                                     throw new RuntimeException(
+                                             response.getStatusCode()
+                                                     + response.getHeaders()
+                                                               .toString());
+                                 })
+                         .onStatus(HttpStatusCode::is2xxSuccessful,
+                                 ((request, response) -> log.info("[INFO] :: api 요청 성공"
+                                         + response.getBody())))
+                         .body(String.class);
+    }
+
+    public String buildUri(Brand brand, Long pageNumber) {
+
+        return UriComponentsBuilder.fromHttpUrl(BASE_PATH)
+                                   .queryParam("AuthKey", AUTH_KEY)
+                                   .queryParam("ServiceName", "slfsfcfst01List")
+                                   .queryParam("PageCount", "20")
+                                   .queryParam("PageNum", String.valueOf(pageNumber))
+                                   .queryParam("compNm", brand.getCompanyName())
+                                   .build()
+                                   .toUriString();
+    }
+}
+
