@@ -116,7 +116,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.surfactant", is(mockProduct.getSurfactant())))
                 .andExpect(jsonPath("$.fluorescentWhitening", is(mockProduct.getFluorescentWhitening())))
                 .andExpect(jsonPath("$.manufactureType", is(mockProduct.getManufactureType())))
-                .andExpect(jsonPath("$.manufactureMethod", is(mockProduct.getManufactureMethod())));
+                .andExpect(jsonPath("$.manufactureMethod", is(mockProduct.getManufactureMethod())))
                 .andExpect(jsonPath("$.declareNo", is(mockProduct.getReportNumber())))
                 .andExpect(jsonPath("$.safetyStatus", is(mockProduct.getSafetyStatus())))
                 .andExpect(jsonPath("$.viewCount", is(mockProduct.getViewCount())));
