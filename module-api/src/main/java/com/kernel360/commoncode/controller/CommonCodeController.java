@@ -4,7 +4,6 @@ import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.commoncode.dto.CommonCodeDto;
 import com.kernel360.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +33,7 @@ public class CommonCodeController {
 
     // FIXME :: 아래 메서드는 추후 삭제 예정입니다
     @GetMapping("/test/{codeName}")
-    public ResponseEntity<ApiResponse> getCommonCode_1 (@PathVariable String codeName){
+    public ResponseEntity<ApiResponse<List<CommonCodeDto>>> getCommonCode_1 (@PathVariable String codeName){
         List<CommonCodeDto> codes = commonCodeService.getCodes(codeName);
 
         return ApiResponse.toResponseEntity(GET_COMMON_CODE_SUCCESS, codes);
