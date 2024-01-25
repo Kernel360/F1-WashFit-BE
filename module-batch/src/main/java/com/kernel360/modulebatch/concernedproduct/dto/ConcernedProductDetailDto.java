@@ -11,35 +11,50 @@ import java.time.LocalDate;
 public record ConcernedProductDetailDto(
         @JacksonXmlProperty(localName = "prdt_no")
         String productNo,
+
         @JacksonXmlProperty(localName = "prdt_nm")
         String productName,
+
         @JacksonXmlProperty(localName = "inspct_org")
         String inspectedOrganization,
+
         @JacksonXmlProperty(localName = "issu_date")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate issuedDate,
+
         @JacksonXmlProperty(localName = "upper_item")
         String upperItem,
+
         @JacksonXmlProperty(localName = "prdt_type")
         String productType,
+
         @JacksonXmlProperty(localName = "renew_yn")
         String renewedType,
+
         @JacksonXmlProperty(localName = "slfsfcfst_no")
         String reportNumber,
+
         @JacksonXmlProperty(localName = "safe_sd")
         String safetyInspectionStandard,
+
         @JacksonXmlProperty(localName = "kid_prt_pkg")
         String kidProtectPackage,
+
         @JacksonXmlProperty(localName = "mf_cpy")
         String manufactureNation,
+
         @JacksonXmlProperty(localName = "df")
         String productDefinition,
+
         @JacksonXmlProperty(localName = "item")
         String item,
+
         @JacksonXmlProperty(localName = "mf_icm")
         String manufacture,
+
         @JacksonXmlProperty(localName = "comp_nm")
-        String companyName) {
+        String companyName
+) {
     public static ConcernedProductDetailDto of(
             String productName,
             String productMasterId,

@@ -9,10 +9,15 @@ import com.kernel360.ecolife.entity.ConcernedProduct;
 @JacksonXmlRootElement(localName = "row")
 public record ConcernedProductDto(
         @JacksonXmlProperty(localName = "prdt_no") String productNo,
+
         @JacksonXmlProperty(localName = "prdt_nm") String productName,
+
         @JacksonXmlProperty(localName = "slfsfcfst_no") String reportNumber,
+
         @JacksonXmlProperty(localName = "item") String item,
-        @JacksonXmlProperty(localName = "comp_nm") String companyName) {
+
+        @JacksonXmlProperty(localName = "comp_nm") String companyName
+) {
 
     public static ConcernedProduct toEntity(ConcernedProductDto dto) {
         return ConcernedProduct.of(dto.productNo, dto.productName(),
