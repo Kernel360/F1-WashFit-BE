@@ -18,8 +18,8 @@ CREATE
 OR REPLACE VIEW member_view AS
 SELECT member_no,
        id,
-       encode(pgp_sym_decrypt(password, 'changedRequired')::bytea, 'escape') as password,
-       encode(pgp_sym_decrypt(email, 'changedRequired')::bytea, 'escape')    as email,
+       encode(pgp_sym_decrypt(password, 'changeRequired')::bytea, 'escape') as password,
+       encode(pgp_sym_decrypt(email, 'changeRequired')::bytea, 'escape')    as email,
        gender,
        age,
        created_at,
