@@ -23,4 +23,10 @@ public record ConcernedProductDto(
         return ConcernedProduct.of(dto.productNo, dto.productName(),
                 dto.reportNumber(), dto.item(), dto.companyName());
     }
+
+    public static ConcernedProductDto of(String productNo, String productName, String reportNumber, String item,
+                                         String companyName) {
+
+        return new ConcernedProductDto(productNo, productName, reportNumber, item, companyName);
+    }
 }
