@@ -3,6 +3,7 @@ package com.kernel360.member.service;
 import com.kernel360.auth.entity.Auth;
 import com.kernel360.auth.repository.AuthRepository;
 import com.kernel360.carinfo.entity.CarInfo;
+import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.MemberDto;
@@ -18,6 +19,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -29,6 +31,8 @@ public class MemberService {
     private final JWT jwt;
     private final AuthRepository authRepository;
     private final MemberRepository memberRepository;
+    private final CommonCodeService commonCodeService;
+
 
     /**
      * 가입
@@ -146,6 +150,38 @@ public class MemberService {
         return memberDto.toEntity().getCarInfo();
     }
 
+    @Transactional
+    public void deleteMember(String id) {
+        memberRepository.deleteMemberById(id);
+    }
 
-    public void deleteMember(String id) {memberRepository.deleteMemberById(id);}
+
+    @Transactional
+    public void changePassword(MemberDto memberDto) {
+        memberRepository.updatePasswordById(memberDto.id(), memberDto.password());
+    }
+
+    @Transactional
+    public void updateMember(MemberDto memberDto) {
+        Member member =
+                Member.of(memberDto.memberNo(), memberDto.id(), memberDto.email(), memberDto.password(),
+                        Integer.parseInt(memberDto.gender()), Integer.parseInt(memberDto.age()));
+
+        memberRepository.save(member);
+    }
+
+    @Transactional(readOnly = true)
+    public <T> Map<String,Object> getCarInfo(RequestEntity<T> request) {
+        //        CarInfo carInfo = memberService.findCarInfoByToken(request);
+        //FIXME :: CarInfo Data 없어서 에러발생 주석 처리해둠
+
+        return Map.of(
+//                "car_info", carInfo,
+                "segment_options", commonCodeService.getCodes("segment"),
+                "carType_options", commonCodeService.getCodes("cartype"),
+                "color_options", commonCodeService.getCodes("color"),
+                "driving_options", commonCodeService.getCodes("driving"),
+                "parking_options", commonCodeService.getCodes("parking")
+        );
+    }
 }

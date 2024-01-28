@@ -1,0 +1,27 @@
+== Main API
+
+// [[]] 안에는 a 태그 이름 들어갑니다 (http://localhost:8080/docs/index#공통코드-조회)
+[[Banner-조회]]
+=== Banner 조회
+
+===== HTTP Request
+include::{snippets}/banner/get-banner/http-request.adoc[]
+
+==== Response
+include::{snippets}/banner/get-banner/response-fields-value.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/banner/get-banner/http-response.adoc[]
+
+
+[[Recommend-Product-조회]]
+=== Recommend-Product-조회
+
+===== HTTP Request
+include::{snippets}/recommend-products/get-recommend-products/http-request.adoc[]
+
+==== Response
+include::{snippets}/recommend-products/get-recommend-products/response-fields.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/recommend-products/get-recommend-products/http-response.adoc[]

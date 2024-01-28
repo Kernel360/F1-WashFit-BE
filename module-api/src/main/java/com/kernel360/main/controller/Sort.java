@@ -7,21 +7,22 @@ import java.util.List;
 
 public enum Sort {
 
-    VIEW_COUNT_PRODUCT_ORDER("viewCnt_order") {
+    VIEW_COUNT_PRODUCT_ORDER("viewCnt-order") {
         @Override
         List<ProductDto> sort(ProductService productService) {
 
-            return productService.getProductListOrderByViewCount();
+//            return productService.getProductListOrderByViewCount();
+            return productService.getProductList();
         }
     },
-    SAFE_PRODUCT_LIST("violation_product") {
+    SAFE_PRODUCT_LIST("violation-products") {
         @Override
         List<ProductDto> sort(ProductService productService) {
 
             return productService.getViolationProducts();
         }
     },
-    RECOMMENDATION_PRODUCT_ORDER("recommend_order") {
+    RECOMMENDATION_PRODUCT_ORDER("recommend-order") {
         @Override
         List<ProductDto> sort(ProductService productService) {
 //Fixme :: 향후 Like Table 구현후, 정렬메소드 변경이 필요합니다.(임시로 violationProduct 리턴으로 구현)
@@ -29,7 +30,7 @@ public enum Sort {
             return productService.getViolationProducts();
         }
     },
-    RECENT_PRODUCT_ORDER("recent_order") {
+    RECENT_PRODUCT_ORDER("recent-order") {
         @Override
         List<ProductDto> sort(ProductService productService) {
 
