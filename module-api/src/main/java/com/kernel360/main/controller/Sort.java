@@ -11,11 +11,10 @@ public enum Sort {
         @Override
         List<ProductDto> sort(ProductService productService) {
 
-//            return productService.getProductListOrderByViewCount();
-            return productService.getProductList();
+            return productService.getProductListOrderByViewCount();
         }
     },
-    SAFE_PRODUCT_LIST("violation-products") {
+    VIOLATION_PRODUCT_LIST("violation-products") {
         @Override
         List<ProductDto> sort(ProductService productService) {
 
@@ -42,6 +41,10 @@ public enum Sort {
 
     Sort(String orderType) {
         this.orderType = orderType;
+    }
+
+    public String getOrderType() {
+        return orderType;
     }
 
     abstract List<ProductDto> sort(ProductService productService);

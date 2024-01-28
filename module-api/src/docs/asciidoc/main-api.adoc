@@ -25,3 +25,17 @@ include::{snippets}/recommend-products/get-recommend-products/response-fields.ad
 
 ===== HTTP Response 예시
 include::{snippets}/recommend-products/get-recommend-products/http-response.adoc[]
+
+
+[[Products-rank-최신순]]
+== Products-rank-최신순
+
+===== HTTP Request
+include::{snippets}/products/get-products-view-count-order/http-request.adoc[]
+
+===== Response
+include::{snippets}/products/get-products-view-count-order/response-fields.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/products/get-products-view-count-order/http-response.adoc[]
+

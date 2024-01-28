@@ -8,6 +8,8 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -98,51 +100,101 @@ class MainContollerTest extends ControllerTest {
                         getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER).description("상태 코드"),
-                                fieldWithPath("code").type(JsonFieldType.STRING).description("비지니스 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메세지"),
-                                subsectionWithPath("value").description("추천 제품 리스트"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답메세지"),
+                                fieldWithPath("value").type(JsonFieldType.ARRAY).description("제품 리스트"),
                                 fieldWithPath("value[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                 fieldWithPath("value[].image").type(JsonFieldType.STRING).description("이미지 URL"),
-                                fieldWithPath("value[].alt").type(JsonFieldType.STRING).description("이미지 설명"),
+                                fieldWithPath("value[].alt").type(JsonFieldType.STRING).description("이미지 대체 텍스트"),
                                 fieldWithPath("value[].productName").type(JsonFieldType.STRING).description("제품명")
                         )
                 ));
-
-        verify(productService, times(1)).getRecommendProductList();
     }
-
-    @Test
-    void 메인페이지_조회순으로_제품리스트_요청시_200응답과_데이터가_잘_반환되는지() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = Sort.class, names = {"VIEW_COUNT_PRODUCT_ORDER", "VIOLATION_PRODUCT_LIST", "RECENT_PRODUCT_ORDER"})
+    void 메인페이지_조회순으로_제품리스트_요청시_200응답과_데이터가_잘_반환되는지(Sort sortType) throws Exception {
         // given
         List<ProductDto> productDtos = fixtureMonkey.giveMeBuilder(ProductDto.class)
                 .setNotNull("productNo")
                 .setNotNull("productName")
                 .setNotNull("viewCount")
+                .setNotNull("reportNumber")
+                .setNotNull("safetyStatus")
+                .setNotNull("createdAt")
+                .setNotNull("createdBy")
                 .sampleList(5);
-        when(productService.getProductListOrderByViewCount()).thenReturn(productDtos);
+
+
+        if (sortType == Sort.VIEW_COUNT_PRODUCT_ORDER) {
+            when(productService.getProductListOrderByViewCount()).thenReturn(productDtos);
+        } else if (sortType == Sort.VIOLATION_PRODUCT_LIST) {
+            when(productService.getViolationProducts()).thenReturn(productDtos);
+        } else if (sortType == Sort.RECENT_PRODUCT_ORDER) {
+            when(productService.getRecentProducts()).thenReturn(productDtos);
+        }
 
         // when & then
         mockMvc.perform(get("/products/rank")
-                        .queryParam("sortType", "viewCnt-order"))
+                        .queryParam("sortType", sortType.getOrderType()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.value", hasSize(5)))
-                .andExpect(jsonPath("$.value[0].id").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].name").isNotEmpty())
+                .andExpect(jsonPath("$.value[0].productNo").isNotEmpty())
+                .andExpect(jsonPath("$.value[0].productName").isNotEmpty())
+                .andExpect(jsonPath("$.value[0].viewCount").isNotEmpty())
                 .andDo(document(
                         "products/get-products-view-count-order",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER).description("상태 코드"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답메세지"),
                                 fieldWithPath("value").type(JsonFieldType.ARRAY).description("제품 리스트"),
-                                fieldWithPath("value[].id").type(JsonFieldType.NUMBER).description("제품 아이디"),
-                                fieldWithPath("value[].name").type(JsonFieldType.STRING).description("제품명")
+                                fieldWithPath("value[].productNo").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                fieldWithPath("value[].productName").type(JsonFieldType.STRING).description("제품명"),
+                                fieldWithPath("value[].barcode").type(JsonFieldType.STRING).optional().description("바코드"),
+                                fieldWithPath("value[].imageSource").type(JsonFieldType.STRING).optional().description("이미지 소스"),
+                                fieldWithPath("value[].reportNumber").type(JsonFieldType.STRING).description("신고 번호"),
+                                fieldWithPath("value[].safetyStatus").type(JsonFieldType.STRING).description("안전 상태"),
+                                fieldWithPath("value[].viewCount").type(JsonFieldType.NUMBER).description("조회수"),
+                                fieldWithPath("value[].createdAt").type(JsonFieldType.STRING).description("생성날짜"),
+                                fieldWithPath("value[].createdBy").type(JsonFieldType.STRING).description("생성자"),
+                                fieldWithPath("value[].modifiedAt").type(JsonFieldType.STRING).optional().description("수정날짜"),
+                                fieldWithPath("value[].modifiedBy").type(JsonFieldType.STRING).optional().description("수정자")
                         )
                 ));
 
-        verify(productService, times(1)).getProductListOrderByViewCount();
+        if (sortType == Sort.VIEW_COUNT_PRODUCT_ORDER) {
+            verify(productService, times(1)).getProductListOrderByViewCount();
+        } else if (sortType == Sort.VIOLATION_PRODUCT_LIST) {
+            verify(productService, times(1)).getViolationProducts();
+        } else if (sortType == Sort.RECENT_PRODUCT_ORDER) {
+            verify(productService, times(1)).getRecentProducts();
+        }
+
     }
 
+
+//FIXME:: 좋아요 기능구현후, 데이터를 바탕으로 추천기능구현후, 테스트코드 변경예정
+//    @Test
+//    void 메인페이지_추천제품_정렬_옵션으로_요청시_200응답과_데이터가_잘_반환되는지() throws Exception {
+//        // given
+//        List<RecommendProductsDto> recommendProducts = fixtureMonkey.giveMeBuilder(RecommendProductsDto.class)
+//                .sampleList(5);
+//        when(productService.getRecommendProductList()).thenReturn(recommendProducts);
+//
+//        // when & then
+//        mockMvc.perform(get("/products/rank")
+//                        .queryParam("sortType", "recommend-order"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.status").value(200));
+////                .andExpect(jsonPath("$.value", hasSize(5)));
+//        ;
+//
+//        verify(productService, times(1)).getRecommendProductList();
+//
+//    }
 }
