@@ -20,22 +20,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainContoller {
     private final ProductService productService;
+    private final MainService mainService;
 
     @GetMapping("/banner")
     ResponseEntity<ApiResponse<BannerDto>> getBanner() {
 
-        return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, MainService.getSampleBanner());
+        return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, mainService.getSampleBanner());
     }
 
-    @GetMapping("/recommend_products")
+    @GetMapping("/recommend-products")
     ResponseEntity<ApiResponse<List<RecommendProductsDto>>> getRecommendProducts() {
         List<RecommendProductsDto> recommendProductList = productService.getRecommendProductList();
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProductList);
 
     }
-    @GetMapping("/products/")
-    ResponseEntity<ApiResponse<List<ProductDto>>> getProducts(@RequestParam(name ="sortType", defaultValue = "viewCnt_order") Sort sortType){
+    @GetMapping("/products/rank")
+    ResponseEntity<ApiResponse<List<ProductDto>>> getProducts(@RequestParam(name ="sortType", defaultValue = "viewCnt-order") Sort sortType){
         List<ProductDto> productDtos = sortType.sort(productService);
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productDtos);
