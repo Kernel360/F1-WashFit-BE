@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: local
+
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndTripleDES
+
+
