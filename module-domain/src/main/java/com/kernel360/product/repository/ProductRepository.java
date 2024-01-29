@@ -26,6 +26,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT p FROM Product p WHERE p.productName = :productName "
             + "AND p.companyName like :companyName")
-    Optional<Product> findProductByProductNameAndReportNumber(@Param("productName") String productName,
-                                                              @Param("companyName") String companyName);
+    Optional<Product> findProductByProductNameAndCompanyName(@Param("productName") String productName,
+                                                             @Param("companyName") String companyName);
 }
