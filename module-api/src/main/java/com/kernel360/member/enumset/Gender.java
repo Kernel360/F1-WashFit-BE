@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Gender {
-    MAN(0),
-    WOMAN(1);
+    man(0),
+    woman(1);
 
     private final int value;
     public static String ordinalToName(int value) {

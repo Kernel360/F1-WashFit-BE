@@ -155,7 +155,7 @@ public class MemberService {
     public void deleteMember(String id) {
         Member member = memberRepository.findOneById(id);
 
-        memberRepository.deleteMemberById(id);
+        memberRepository.delete(member);
     }
 
 
