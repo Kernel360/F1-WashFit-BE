@@ -39,7 +39,8 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductDto> getProductListByKeyword(String keyword) {
-        List<Product> products = productRepository.findByKeyword(keyword);
+        List<Product> products = productRepository.
+                findByProductNameContaining(keyword);
 
         return products.stream().map(ProductDto::from).toList();
     }
