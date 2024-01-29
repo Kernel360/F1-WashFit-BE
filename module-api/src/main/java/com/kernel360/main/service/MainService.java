@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 
 public class MainService {
 
-    public static BannerDto getSampleBanner() {
-
-        return BannerDto.of(1L,
-                            "classpath:static/bannerSample.png",
-                            "Banner Image");
+    public BannerDto getSampleBanner() {
+        return BannerDto.of(1L, "classpath:static/bannerSample.png", "Banner Image");
     }
+
 }

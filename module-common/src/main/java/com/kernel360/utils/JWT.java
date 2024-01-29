@@ -3,7 +3,6 @@ package com.kernel360.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -43,7 +42,7 @@ public class JWT {
         return claims.getExpiration();
     }
 
-    public String ownerId(String token) {
+    public static String ownerId(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
         return claims.getId();
     }
