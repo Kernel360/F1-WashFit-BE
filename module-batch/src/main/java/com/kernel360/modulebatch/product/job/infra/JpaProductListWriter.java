@@ -1,4 +1,4 @@
-package com.kernel360.modulebatch.product.job;
+package com.kernel360.modulebatch.product.job.infra;
 
 import java.util.List;
 import org.springframework.batch.item.Chunk;

@@ -1,17 +1,21 @@
-package com.kernel360.modulebatch.reportedproduct.job;
+package com.kernel360.modulebatch.reportedproduct.job.infra;
 
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
 import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import java.util.List;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.stereotype.Component;
 
+@Component
+@StepScope
 public class ReportedProductListItemWriter implements ItemWriter<List<ReportedProductDto>> {
 
-    private final ReportedProductService apiService;
+    private final ReportedProductService service;
 
-    public ReportedProductListItemWriter(ReportedProductService apiService) {
-        this.apiService = apiService;
+    public ReportedProductListItemWriter(ReportedProductService service) {
+        this.service = service;
     }
 
     /**
@@ -23,7 +27,7 @@ public class ReportedProductListItemWriter implements ItemWriter<List<ReportedPr
     public void write(Chunk<? extends List<ReportedProductDto>> chunk) throws Exception {
         for (List<ReportedProductDto> c : chunk) {
             for (ReportedProductDto reportedProductDto : c) {
-                apiService.saveReportedProduct(reportedProductDto);
+                service.saveReportedProduct(reportedProductDto);
             }
         }
     }

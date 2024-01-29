@@ -4,7 +4,7 @@ import com.kernel360.brand.entity.Brand;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.ecolife.repository.ReportedProductRepository;
 import com.kernel360.modulebatch.product.dto.ProductDto;
-import com.kernel360.modulebatch.product.job.JpaProductListWriter;
+import com.kernel360.modulebatch.product.job.infra.JpaProductListWriter;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;

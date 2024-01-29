@@ -1,4 +1,4 @@
-package com.kernel360.modulebatch.reportedproduct.job;
+package com.kernel360.modulebatch.reportedproduct.job.infra;
 
 import com.kernel360.brand.entity.Brand;
 import com.kernel360.modulebatch.reportedproduct.client.ReportedProductFromBrandClient;
@@ -10,9 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
+@StepScope
 @RequiredArgsConstructor
 public class FetchReportedProductListFromBrandItemProcessor implements ItemProcessor<Brand, List<ReportedProductDto>> {
 

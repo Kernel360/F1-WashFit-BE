@@ -1,4 +1,4 @@
-package com.kernel360.modulebatch.reportedproduct.job;
+package com.kernel360.modulebatch.reportedproduct.job.infra;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kernel360.modulebatch.reportedproduct.client.ReportedProductClient;
@@ -7,9 +7,13 @@ import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.annotation.BeforeStep;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
+@StepScope
 public class ReportedProductListItemReader implements ItemReader<List<ReportedProductDto>> {
 
     private static int MAX_PAGES_PER_JOB;
