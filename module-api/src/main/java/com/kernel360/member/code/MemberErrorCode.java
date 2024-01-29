@@ -4,6 +4,8 @@ import com.kernel360.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.util.EnumSet;
+
 @RequiredArgsConstructor
 public enum MemberErrorCode implements ErrorCode {
 
@@ -12,8 +14,8 @@ public enum MemberErrorCode implements ErrorCode {
     FAILED_NOT_MAPPING_ENUM_VALUEOF(HttpStatus.INTERNAL_SERVER_ERROR.value(), "EMC003", "PARAMETER 값과 ENUM의 NAME이 불일치함."),
     FAILED_GENERATE_JOIN_MEMBER_INFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "EMC004", "회원가입에 필요한 정보 생성 실패"),
     FAILED_GENERATE_LOGIN_REQUEST_INFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "EMC005", "정보 불일치로 인한 로그인 정보 생성 실패"),
-    FAILED_REQUEST_LOGIN(HttpStatus.BAD_REQUEST.value(), "EMC006", "정보 불일치로 인한 로그인 실패");
-
+    FAILED_REQUEST_LOGIN(HttpStatus.BAD_REQUEST.value(), "EMC006", "정보 불일치로 인한 로그인 실패"),
+    FAILED_FIND_MEMBER_INFO(HttpStatus.BAD_REQUEST.value(), "EMC007", "요청 회원정보가 존재하지 않습니다.");
 
 
     private final int status;

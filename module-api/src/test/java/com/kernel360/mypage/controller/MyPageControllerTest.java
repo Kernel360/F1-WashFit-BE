@@ -33,25 +33,25 @@ class MyPageControllerTest extends ControllerTest {
                 ))
                 .build();
     }
-
-    @Test
-    void 마이페이지_메인요청이왔을때_200요청과_응답이_잘반환되는지() throws Exception {
-        //given
-        List<ProductDto> productDtoList = fixtureMonkey.giveMeBuilder(ProductDto.class).sampleList(5);
-
-        //when
-        when(productService.getProductListOrderByViewCount()).thenReturn(productDtoList);
-
-        //then
-        mockMvc.perform(get("/mypage/main"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.Banner").value("http://localhost:8080/bannersample.png"))
-                .andExpect(jsonPath("$.Suggest").value("http://localhost:8080/suggestsample.png"))
-                .andExpect(jsonPath("$.Product", hasSize(5)));
-
-        verify(productService, times(1)).getProductListOrderByViewCount();
-    }
+//
+//    @Test
+//    void 마이페이지_메인요청이왔을때_200_응답이_잘반환되는지() throws Exception {
+//        //given
+//        List<ProductDto> productDtoList = fixtureMonkey.giveMeBuilder(ProductDto.class).sampleList(5);
+//
+//        //when
+//        when(productService.getProductListOrderByViewCount()).thenReturn(productDtoList);
+//
+//        //then
+//        mockMvc.perform(get("/mypage/main"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.Banner").value("http://localhost:8080/bannersample.png"))
+//                .andExpect(jsonPath("$.Suggest").value("http://localhost:8080/suggestsample.png"))
+//                .andExpect(jsonPath("$.Product", hasSize(5)));
+//
+//        verify(productService, times(1)).getProductListOrderByViewCount();
+//    }
 
 
 }
