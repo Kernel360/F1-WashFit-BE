@@ -3,7 +3,6 @@ package com.kernel360.modulebatch.reportedproduct.job.core;
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
 import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductListItemReader;
 import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductListItemWriter;
-import com.kernel360.modulebatch.reportedproduct.job.RetryReportedProductListItemReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.retry.support.RetryTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -32,7 +30,6 @@ public class ReportedProductApiJobConfig {
 
     private final ReportedProductListItemWriter reportedProductListItemWriter;
 
-    private final RetryTemplate retryTemplate;
 
     @Bean
     public Job fetchReportedProductJob(JobRepository jobRepository,
@@ -54,8 +51,7 @@ public class ReportedProductApiJobConfig {
 
         return new StepBuilder("fetchReportedProductListStep", jobRepository)
                 .<List<ReportedProductDto>, List<ReportedProductDto>>chunk(10, transactionManager)
-                .reader(new RetryReportedProductListItemReader(reportedProductListItemReader,
-                        retryTemplate)) // API 요청, 응답을 DTO 리스트로 반환
+                .reader(reportedProductListItemReader) // API 요청, 응답을 DTO 리스트로 반환
                 .writer(reportedProductListItemWriter) // DTO 리스트 입력, 저장
                 .faultTolerant()
                 .retryLimit(2)
