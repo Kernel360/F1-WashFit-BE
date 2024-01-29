@@ -1,6 +1,7 @@
 package com.kernel360.modulebatch.concernedproduct.client;
 
-import com.kernel360.brand.entity.Brand;
+import com.kernel360.ecolife.entity.ConcernedProduct;
+import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
-public class ConcernedProductListClient {
+public class ConcernedProductDetailClient {
 
     @Value("${external.ecolife-api.path}")
     private String BASE_PATH;
@@ -22,13 +23,19 @@ public class ConcernedProductListClient {
 
     private final RestClient restClient;
 
-    public ConcernedProductListClient() {
+    public ConcernedProductDetailClient() {
         this.restClient = RestClient.builder()
                                     .build();
+        log.info("ConcernedProductDetailClient initialized with BASE_PATH: " + BASE_PATH);
+    }
+    @PostConstruct
+    public void postConstruct() {
+        log.info("ConcernedProductDetailClient postConstruct with BASE_PATH: " + BASE_PATH);
     }
 
-    public String getXmlResponse(Brand brand, Long pageNumber) {
-        return restClient.post().uri(buildUri(brand, pageNumber))
+    public String getXmlResponse(ConcernedProduct concernedProduct) {
+
+        return restClient.get().uri(buildUri(concernedProduct))
                          .accept(MediaType.APPLICATION_XML)
                          .acceptCharset(StandardCharsets.UTF_8)
                          .retrieve()
@@ -51,21 +58,17 @@ public class ConcernedProductListClient {
                                                                .toString());
                                  })
                          .onStatus(HttpStatusCode::is2xxSuccessful,
-                                 ((request, response) -> log.info("[INFO] :: api 요청 성공"
+                                 ((request, response) -> log.info("[INFO] :: 2XX API 요청 성공"
                                          + response.getBody())))
                          .body(String.class);
     }
 
-    public String buildUri(Brand brand, Long pageNumber) {
+    public String buildUri(ConcernedProduct concernedProduct) {
 
         return UriComponentsBuilder.fromHttpUrl(BASE_PATH)
                                    .queryParam("AuthKey", AUTH_KEY)
-                                   .queryParam("ServiceName", "slfsfcfst01List")
-                                   .queryParam("PageCount", "20")
-                                   .queryParam("PageNum", String.valueOf(pageNumber))
-                                   .queryParam("compNm", brand.getCompanyName())
-                                   .build()
+                                   .queryParam("ServiceName", "slfsfcfst01Detail")
+                                   .queryParam("prdtNo", concernedProduct.getProductNo())
                                    .toUriString();
     }
 }
-

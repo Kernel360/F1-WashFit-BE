@@ -14,23 +14,37 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@Profile({"local", "prod"})
+@Profile({"local", "dev"})
 public class ConcernedProductScheduler {
     private final Job fetchConcernedProductListFromBrandJob;
+    private final Job fetchConcernedProductDetailJob;
     private final JobLauncher jobLauncher;
 
     @Autowired
     public ConcernedProductScheduler(
             @Qualifier("fetchConcernedProductListFromBrandJob") Job fetchConcernedProductListJob,
+            @Qualifier("fetchConcernedProductDetailJob") Job fetchConcernedProductDetailJob,
             JobLauncher jobLauncher) {
 
         this.fetchConcernedProductListFromBrandJob = fetchConcernedProductListJob;
+        this.fetchConcernedProductDetailJob = fetchConcernedProductDetailJob;
         this.jobLauncher = jobLauncher;
     }
 
-    @Scheduled(cron = "0 30 11,13 * * TUE", zone = "Asia/Seoul")
+    /**
+     * 매주 목요일 19시 00분 실행
+     */
+    @Scheduled(cron = "0 0 19 * * THU", zone = "Asia/Seoul")
     public void executeFetchConcernedProductListJob() {
         executeJob(fetchConcernedProductListFromBrandJob);
+    }
+
+    /**
+     * 매주 목요일 19시 30분 실행
+     */
+    @Scheduled(cron = "0 30 19 * * THU", zone = "Asia/Seoul")
+    public void executeFetchConcernedProductDetailJob() {
+        executeJob(fetchConcernedProductDetailJob);
     }
 
     private synchronized void executeJob(Job job) {

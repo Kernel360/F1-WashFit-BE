@@ -1,10 +1,11 @@
 package com.kernel360.modulebatch.concernedproduct.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.kernel360.ecolife.entity.ConcernedProduct;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "row")
@@ -19,9 +20,7 @@ public record ConcernedProductDetailDto(
         String inspectedOrganization,
 
         @JacksonXmlProperty(localName = "issu_date")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-        LocalDate issuedDate,
-
+        String issuedDate,
         @JacksonXmlProperty(localName = "upper_item")
         String upperItem,
 
@@ -53,27 +52,15 @@ public record ConcernedProductDetailDto(
         String manufacture,
 
         @JacksonXmlProperty(localName = "comp_nm")
-        String companyName
-) {
-    public static ConcernedProductDetailDto of(
-            String productName,
-            String productMasterId,
-            String inspectedOrganization,
-            LocalDate issuedDate,
-            String upperItem,
-            String productType,
-            String renewedType,
-            String reportNumber,
-            String safetyInspectionStandard,
-            String kidProtectPackage,
-            String manufactureNation,
-            String productDefinition,
-            String item,
-            String manufacture,
-            String companyName) {
-        return new ConcernedProductDetailDto(productName, productMasterId, inspectedOrganization, issuedDate,
-                upperItem, productType, renewedType, reportNumber, safetyInspectionStandard, kidProtectPackage,
-                manufactureNation, productDefinition, item, manufacture, companyName);
-    }
+        String companyName) {
 
+    public static ConcernedProduct toEntity(ConcernedProductDetailDto detailDto, ConcernedProductDto productDto) {
+        return ConcernedProduct.of(productDto.productNo(), productDto.productName(), productDto.reportNumber(),
+                productDto.item(), productDto.companyName(), detailDto.inspectedOrganization,
+                LocalDate.parse(detailDto.issuedDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                detailDto.upperItem, detailDto.productType,
+                detailDto.renewedType(), detailDto.safetyInspectionStandard(), detailDto.kidProtectPackage,
+                detailDto.manufactureNation(),
+                detailDto.productDefinition(), detailDto.manufacture());
+    }
 }
