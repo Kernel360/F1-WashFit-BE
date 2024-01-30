@@ -57,23 +57,25 @@ jobs:
         working-directory: ./module-api
         run: ./gradlew clean build
 
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+      - name: DockerHub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Copy JAR file to remote server using SCP
-        run: |
-          cd module-api/build/libs/
-          export PASSWORD="${{ secrets.VULTR_PW }}"
-          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no -P 22 module-api-0.0.1-SNAPSHOT.jar ${{ secrets.VULTR_USERNAME }}@${{ secrets.VULTR_IP }}:/root
-      # kill 하는 부분이 추가되어야 함 (일단 여기까지 1차 성공 버전)
-      # 다만, 성공하는 건 확인했으니 다음 버전(DockerHub)으로 넘어가는 걸 우선..
-      - name: Application Run on Remote Server
-        run: |
-          export JAR_NAME="module-api-0.0.1-SNAPSHOT.jar"
-          export PASSWORD="${{ secrets.VULTR_PW }}"
-          sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no ${{ secrets.VULTR_USERNAME }}@${{ secrets.VULTR_IP }} \
-          "cd \$HOME && \
-          mkdir -p ./logs && \
-          sleep 10 && \
-          echo "start!" && \
-          nohup java -jar $JAR_NAME >> ./logs/deploy.log 2> ./logs/deploy_err.log & "
+      - name: Docker Image Build
+        working-directory: ./module-api
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_API_NAME }} . --platform=linux/amd64
+
+      - name: DockerHub Push
+        working-directory: ./module-api
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_API_NAME }}
+
+      - name: Application Run
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VULTR_IP }}
+          username: ${{ secrets.VULTR_USERNAME }}
+          password: ${{ secrets.VULTR_PW }}
+          script: |
+            echo "hi~!"
