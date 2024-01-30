@@ -1,108 +1,4 @@
--- 복호화 view 삭제
-drop view IF EXISTS member_view;
-
--- 함수 삭제
-drop function IF EXISTS member_view_delete_trigger;
-drop function IF EXISTS member_view_insert_trigger;
-drop function IF EXISTS member_view_update_trigger;
-
-
--- member 테이블 컬럼 자료형 변경
-ALTER TABLE public."member" DROP COLUMN IF EXISTS birthdate;
-ALTER TABLE public."member" DROP COLUMN IF EXISTS gender;
-ALTER TABLE public."member" ADD COLUMN IF NOT EXISTS age int;
-ALTER TABLE public."member" ADD COLUMN IF NOT EXISTS gender int;
-
--- 복호화 뷰 생성
-CREATE
-OR REPLACE VIEW member_view AS
-SELECT member_no,
-       id,
-       encode(pgp_sym_decrypt(password, 'changeRequired')::bytea, 'escape') as password,
-       encode(pgp_sym_decrypt(email, 'changeRequired')::bytea, 'escape')    as email,
-       gender,
-       age,
-       created_at,
-       created_by,
-       modified_at,
-       modified_by
-FROM member;
-
-/** 뷰 TO 테이블 바인딩 **/
-
--- 뷰 insert 함수
-CREATE
-OR REPLACE FUNCTION member_view_insert_trigger()
-    RETURNS TRIGGER AS $$
-BEGIN
-INSERT INTO member (member_no, id, "password", email, gender, age, created_at, created_by, modified_at, modified_by)
-VALUES (nextval('member_member_no_seq'::regclass), NEW.id, pgp_sym_encrypt(NEW.password::TEXT, 'changeRequired'),
-        pgp_sym_encrypt(NEW.email::TEXT, 'changeRequired'), NEW.gender, NEW.age, NEW.created_at, NEW.created_by,
-        NEW.modified_at, NEW.modified_by);
-
-RETURN NEW;
-
-END;
-$$
-LANGUAGE plpgsql;
-
--- 뷰 insert 트리거
-CREATE TRIGGER member_view_insert_trigger
-    INSTEAD OF INSERT
-    ON member_view
-    FOR EACH ROW EXECUTE FUNCTION member_view_insert_trigger();
-
-
--- 뷰 update 함수
-CREATE
-OR REPLACE FUNCTION member_view_update_trigger()
-    RETURNS TRIGGER AS $$
-BEGIN
-UPDATE member
-SET id          = NEW.id,
-    "password"  = pgp_sym_encrypt(NEW.password::TEXT, 'changeRequired'),
-    email       = pgp_sym_encrypt(NEW.email::TEXT, 'changeRequired'),
-    gender      = NEW.gender,
-    age         = NEW.age,
-    created_at  = NEW.created_at,
-    created_by  = NEW.created_by,
-    modified_at = NEW.modified_at,
-    modified_by = NEW.modified_by
-WHERE member_no = NEW.member_no;
-RETURN NEW;
-END;
-$$
-LANGUAGE plpgsql;
-
--- 뷰 update 트리거
-CREATE TRIGGER member_view_update_trigger
-    INSTEAD OF UPDATE
-    ON member_view
-    FOR EACH ROW EXECUTE FUNCTION member_view_update_trigger();
-
-
--- 뷰 delete 함수
-CREATE
-OR REPLACE FUNCTION member_view_delete_trigger()
-    RETURNS TRIGGER AS $$
-BEGIN
-DELETE
-FROM member
-WHERE id = OLD.id;
-RETURN OLD;
-END;
-$$
-LANGUAGE plpgsql;
-
--- 뷰 delete 트리거
-CREATE TRIGGER member_view_delete_trigger
-    INSTEAD OF DELETE
-    ON member_view
-    FOR EACH ROW EXECUTE FUNCTION member_view_delete_trigger();
-
-/** 공통 코드 추가 **/
-
-TRUNCATE TABLE public.common_code;
+-- Insert Into common_code
 
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by)
@@ -116,6 +12,8 @@ VALUES (1, 'carbrand', 0, '', 1, false, '차량 브랜드', '2023-12-28', 'admin
        (32, 'clearcoat', 0, '', 6, true, '차량 페인트 마감', '2023-12-28', 'admin', NULL, NULL),
        (33, 'TRUE', 31, 'clearcoat', 1, true, '있음', '2023-12-28', 'admin', NULL, NULL),
        (34, 'FALSE', 31, 'clearcoat', 2, true, '없음', '2023-12-28', 'admin', NULL, NULL);
+
+
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by)
 VALUES (35, 'driving', 0, '', 7, true, '주행환경', '2023-12-28', 'admin', NULL, NULL),
@@ -128,6 +26,8 @@ VALUES (35, 'driving', 0, '', 7, true, '주행환경', '2023-12-28', 'admin', NU
        (42, 'piloti', 38, 'parking', 3, true, '필로티', '2023-12-28', 'admin', NULL, NULL),
        (43, 'interest', 0, '', 9, true, '주요관심사', '2023-12-28', 'admin', NULL, NULL),
        (48, 'gender', 0, NULL, 10, true, NULL, '2024-01-10', 'admin', NULL, NULL);
+
+
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by)
 VALUES (49, 'man', 48, 'gender', 1, true, '남성', '2024-01-10', 'admin', NULL, NULL),
@@ -140,6 +40,8 @@ VALUES (49, 'man', 48, 'gender', 1, true, '남성', '2024-01-10', 'admin', NULL,
        (51, 'age', 0, NULL, 11, true, '연령대', '2024-01-10', 'admin', NULL, NULL),
        (52, 'AGE_20', 51, 'age', 1, true, '20대 이하', '2024-01-10', 'admin', NULL, NULL),
        (53, 'AGE_30', 51, 'age', 2, true, '30대', '2024-01-10', 'admin', NULL, NULL);
+
+
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by)
 VALUES (54, 'AGE_40', 51, 'age', 3, true, '40대', '2024-01-10', 'admin', NULL, NULL),
@@ -152,6 +54,8 @@ VALUES (54, 'AGE_40', 51, 'age', 3, true, '40대', '2024-01-10', 'admin', NULL, 
        (61, 'month4', 57, 'frequency', 4, true, '월 평균 4회', '2024-01-10', 'admin', NULL, NULL),
        (62, 'cost', 0, NULL, 13, true, '지출비용', '2024-01-10', 'admin', NULL, NULL),
        (63, '1to3', 62, 'cost', 1, true, '월 평균 1~3만원', '2024-01-10', 'admin', NULL, NULL);
+
+
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by)
 VALUES (64, '4to6', 62, 'cost', 2, true, '월 평균 4~6만원', '2024-01-10', 'admin', NULL, NULL),
@@ -164,6 +68,8 @@ VALUES (64, '4to6', 62, 'cost', 2, true, '월 평균 4~6만원', '2024-01-10', '
        (47, 'innercare', 42, 'interest', 4, true, '실내', '2023-12-28', 'admin', NULL, NULL),
        (2, 'hyundai', 1, 'carbrand', 1, false, '현대', '2023-12-28', 'admin', NULL, NULL),
        (3, 'kia', 1, 'carbrand', 2, false, '기아', '2023-12-28', 'admin', NULL, NULL);
+
+
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by)
 VALUES (4, 'renault', 1, 'carbrand', 3, false, '르노', '2023-12-28', 'admin', NULL, NULL),
@@ -176,6 +82,8 @@ VALUES (4, 'renault', 1, 'carbrand', 3, false, '르노', '2023-12-28', 'admin', 
        (11, 'sedan', 10, 'cartype', 1, true, '세단', '2023-12-28', 'admin', NULL, NULL),
        (12, 'hatchback', 10, 'cartype', 2, true, '해치백', '2023-12-28', 'admin', NULL, NULL),
        (13, 'suv', 10, 'cartype', 3, true, 'SUV', '2023-12-28', 'admin', NULL, NULL);
+
+
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by)
 VALUES (14, 'etc', 10, 'cartype', 4, true, '기타', '2023-12-28', 'admin', NULL, NULL),
@@ -185,3 +93,42 @@ VALUES (14, 'etc', 10, 'cartype', 4, true, '기타', '2023-12-28', 'admin', NULL
        (65, '7to9', 62, 'cost', 3, true, '월 평균 7~9만원', '2024-01-10', 'admin', NULL, NULL),
        (66, '10over', 62, 'cost', 4, true, '월 평균 10만원 이상', '2024-01-10', 'admin', NULL, NULL),
        (19, 'fullsize', 15, 'segment', 4, true, '대형', '2023-12-28', 'admin', NULL, NULL);
+
+
+-- Insert Into brand
+
+Insert Into brand (brand_no, brand_name, company_name, nation_name, created_at, created_by)
+VALUES (1, '더클래스', '코스메디슨(CosMedicine)', '대한민국', current_date, 'admin'),
+       (51, '크리스탈 코트', '(주) 불스원', '대한민국', current_date, 'admin'),
+       (101, '불스원', '(주) 불스원', '대한민국', current_date, 'admin'),
+       (151, '글로스브로', '주식회사 제이씨웍스', '대한민국', current_date, 'admin'),
+       (201, '파이어볼', '(주)파이어볼', '대한민국', current_date, 'admin'),
+       (251, '티에이씨시스템', '티에이씨시스템', '대한민국', current_date, 'admin'),
+       (301, '기온테크놀로지', '주식회사 기온테크놀로지(Gyeon Technology)', '대한민국', current_date, 'admin'),
+       (351, '루나틱폴리시', '(주) 불스원', '대한민국', current_date, 'admin'),
+       (401, '젠틀맨', '주식회사 에스피', '대한민국', current_date, 'admin'),
+       (451, '디아만테', '현일', '대한민국', current_date, 'admin'),
+       (501, '(주)오토왁스', '(주)오토왁스', '대한민국', current_date, 'admin'),
+       (551, '라보코스메디카', '주식회사 대흥아이앤씨(INC)', '이탈리아', current_date, 'admin'),
+       (601, '마프라', '주식회사 대흥아이앤씨(INC)', '이탈리아', current_date, 'admin'),
+       (651, '매니악', '주식회사 대흥아이앤씨(INC)', '이탈리아', current_date, 'admin'),
+       (701, 'EXQ', '이엑스큐(EXQ)', '대한민국', current_date, 'admin'),
+       (751, 'EXQ', '이엑스큐(EXQ)', '중국', current_date, 'admin'),
+       (801, '터틀왁스', '(주)에스씨에이', '미국', current_date, 'admin'),
+       (851, '잭스왁스', '주식회사 잭스왁스코리아', '미국', current_date, 'admin'),
+       (901, '오토브라이트', '주식회사 오토브라이트다이렉트코리아(AUTOBRITE DIRECT KOREA CO.,LTD)', '영국', current_date, 'admin'),
+       (951, '블루믹스', '제이웍스 (J-works)', '대한민국', current_date, 'admin'),
+       (1001, '림피오', '림피오(LIMPIO)', '대한민국', current_date, 'admin'),
+       (1051, '좀비', '한국씨앤에스', '대한민국', current_date, 'admin'),
+       (1101, '카프로', '(주)카프로코리아', '대한민국', current_date, 'admin'),
+       (1151, '이지카케어', '발스코리아(주)', '영국', current_date, 'admin'),
+       (1201, '니그린', '(주)다스모터스', '영국', current_date, 'admin'),
+       (1251, '도도쥬스', '주식회사투왁스', '영국', current_date, 'admin'),
+--        (1301, '루미너스', '주식회사 엘엠', '대한민국', current_date, 'admin'),
+       (1351, '소낙스', '(주)알레스', '독일', current_date, 'admin'),
+       (1401, '스마트왁스', '에이큐에이 주식회사', '미국', current_date, 'admin'),
+       (1451, '케미컬가이', '에이큐에이 주식회사', '미국', current_date, 'admin'),
+       (1501, '리바이브', '주식회사 에스피', '영국', current_date, 'admin'),
+       (1551, '보닉스', '대흥아이앤씨', '브라질', current_date, 'admin'),
+       --        (1601, '더클래스', '더클래스', '대한민국', current_date, 'admin'),
+       (1651, '루미너스', '루미너스코리아', '대한민국', current_date, 'admin');
