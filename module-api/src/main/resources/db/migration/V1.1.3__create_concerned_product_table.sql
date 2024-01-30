@@ -1,4 +1,4 @@
-CREATE TABLE if not exists ConcernedProduct
+CREATE TABLE if not exists concerned_product
 (
     prdt_no                    VARCHAR(255) PRIMARY KEY,
     prdt_name                  VARCHAR(255) NOT NULL,

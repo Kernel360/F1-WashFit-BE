@@ -1,9 +1,10 @@
-package com.kernel360.modulebatch.product.job;
+package com.kernel360.modulebatch.product.job.core;
 
 import com.kernel360.brand.entity.Brand;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.ecolife.repository.ReportedProductRepository;
 import com.kernel360.modulebatch.product.dto.ProductDto;
+import com.kernel360.modulebatch.product.job.JpaProductListWriter;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;
@@ -68,7 +69,7 @@ public class ImportProductFromReportedProductJobConfig {
 
         return new StepBuilder("ImportProductFromReportedProductStep", jobRepository)
                 .<Brand, List<Product>>chunk(1, transactionManager)
-                .reader(brandReader())
+                .reader(importProductFromReportedProductBrandReader())
                 .processor(reportedProductToProductListProcessor())
                 .writer(productListWriter())
                 .faultTolerant()
@@ -84,7 +85,7 @@ public class ImportProductFromReportedProductJobConfig {
      */
     @Bean
     @StepScope
-    public JpaPagingItemReader<Brand> brandReader() throws Exception {
+    public JpaPagingItemReader<Brand> importProductFromReportedProductBrandReader() throws Exception {
         JpaPagingItemReader<Brand> itemReader = new JpaPagingItemReader<>();
         itemReader.setPageSize(50);
         itemReader.setEntityManagerFactory(emf);
@@ -100,10 +101,11 @@ public class ImportProductFromReportedProductJobConfig {
     public ItemProcessor<Brand, List<Product>> reportedProductToProductListProcessor() throws Exception {
         return brand -> {
             //-- ReportedProduct 테이블에서 브랜드명과 제조사명으로 제품 검색 --//
+            // TODO :: 해당 회사의 모든 브랜드 명에 매칭되지 않는 브랜드의 경우 default 로 제조사명을 브랜드로 등록하도록 변경(테이블에 브랜드명이 없는 브랜드를 추가?)
             List<ReportedProduct> reportedProductList = reportedProductRepository
                     .findByBrandNameAndCompanyName(
-                            "%" + brand.getCompanyName().replaceAll(" ", "%") + "%",
-                            "%" + brand.getBrandName().replaceAll(" ", "%") + "%"
+                            "%" + brand.getBrandName().replaceAll(" ", "%") + "%",
+                            "%" + brand.getCompanyName().replaceAll(" ", "%") + "%"
                     );
             List<ProductDto> productDtoList = reportedProductList.stream()
                                                                  .filter(rp -> rp.getInspectedOrganization() != null)
@@ -111,8 +113,8 @@ public class ImportProductFromReportedProductJobConfig {
                                                                          null,
                                                                          null,
                                                                          "취하".equals(rp.getRenewType())
-                                                                                 ? SafetyStatus.CONCERN
-                                                                                 : SafetyStatus.SAFE,
+                                                                                 ? SafetyStatus.DANGER
+                                                                                 : SafetyStatus.CONCERN,
                                                                          0,
                                                                          rp.getCompanyName(),
                                                                          rp.getSafetyReportNumber(),
@@ -144,7 +146,7 @@ public class ImportProductFromReportedProductJobConfig {
         List<Product> productList = new ArrayList<>();
 
         for (ProductDto productDto : productDtoList) {
-            Optional<Product> foundProduct = productRepository.findProductByProductNameAndReportNumber(
+            Optional<Product> foundProduct = productRepository.findProductByProductNameAndCompanyName(
                     productDto.productName(), "%" + getCompanyNameWithoutSlash(productDto.companyName()) + "%");
 
             boolean foundInList = productList.stream().anyMatch(
@@ -192,6 +194,7 @@ public class ImportProductFromReportedProductJobConfig {
     }
 
     private static Product generateNewProduct(ProductDto productDto) {
+
         return Product.of(productDto.productName(), productDto.barcode(),
                 productDto.imageSource(), productDto.reportNumber(), String.valueOf(productDto.safetyStatus()),
                 productDto.viewCount(), getCompanyNameWithoutSlash(productDto.companyName()), productDto.productType(),
