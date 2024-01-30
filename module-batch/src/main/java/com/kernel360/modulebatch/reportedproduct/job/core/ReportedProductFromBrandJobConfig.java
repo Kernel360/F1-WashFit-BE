@@ -1,9 +1,9 @@
-package com.kernel360.modulebatch.reportedproduct.job;
+package com.kernel360.modulebatch.reportedproduct.job.core;
 
 import com.kernel360.brand.entity.Brand;
-import com.kernel360.modulebatch.reportedproduct.client.ReportedProductFromBrandClient;
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
-import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
+import com.kernel360.modulebatch.reportedproduct.job.infra.FetchReportedProductListFromBrandItemProcessor;
+import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductListItemWriter;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +27,9 @@ import org.springframework.web.client.ResourceAccessException;
 @RequiredArgsConstructor
 public class ReportedProductFromBrandJobConfig {
 
-    private final ReportedProductFromBrandClient client;
+    private final ReportedProductListItemWriter reportedProductListItemWriter;
 
-    private final ReportedProductService service;
+    private final FetchReportedProductListFromBrandItemProcessor fetchReportedProductListFromBrandItemProcessor;
 
     private final EntityManagerFactory emf;
 
@@ -51,8 +51,8 @@ public class ReportedProductFromBrandJobConfig {
         return new StepBuilder("fetchReportedProductFromBrandStep", jobRepository)
                 .<Brand, List<ReportedProductDto>>chunk(1, transactionManager)
                 .reader(readBrand()) // brand 목록을 읽어와서 전달
-                .processor(itemProcessor()) // 브랜드 정보를 통해서 API 요청, reportedProductDto 리스트 반환
-                .writer(reportedProductListItemWriter())
+                .processor(fetchReportedProductListFromBrandItemProcessor) // 브랜드 정보를 통해서 API 요청, reportedProductDto 리스트 반환
+                .writer(reportedProductListItemWriter)
                 .faultTolerant()
                 .retryLimit(2)
                 .retry(ResourceAccessException.class)
@@ -70,16 +70,4 @@ public class ReportedProductFromBrandJobConfig {
         return jpaPagingItemReader;
     }
 
-
-    @Bean
-    @StepScope
-    public FetchReportedProductListFromBrandItemProcessor itemProcessor() {
-        return new FetchReportedProductListFromBrandItemProcessor(client, service);
-    }
-
-    @Bean
-    @StepScope
-    public ReportedProductListItemWriter reportedProductListItemWriter() {
-        return new ReportedProductListItemWriter(service);
-    }
 }

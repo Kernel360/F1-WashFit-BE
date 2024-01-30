@@ -1,4 +1,4 @@
-package com.kernel360.modulebatch.reportedproduct.job;
+package com.kernel360.modulebatch.reportedproduct.job.infra;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.modulebatch.reportedproduct.client.ReportedProductDetailClient;
@@ -9,8 +9,10 @@ import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 public class ReportedProductDetailItemProcessor implements ItemProcessor<ReportedProduct, ReportedProduct> {
     private final ReportedProductService service;
     private final ReportedProductDetailClient client;

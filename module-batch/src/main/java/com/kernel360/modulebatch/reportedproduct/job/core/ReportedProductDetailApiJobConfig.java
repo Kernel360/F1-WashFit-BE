@@ -1,7 +1,7 @@
-package com.kernel360.modulebatch.reportedproduct.job;
+package com.kernel360.modulebatch.reportedproduct.job.core;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
-import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
+import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductDetailItemProcessor;
 import jakarta.persistence.EntityManagerFactory;
 import java.net.ConnectException;
 import java.nio.channels.ClosedChannelException;
@@ -29,7 +29,8 @@ import org.springframework.web.client.ResourceAccessException;
 @Configuration
 @RequiredArgsConstructor
 public class ReportedProductDetailApiJobConfig {
-    private final ReportedProductService service;
+
+    private final ReportedProductDetailItemProcessor reportedProductDetailItemProcessor;
 
     private final EntityManagerFactory emf;
 
@@ -51,7 +52,7 @@ public class ReportedProductDetailApiJobConfig {
         return new StepBuilder("fetchReportedProductDetailStep", jobRepository)
                 .<ReportedProduct, ReportedProduct>chunk(10, transactionManager)
                 .reader(productDetailItemReader()) // reported_product 테이블 읽어서 엔티티를 전달
-                .processor(productDetailItemProcessor()) // 전달받은 엔티티로 detail 조회, 엔티티로 변환
+                .processor(reportedProductDetailItemProcessor) // 전달받은 엔티티로 detail 조회, 엔티티로 변환
                 .writer(productDetailJpaItemWriter(emf)) // 엔티티를 테이블에 업데이트
                 .faultTolerant()
                 .retryLimit(2)
@@ -72,12 +73,6 @@ public class ReportedProductDetailApiJobConfig {
         reader.setPageSize(1000);
 
         return reader;
-    }
-
-    @Bean
-    @StepScope
-    public ReportedProductDetailItemProcessor productDetailItemProcessor() {
-        return new ReportedProductDetailItemProcessor(service);
     }
 
     @Bean

@@ -1,7 +1,7 @@
 package com.kernel360.modulebatch.product.job.core;
 
 import com.kernel360.brand.entity.Brand;
-import com.kernel360.modulebatch.product.job.JpaProductListWriter;
+import com.kernel360.modulebatch.product.job.infra.JpaProductListWriter;
 import com.kernel360.modulebatch.product.job.infra.ConcernedProductToProductListItemProcessor;
 import com.kernel360.product.entity.Product;
 import jakarta.persistence.EntityManagerFactory;

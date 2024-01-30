@@ -1,7 +1,8 @@
-package com.kernel360.modulebatch.reportedproduct.job;
+package com.kernel360.modulebatch.reportedproduct.job.core;
 
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
-import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
+import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductListItemReader;
+import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductListItemWriter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
@@ -26,7 +26,10 @@ import org.springframework.web.client.ResourceAccessException;
 @RequiredArgsConstructor
 public class ReportedProductApiJobConfig {
 
-    private final ReportedProductService service;
+    private final ReportedProductListItemReader reportedProductListItemReader;
+
+    private final ReportedProductListItemWriter reportedProductListItemWriter;
+
 
     @Bean
     public Job fetchReportedProductJob(JobRepository jobRepository,
@@ -45,28 +48,17 @@ public class ReportedProductApiJobConfig {
     public Step fetchReportedProductListStep(JobRepository jobRepository,
                                              PlatformTransactionManager transactionManager) {
         log.info("Fetch ReportedProduct List Step Build Configuration");
+
         return new StepBuilder("fetchReportedProductListStep", jobRepository)
                 .<List<ReportedProductDto>, List<ReportedProductDto>>chunk(10, transactionManager)
-                .reader(productListItemReader()) // API 요청, 응답을 DTO 리스트로 반환
-                .writer(productListItemWriter()) // DTO 리스트 입력, 저장
+                .reader(reportedProductListItemReader) // API 요청, 응답을 DTO 리스트로 반환
+                .writer(reportedProductListItemWriter) // DTO 리스트 입력, 저장
                 .faultTolerant()
                 .retryLimit(2)
                 .retry(ResourceAccessException.class)
                 .skipLimit(10)
                 .skip(DataIntegrityViolationException.class)
                 .build();
-    }
-
-    @Bean
-    @StepScope
-    public ReportedProductListItemReader productListItemReader() {
-        return new ReportedProductListItemReader(service);
-    }
-
-    @Bean
-    @StepScope
-    public ReportedProductListItemWriter productListItemWriter() {
-        return new ReportedProductListItemWriter(service);
     }
 
     //-- Execution Listener --//
@@ -82,6 +74,5 @@ public class ReportedProductApiJobConfig {
             log.info("{} ends", jobExecution.getJobInstance().getJobName());
         }
     }
-
 
 }
