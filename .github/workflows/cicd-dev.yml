@@ -1,0 +1,79 @@
+name: CI and CD in WashPedia Project
+
+on:
+  push:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Replace SQL Queries
+        run: |
+          sql_dir_path="./module-api/src/main/resources/db/migration"
+          sql_old_text="changeRequired"
+          sql_new_text="${{ secrets.PUBLIC_KEY }}"
+          find "$sql_dir_path" -type f -name "*.sql" -exec sed -i "s|$sql_old_text|$sql_new_text|g" {} +
+      - name: Replace Java Config
+        run: |
+          java_file_path="./module-common/src/main/java/com/kernel360/utils/jasypt/EncryptionConfiguration.java"
+          java_old_text="이 곳에 secret-key를 넣으세요"
+          java_new_text="${{ secrets.PUBLIC_KEY }}"
+          sed -i "s/$java_old_text/$java_new_text/g" $java_file_path
+      - name: Set application yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-api/src/main/resources/application.yml
+        env:
+          spring.profiles.active: "dev"
+
+      - name: Set application-dev yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-api/src/main/resources/application-dev.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USER }}
+          spring.datasource.password: ${{ secrets.DB_PW }}
+
+      - name: Grant execute permission for gradlew
+        working-directory: ./module-api
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        working-directory: ./module-api
+        run: ./gradlew clean build
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Copy JAR file to remote server using SCP
+        run: |
+          cd module-api/build/libs/
+          export PASSWORD="${{ secrets.VULTR_PW }}"
+          sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no -P 22 module-api-0.0.1-SNAPSHOT.jar ${{ secrets.VULTR_USERNAME }}@${{ secrets.VULTR_IP }}:/root
+      # kill 하는 부분이 추가되어야 함 (일단 여기까지 1차 성공 버전)
+      # 다만, 성공하는 건 확인했으니 다음 버전(DockerHub)으로 넘어가는 걸 우선..
+      - name: Application Run on Remote Server
+        run: |
+          export JAR_NAME="module-api-0.0.1-SNAPSHOT.jar"
+          export PASSWORD="${{ secrets.VULTR_PW }}"
+          sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no ${{ secrets.VULTR_USERNAME }}@${{ secrets.VULTR_IP }} \
+          "cd \$HOME && \
+          mkdir -p ./logs && \
+          sleep 10 && \
+          echo "start!" && \
+          nohup java -jar $JAR_NAME >> ./logs/deploy.log 2> ./logs/deploy_err.log & "

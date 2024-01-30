@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PW}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: validate
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    #JPA보다 flyway 우선 실행
+    autoconfigure:
+      exclude: org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+logging:
+  file:
+    path: ./logs/api/
+    name: dev-api-log
+  logback:
+    rollingpolicy:
+      max-history: 14
+      max-file-size: 50MB
+      total-size-cap: 5GB
