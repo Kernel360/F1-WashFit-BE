@@ -77,7 +77,7 @@ jobs:
           host: ${{ secrets.VULTR_IP }}
           username: ${{ secrets.VULTR_USERNAME }}
           password: ${{ secrets.VULTR_PW }}
-          target: ~
+          target: ~/deploy
           script: |
             # Install Docker and Docker Compose
             dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -88,6 +88,7 @@ jobs:
             chmod +x /usr/local/bin/docker-compose
             
             # Docker Compose
+            echo "${{ secrets.DB_INIT_SQL }}" > init.sql
             echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
             docker-compose pull
             docker-compose down
