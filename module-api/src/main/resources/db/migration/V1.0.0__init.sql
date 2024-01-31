@@ -1,16 +1,17 @@
 CREATE TABLE if not exists Common_Code
 (
-    code_no     BIGINT  NOT NULL,
-    code_name   varchar NOT NULL,
-    upper_no    BIGINT  NULL,
-    upper_name  varchar NULL,
-    sort_order  int4    NOT NULL,
-    is_used     bool    NOT NULL DEFAULT true,
-    description varchar NULL,
-    created_at  date    NOT NULL,
-    created_by  varchar NOT NULL,
-    modified_at date    NULL,
-    modified_by varchar NULL
+    code_no         BIGINT  NOT NULL,
+    code_name       varchar NOT NULL,
+    upper_no        BIGINT  NULL,
+    upper_name      varchar NULL,
+    sort_order      int4    NOT NULL,
+    is_used         bool    NOT NULL DEFAULT true,
+    description     varchar NULL,
+    sub_description varchar null,
+    created_at      date    NOT NULL,
+    created_by      varchar NOT NULL,
+    modified_at     date    NULL,
+    modified_by     varchar NULL
 );
 
 
@@ -30,8 +31,8 @@ CREATE TABLE if not exists Auth
 CREATE TABLE if not exists Member
 (
     member_no   BIGSERIAL PRIMARY KEY,
-    id          VARCHAR NOT NULL,
-    email       BYTEA   NOT NULL,
+    id          VARCHAR NOT NULL UNIQUE,
+    email       BYTEA   NOT NULL UNIQUE,
     password    BYTEA   NOT NULL,
     gender      int,
     age         int,
@@ -48,9 +49,7 @@ CREATE TABLE if not exists Wash_Info
     member_no       BIGINT  NOT NULL,
     wash_count      INT,
     monthly_expense INT,
-    interest        CHAR,
-    driving_env     CHAR,
-    parking_env     CHAR,
+    interest        INT,
     created_at      DATE    NOT NULL,
     created_by      VARCHAR NOT NULL,
     modified_at     DATE,
@@ -68,6 +67,8 @@ CREATE TABLE if not exists Car_Info
     car_size    CHAR,
     pearl       BOOLEAN,
     clear_coat  BOOLEAN,
+    driving_env CHAR,
+    parking_env CHAR,
     created_at  DATE    NOT NULL,
     created_by  VARCHAR NOT NULL,
     modified_at DATE,
