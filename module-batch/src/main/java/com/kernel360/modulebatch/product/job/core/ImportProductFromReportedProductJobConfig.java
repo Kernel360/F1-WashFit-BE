@@ -1,17 +1,18 @@
 package com.kernel360.modulebatch.product.job.core;
 
-import com.kernel360.brand.entity.Brand;
-import com.kernel360.modulebatch.product.job.infra.JpaProductListWriter;
-import com.kernel360.modulebatch.product.job.infra.ReportedProductToProductListProcessor;
+import com.kernel360.ecolife.entity.ReportedProduct;
+import com.kernel360.modulebatch.product.job.infra.ReportedProductToProductItemProcessor;
 import com.kernel360.product.entity.Product;
 import jakarta.persistence.EntityManagerFactory;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -20,6 +21,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.batch.item.database.orm.JpaNativeQueryProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +36,7 @@ import org.springframework.web.client.ResourceAccessException;
 @RequiredArgsConstructor
 public class ImportProductFromReportedProductJobConfig {
 
-    private final ReportedProductToProductListProcessor reportedProductToProductListProcessor;
+    private final ReportedProductToProductItemProcessor reportedProductToProductItemProcessor;
 
     private final EntityManagerFactory emf;
 
@@ -44,7 +48,7 @@ public class ImportProductFromReportedProductJobConfig {
         return new JobBuilder("ImportProductFromReportedProductJob", jobRepository)
                 .start(importProductFromReportedProductStep)
                 .incrementer(new RunIdIncrementer())
-                .listener(new ImportProductFromReportedProductListener())
+                .listener(new ImportProductFromReportedProductJobListener())
                 .build();
     }
 
@@ -55,10 +59,11 @@ public class ImportProductFromReportedProductJobConfig {
         log.info("Import Product from ReportedProduct by Brand Step Build Configuration");
 
         return new StepBuilder("ImportProductFromReportedProductStep", jobRepository)
-                .<Brand, List<Product>>chunk(100, transactionManager)
-                .reader(importProductFromReportedProductBrandReader())
-                .processor(reportedProductToProductListProcessor)
-                .writer(productListWriter())
+                .<ReportedProduct, Product>chunk(100, transactionManager)
+                .listener(new ImportProductFromReportedProductStepListener())
+                .reader(importProductFromReportedProductItemReader())
+                .processor(reportedProductToProductItemProcessor)
+                .writer(productJpaItemWriter())
                 .faultTolerant()
                 .retryLimit(2)
                 .retry(ResourceAccessException.class)
@@ -67,36 +72,38 @@ public class ImportProductFromReportedProductJobConfig {
                 .build();
     }
 
-    /**
-     * @return Brand 를 읽어오는 JpaPagingReader
-     */
     @Bean
     @StepScope
-    public JpaPagingItemReader<Brand> importProductFromReportedProductBrandReader() throws Exception {
-        JpaPagingItemReader<Brand> itemReader = new JpaPagingItemReader<>();
-        itemReader.setPageSize(50);
-        itemReader.setEntityManagerFactory(emf);
-        itemReader.setQueryString("select b from Brand b");
-        itemReader.setName("jpaPagingBrandReader");
-        itemReader.afterPropertiesSet();
+    public JpaPagingItemReader<ReportedProduct> importProductFromReportedProductItemReader() throws Exception {
+        String sqlQuery = "SELECT rp.* FROM reported_product rp "
+                + "JOIN (SELECT prdt_nm, MAX(issu_date) AS max_issu_date "
+                + "FROM reported_product GROUP BY prdt_nm) max_dates "
+                + "ON rp.prdt_nm = max_dates.prdt_nm AND rp.issu_date = max_dates.max_issu_date "
+                + "ORDER BY max_dates.max_issu_date DESC";
+        JpaNativeQueryProvider<ReportedProduct> queryProvider = new JpaNativeQueryProvider<>();
+        queryProvider.setSqlQuery(sqlQuery);
+        queryProvider.setEntityClass(ReportedProduct.class);
+        queryProvider.afterPropertiesSet();
 
-        return itemReader;
+        return new JpaPagingItemReaderBuilder<ReportedProduct>()
+                .name("importProductFromReportedProductItemReader")
+                .pageSize(100)
+                .queryProvider(queryProvider)
+                .entityManagerFactory(emf)
+                .build();
     }
 
-
-    /**
-     * List 를 저장하기 위한 JpaListWriter. 컴포지트 패턴과 유사하게 구현함.
-     */
-    private JpaProductListWriter<Product> productListWriter() {
-        JpaItemWriter<Product> writer = new JpaItemWriter<>();
-        writer.setEntityManagerFactory(emf);
-
-        return new JpaProductListWriter<>(writer);
+    @Bean
+    @StepScope
+    public JpaItemWriter<Product> productJpaItemWriter() {
+        return new JpaItemWriterBuilder<Product>()
+                .entityManagerFactory(emf)
+                .build();
     }
 
 //-- Execution Listener --//
 
-    public static class ImportProductFromReportedProductListener implements JobExecutionListener {
+    public static class ImportProductFromReportedProductJobListener implements JobExecutionListener {
         @Override
         public void beforeJob(JobExecution jobExecution) {
             log.info("{} starts", jobExecution.getJobInstance().getJobName());
@@ -105,6 +112,19 @@ public class ImportProductFromReportedProductJobConfig {
         @Override
         public void afterJob(JobExecution jobExecution) {
             log.info("{} ends", jobExecution.getJobInstance().getJobName());
+        }
+    }
+
+    public static class ImportProductFromReportedProductStepListener implements StepExecutionListener {
+        @Override
+        public void beforeStep(StepExecution stepExecution) {
+            log.info("{} starts", stepExecution.getStepName());
+        }
+
+        @Override
+        public ExitStatus afterStep(StepExecution stepExecution) {
+            log.info("{} ends", stepExecution.getStepName());
+            return stepExecution.getExitStatus();
         }
     }
 
