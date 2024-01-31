@@ -48,9 +48,7 @@ CREATE TABLE if not exists Wash_Info
     member_no       BIGINT  NOT NULL,
     wash_count      INT,
     monthly_expense INT,
-    interest        CHAR,
-    driving_env     CHAR,
-    parking_env     CHAR,
+    interest        INT,
     created_at      DATE    NOT NULL,
     created_by      VARCHAR NOT NULL,
     modified_at     DATE,
@@ -68,6 +66,8 @@ CREATE TABLE if not exists Car_Info
     car_size    CHAR,
     pearl       BOOLEAN,
     clear_coat  BOOLEAN,
+    driving_env CHAR,
+    parking_env CHAR,
     created_at  DATE    NOT NULL,
     created_by  VARCHAR NOT NULL,
     modified_at DATE,
@@ -92,7 +92,7 @@ CREATE TABLE if not exists Brand
 
 CREATE TABLE if not exists product
 (
-    product_no                 BIGSERIAL    NOT NULL,
+    product_no                 BIGSERIAL PRIMARY KEY,
     created_at                 date         NOT NULL,
     created_by                 VARCHAR(255) NOT NULL,
     modified_at                date,
