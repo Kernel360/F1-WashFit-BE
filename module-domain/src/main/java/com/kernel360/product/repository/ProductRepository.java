@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query(value = "SELECT * FROM Product WHERE product_name LIKE CONCAT('%', :keyword, '%') OR barcode LIKE CONCAT('%', :keyword, '%') OR description LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
-    List<Product> findByKeyword(@Param("keyword") String keyword);
+    List<Product> findByProductNameContaining(String keyword);
 
     List<Product> findAllByOrderByViewCountDesc();
 
@@ -26,6 +25,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT p FROM Product p WHERE p.productName = :productName "
             + "AND p.companyName like :companyName")
-    Optional<Product> findProductByProductNameAndReportNumber(@Param("productName") String productName,
-                                                              @Param("companyName") String companyName);
+    Optional<Product> findProductByProductNameAndCompanyName(@Param("productName") String productName,
+                                                             @Param("companyName") String companyName);
 }

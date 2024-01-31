@@ -2,7 +2,7 @@ package com.kernel360.modulebatch.job;
 
 import static org.mockito.Mockito.mock;
 
-import com.kernel360.modulebatch.reportedproduct.job.ReportedProductApiJobConfig;
+import com.kernel360.modulebatch.reportedproduct.job.core.ReportedProductApiJobConfig;
 import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

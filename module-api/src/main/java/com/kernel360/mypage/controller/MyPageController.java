@@ -1,61 +1,64 @@
 package com.kernel360.mypage.controller;
 
+import com.kernel360.member.code.MemberBusinessCode;
 import com.kernel360.member.dto.MemberDto;
+import com.kernel360.member.dto.MemberInfo;
 import com.kernel360.member.service.MemberService;
-import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.service.ProductService;
+import com.kernel360.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
-
+@Slf4j
 @RestController
 @RequestMapping("/mypage")
 @RequiredArgsConstructor
 public class MyPageController {
     private final MemberService memberService;
     private final ProductService productService;
-    @GetMapping("/main")
-    ResponseEntity<Model> main(Model model) {
-        List<ProductDto> productDtoList = productService.getProductListOrderByViewCount();
-        String bannerImageUrl = "http://localhost:8080/bannersample.png";
-        String suggestImageUrl = "http://localhost:8080/suggestsample.png";
-
-        model.addAllAttributes(Map.of("Banner" , bannerImageUrl,
-                                    "Suggest", suggestImageUrl,
-                                    "Product", productDtoList));
-
-        return ResponseEntity.status(HttpStatus.OK).body(model);
-    }
 
     @GetMapping("/member")
-    ResponseEntity<String> myInfo() {
-        return ResponseEntity.status(HttpStatus.OK).body("mypage 내정보 page입니다.");
+    <T> ResponseEntity<ApiResponse<MemberDto>> myInfo(RequestEntity<T> request) {
+        MemberDto dto = memberService.findMemberByToken(request);
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_REQUEST_MEMBER, dto);
     }
 
     @GetMapping("/car")
-    ResponseEntity<String> myCar() {
-        return ResponseEntity.status(HttpStatus.OK).body("mypage 차량정보 page입니다.");
+    <T> ResponseEntity<ApiResponse<Map<String, Object>>> myCar(RequestEntity<T> request) {
+        Map<String, Object> carInfo = memberService.getCarInfo(request);
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_CAR_INFO_IN_MEMBER, carInfo);
     }
+
 
     @DeleteMapping("/member")
-    ResponseEntity<String> memberDelete(@RequestBody MemberDto memberDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberDto.id() + " 회원이 탈퇴되었습니다.");
+    <T> ResponseEntity<ApiResponse<T>> memberDelete(@RequestBody MemberDto memberDto) {
+        memberService.deleteMember(memberDto.id());
+        log.info("{} 회원 탈퇴 처리 완료", memberDto.id());
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_DELETE_MEMBER);
     }
+
 
     @PostMapping("/member")
-    ResponseEntity<String> memberInfoAdd(@RequestBody MemberDto memberDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberDto.id() + "회원의 회원정보가 추가되었습니다.");
+    <T> ResponseEntity<ApiResponse<T>> changePassword(@RequestBody MemberInfo memberInfo) {
+        memberService.changePassword(memberInfo);
+        log.info("{} 회원 비밀번호 수정 처리 완료", memberInfo.id() );
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_CHANGE_PASSWORD_MEMBER);
     }
 
-    @PatchMapping("/member")
-    ResponseEntity<String> changePassword(@RequestBody MemberDto memberDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberDto.id() + "회원의 비밀번호가 변경 되었습니다.");
+
+    @PutMapping("/member")
+    <T> ResponseEntity<ApiResponse<T>> updateMember(@RequestBody MemberDto memberDto) {
+        memberService.updateMember(memberDto);
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_MEMBER);
+
     }
-
-
 }

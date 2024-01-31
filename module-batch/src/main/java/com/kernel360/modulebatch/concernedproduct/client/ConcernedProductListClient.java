@@ -19,11 +19,14 @@ public class ConcernedProductListClient {
 
     @Value("${external.ecolife-api.service-key}")
     private String AUTH_KEY;
+
     private final RestClient restClient;
+
     public ConcernedProductListClient() {
         this.restClient = RestClient.builder()
                                     .build();
     }
+
     public String getXmlResponse(Brand brand, Long pageNumber) {
         return restClient.post().uri(buildUri(brand, pageNumber))
                          .accept(MediaType.APPLICATION_XML)

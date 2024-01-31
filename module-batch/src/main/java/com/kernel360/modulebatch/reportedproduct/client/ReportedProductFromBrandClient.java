@@ -3,6 +3,7 @@ package com.kernel360.modulebatch.reportedproduct.client;
 import com.kernel360.brand.entity.Brand;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class ReportedProductFromBrandClient{
 
-    private static final String AUTH_KEY = System.getenv("API_AUTH_KEY");
+    @Value("${external.ecolife-api.path}")
+    private String BASE_PATH;
+
+    @Value("${external.ecolife-api.service-key}")
+    private String AUTH_KEY;
 
     private final RestClient restClient;
 
@@ -55,7 +60,7 @@ public class ReportedProductFromBrandClient{
 
 
     public String buildUri(Brand brand, int pageNumber) {
-        return UriComponentsBuilder.fromHttpUrl("https://ecolife.me.go.kr/openapi/ServiceSvl")
+        return UriComponentsBuilder.fromHttpUrl(BASE_PATH)
                                    .queryParam("AuthKey", AUTH_KEY)
                                    .queryParam("ServiceName", "slfsfcfst02List")
                                    .queryParam("PageCount", "20")

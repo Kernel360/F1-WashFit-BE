@@ -3,6 +3,7 @@ package com.kernel360.modulebatch.reportedproduct.client;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class ReportedProductDetailClient implements ApiClient<ReportedProduct> {
 
-    private static final String AUTH_KEY = System.getenv("API_AUTH_KEY");
+    @Value("${external.ecolife-api.path}")
+    private String BASE_PATH;
+
+    @Value("${external.ecolife-api.service-key}")
+    private String AUTH_KEY;
 
     private final RestClient restClient;
 
@@ -56,7 +61,7 @@ public class ReportedProductDetailClient implements ApiClient<ReportedProduct> {
     @Override
     public String buildUri(ReportedProduct reportedProduct) {
 
-        return UriComponentsBuilder.fromHttpUrl("https://ecolife.me.go.kr/openapi/ServiceSvl")
+        return UriComponentsBuilder.fromHttpUrl(BASE_PATH)
                                    .queryParam("AuthKey", AUTH_KEY)
                                    .queryParam("ServiceName", "slfsfcfst02Detail")
                                    .queryParam("mstId", reportedProduct.getId().getProductMasterId())

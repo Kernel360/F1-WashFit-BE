@@ -39,14 +39,17 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductDto> getProductListByKeyword(String keyword) {
-        List<Product> products = productRepository.findByKeyword(keyword);
+        List<Product> products = productRepository.
+                findByProductNameContaining(keyword);
 
         return products.stream().map(ProductDto::from).toList();
     }
 
     @Transactional(readOnly = true)
     public List<ProductDto> getProductListOrderByViewCount() {
-        List<Product> products = productRepository.findAllByOrderByViewCountDesc();
+        List<Product> products = productRepository.findTop5ByOrderByProductNameDesc();
+//        List<Product> products = productRepository.findAllByOrderByViewCountDesc();
+        //FIXME:: viewCount 값이 존재하지 않아,제품이룸순 데이터를 샘플로 전달한 후 향후 변경
 
         return products.stream().map(ProductDto::from).toList();
     }

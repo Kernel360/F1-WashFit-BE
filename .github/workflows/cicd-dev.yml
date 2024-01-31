@@ -1,0 +1,124 @@
+name: CI and CD in WashPedia Project
+
+on:
+  push:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Replace SQL Queries
+        run: |
+          sql_dir_path="./module-api/src/main/resources/db/migration"
+          sql_old_text="changeRequired"
+          sql_new_text="${{ secrets.PUBLIC_KEY }}"
+          find "$sql_dir_path" -type f -name "*.sql" -exec sed -i "s|$sql_old_text|$sql_new_text|g" {} +
+
+      - name: Replace Java Config
+        run: |
+          java_file_path="./module-common/src/main/java/com/kernel360/utils/jasypt/EncryptionConfiguration.java"
+          java_old_text="이 곳에 secret-key를 넣으세요"
+          java_new_text="${{ secrets.PUBLIC_KEY }}"
+          sed -i "s/$java_old_text/$java_new_text/g" $java_file_path
+
+      - name: Set application yml file (api)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-api/src/main/resources/application.yml
+        env:
+          spring.profiles.active: "dev"
+
+      - name: Set application yml file (batch)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-batch/src/main/resources/application.yml
+        env:
+          spring.profiles.active: "dev"
+
+      - name: Set application-dev yml file (api)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-api/src/main/resources/application-dev.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USER }}
+          spring.datasource.password: ${{ secrets.DB_PW }}
+
+      - name: Set application-dev yml file (batch)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-batch/src/main/resources/application-dev.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USER }}
+          spring.datasource.password: ${{ secrets.DB_PW }}
+          external.ecolife-api.path: ${{ secrets.ECOLIFE_PATH }}
+          external.ecolife-api.service-key: ${{ secrets.ECOLIFE_KEY }}
+
+      - name: Grant execute permission And Build with Gradle (api)
+        working-directory: ./module-api
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: Grant execute permission And Build with Gradle (batch)
+        working-directory: ./module-batch
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: DockerHub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Docker Image Build And Push (api)
+        working-directory: ./module-api
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_API_NAME }} . --platform=linux/amd64
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_API_NAME }}
+
+      - name: Docker Image Build And Push (batch)
+        working-directory: ./module-batch
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_BATCH_NAME }} . --platform=linux/amd64
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_BATCH_NAME }}
+
+      - name: Application Run
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VULTR_IP }}
+          username: ${{ secrets.VULTR_USERNAME }}
+          password: ${{ secrets.VULTR_PW }}
+          script: |
+            # Install Docker and Docker Compose
+            dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+            dnf install -y docker-ce docker-ce-cli containerd.io
+            systemctl start docker
+            systemctl enable docker
+            curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+            
+            # Docker Compose
+            mkdir -p deploy
+            cd deploy
+            echo "${{ secrets.DB_INIT_SQL }}" > init.sql
+            echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
