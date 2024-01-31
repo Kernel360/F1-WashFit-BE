@@ -36,9 +36,4 @@ public class Brand extends BaseEntity {
 
     @Column(name = "nation_name", length = Integer.MAX_VALUE)
     private String nationName;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "brand")
-    private List<Product> productList = new ArrayList<>();
-
-
 }
