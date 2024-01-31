@@ -1,8 +1,8 @@
 package com.kernel360.commoncode.service;
 
 import com.kernel360.commoncode.dto.CommonCodeDto;
-import com.kernel360.commoncode.entity.CommonCode;
-import com.kernel360.commoncode.repository.CommonCodeRepository;
+import com.kernel360.entity.commoncode.CommonCode;
+import com.kernel360.infra.commoncode.CommonCodeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ class CommonCodeServiceTest {
     private CommonCodeRepository commonCodeRepository;
 
     @InjectMocks
-    private CommonCodeService commonCodeService;
+    private CommonCodeServiceImpl commonCodeServiceImpl;
 
     @Test
     @DisplayName("getCodes :: 8개를 지닌 List 조회")
@@ -47,7 +47,7 @@ class CommonCodeServiceTest {
         when(commonCodeRepository.findAllByUpperNameAndIsUsed(anyString(),anyBoolean())).thenReturn(entities);
 
         /** when **/
-        List<CommonCodeDto> test = commonCodeService.getCodes(codeName);
+        List<CommonCodeDto> test = commonCodeServiceImpl.getCodes(codeName);
 
         /** then **/
         assertEquals(8,test.size());

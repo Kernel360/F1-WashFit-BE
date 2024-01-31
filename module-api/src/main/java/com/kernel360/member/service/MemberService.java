@@ -3,7 +3,7 @@ package com.kernel360.member.service;
 import com.kernel360.auth.entity.Auth;
 import com.kernel360.auth.repository.AuthRepository;
 import com.kernel360.carinfo.entity.CarInfo;
-import com.kernel360.commoncode.service.CommonCodeService;
+import com.kernel360.commoncode.service.CommonCodeServiceImpl;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.MemberDto;
@@ -32,7 +32,7 @@ public class MemberService {
     private final JWT jwt;
     private final AuthRepository authRepository;
     private final MemberRepository memberRepository;
-    private final CommonCodeService commonCodeService;
+    private final CommonCodeServiceImpl commonCodeServiceImpl;
 
 
     /**
@@ -185,11 +185,11 @@ public class MemberService {
 
         return Map.of(
 //                "car_info", carInfo,
-                "segment_options", commonCodeService.getCodes("segment"),
-                "carType_options", commonCodeService.getCodes("cartype"),
-                "color_options", commonCodeService.getCodes("color"),
-                "driving_options", commonCodeService.getCodes("driving"),
-                "parking_options", commonCodeService.getCodes("parking")
+                "segment_options", commonCodeServiceImpl.getCodes("segment"),
+                "carType_options", commonCodeServiceImpl.getCodes("cartype"),
+                "color_options", commonCodeServiceImpl.getCodes("color"),
+                "driving_options", commonCodeServiceImpl.getCodes("driving"),
+                "parking_options", commonCodeServiceImpl.getCodes("parking")
         );
     }
 }

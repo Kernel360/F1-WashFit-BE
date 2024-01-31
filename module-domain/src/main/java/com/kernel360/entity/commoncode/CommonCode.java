@@ -1,4 +1,4 @@
-package com.kernel360.commoncode.entity;
+package com.kernel360.entity.commoncode;
 
 import com.kernel360.base.BaseEntity;
 import jakarta.persistence.Column;

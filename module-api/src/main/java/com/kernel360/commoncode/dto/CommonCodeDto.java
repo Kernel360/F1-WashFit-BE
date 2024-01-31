@@ -1,11 +1,11 @@
 package com.kernel360.commoncode.dto;
 
-import com.kernel360.commoncode.entity.CommonCode;
+import com.kernel360.entity.commoncode.CommonCode;
 
 import java.time.LocalDate;
 
 /**
- * DTO for {@link com.kernel360.commoncode.entity.CommonCode}
+ * DTO for {@link CommonCode}
  */
 public record CommonCodeDto(Long codeNo,
                             String codeName,

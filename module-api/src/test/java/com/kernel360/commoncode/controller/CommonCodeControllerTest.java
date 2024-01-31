@@ -33,7 +33,7 @@ class CommonCodeControllerTest extends ControllerTest {
 
         CommonCodeDto item = CommonCodeDto.of(codeNo,codeName,upperNo,upperName,sortOrder,isUsed,description,createdAt,createdBy,modifiedAt,modifiedBy);
 
-        given(commonCodeService.getCodes(pathVariable)).willReturn(Collections.singletonList(item));
+        given(commonCodeServiceImpl.getCodes(pathVariable)).willReturn(Collections.singletonList(item));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/commoncode/{codeName}", pathVariable))
                .andExpect(MockMvcResultMatchers.status().isOk())

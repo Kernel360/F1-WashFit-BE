@@ -53,7 +53,7 @@ class CommonCodeControllerRestDocsTest extends ControllerTest {
         );
 
         String pathVariable = "color";
-        given(commonCodeService.getCodes(pathVariable)).willReturn(responseList);
+        given(commonCodeServiceImpl.getCodes(pathVariable)).willReturn(responseList);
 
 
         //when

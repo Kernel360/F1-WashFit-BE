@@ -1,6 +1,6 @@
-package com.kernel360.commoncode.repository;
+package com.kernel360.infra.commoncode;
 
-import com.kernel360.commoncode.entity.CommonCode;
+import com.kernel360.entity.commoncode.CommonCode;
 import jakarta.persistence.Id;
 import org.springframework.data.jpa.repository.JpaRepository;
 
