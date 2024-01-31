@@ -1,16 +1,17 @@
 CREATE TABLE if not exists Common_Code
 (
-    code_no     BIGINT  NOT NULL,
-    code_name   varchar NOT NULL,
-    upper_no    BIGINT  NULL,
-    upper_name  varchar NULL,
-    sort_order  int4    NOT NULL,
-    is_used     bool    NOT NULL DEFAULT true,
-    description varchar NULL,
-    created_at  date    NOT NULL,
-    created_by  varchar NOT NULL,
-    modified_at date    NULL,
-    modified_by varchar NULL
+    code_no         BIGINT  NOT NULL,
+    code_name       varchar NOT NULL,
+    upper_no        BIGINT  NULL,
+    upper_name      varchar NULL,
+    sort_order      int4    NOT NULL,
+    is_used         bool    NOT NULL DEFAULT true,
+    description     varchar NULL,
+    sub_description varchar null,
+    created_at      date    NOT NULL,
+    created_by      varchar NOT NULL,
+    modified_at     date    NULL,
+    modified_by     varchar NULL
 );
 
 
@@ -30,8 +31,8 @@ CREATE TABLE if not exists Auth
 CREATE TABLE if not exists Member
 (
     member_no   BIGSERIAL PRIMARY KEY,
-    id          VARCHAR NOT NULL,
-    email       BYTEA   NOT NULL,
+    id          VARCHAR NOT NULL UNIQUE,
+    email       BYTEA   NOT NULL UNIQUE,
     password    BYTEA   NOT NULL,
     gender      int,
     age         int,
@@ -48,9 +49,7 @@ CREATE TABLE if not exists Wash_Info
     member_no       BIGINT  NOT NULL,
     wash_count      INT,
     monthly_expense INT,
-    interest        CHAR,
-    driving_env     CHAR,
-    parking_env     CHAR,
+    interest        INT,
     created_at      DATE    NOT NULL,
     created_by      VARCHAR NOT NULL,
     modified_at     DATE,
@@ -63,11 +62,11 @@ CREATE TABLE if not exists Car_Info
 (
     car_no      BIGSERIAL PRIMARY KEY,
     member_no   BIGINT  NOT NULL,
-    car_brand   CHAR,
-    car_type    CHAR,
-    car_size    CHAR,
-    pearl       BOOLEAN,
-    clear_coat  BOOLEAN,
+    car_type    INT,
+    car_size    INT,
+    car_color   INT,
+    driving_env INT,
+    parking_env INT,
     created_at  DATE    NOT NULL,
     created_by  VARCHAR NOT NULL,
     modified_at DATE,
@@ -92,7 +91,7 @@ CREATE TABLE if not exists Brand
 
 CREATE TABLE if not exists product
 (
-    product_no                 BIGSERIAL    NOT NULL,
+    product_no                 BIGSERIAL    PRIMARY KEY,
     created_at                 date         NOT NULL,
     created_by                 VARCHAR(255) NOT NULL,
     modified_at                date,
@@ -123,12 +122,7 @@ CREATE TABLE if not exists product
     fluorescent_whitening      TEXT,
     manufacture_type           VARCHAR(255),
     manufacture_method         VARCHAR(255),
-    -- 나중에 아래 2줄 삭제 버전으로 다시 올릴 예정
-    brand_no                   BIGINT,
-    FOREIGN KEY (brand_no) REFERENCES Brand (brand_no)
-    -- 위 2줄 삭제할 때, 아래 2줄 주석 해제해야 함
-    -- distribute_limit           VARCHAR(255), -- 유통기한 추가, 이 값이 NULL 이면 아직 출시하지 않은 제품 --
-    -- violation_info             VARCHAR(255) -- 위반 여부 정보 별첨, 이 값이 있으면 주의해야 할 제품 --
+    violation_info             VARCHAR(255) -- 위반 여부 정보 별첨, 이 값이 있으면 주의해야 할 제품 --
 );
 
 
