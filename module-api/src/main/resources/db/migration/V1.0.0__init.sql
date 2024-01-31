@@ -93,7 +93,7 @@ CREATE TABLE if not exists Brand
 
 CREATE TABLE if not exists product
 (
-    product_no                 BIGSERIAL PRIMARY KEY,
+    product_no                 BIGSERIAL    PRIMARY KEY,
     created_at                 date         NOT NULL,
     created_by                 VARCHAR(255) NOT NULL,
     modified_at                date,
@@ -124,12 +124,7 @@ CREATE TABLE if not exists product
     fluorescent_whitening      TEXT,
     manufacture_type           VARCHAR(255),
     manufacture_method         VARCHAR(255),
-    -- 나중에 아래 2줄 삭제 버전으로 다시 올릴 예정
-    brand_no                   BIGINT,
-    FOREIGN KEY (brand_no) REFERENCES Brand (brand_no)
-    -- 위 2줄 삭제할 때, 아래 2줄 주석 해제해야 함
-    -- distribute_limit           VARCHAR(255), -- 유통기한 추가, 이 값이 NULL 이면 아직 출시하지 않은 제품 --
-    -- violation_info             VARCHAR(255) -- 위반 여부 정보 별첨, 이 값이 있으면 주의해야 할 제품 --
+    violation_info             VARCHAR(255) -- 위반 여부 정보 별첨, 이 값이 있으면 주의해야 할 제품 --
 );
 
 

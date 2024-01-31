@@ -1,14 +1,11 @@
 package com.kernel360.product.entity;
 
 import com.kernel360.base.BaseEntity;
-import com.kernel360.brand.entity.Brand;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
@@ -110,9 +107,8 @@ public class Product extends BaseEntity {
     @Column(name = "manufacture_method")
     private String manufactureMethod;
 
-    @ManyToOne
-    @JoinColumn(name = "brand_no")
-    private Brand brand;
+    @Column(name = "violation_info")
+    private String violationInfo;
 
 
     private Product(
@@ -142,7 +138,7 @@ public class Product extends BaseEntity {
             String manufactureType,
             String manufactureMethod,
             String manufactureNation,
-            Brand brand
+            String violationInfo
     ) {
         this.productName = productName;
         this.barcode = barcode;
@@ -150,7 +146,6 @@ public class Product extends BaseEntity {
         this.reportNumber = reportNumber;
         this.safetyStatus = SafetyStatus.valueOf(safetyStatus);
         this.viewCount = viewCount;
-        this.brand = brand;
         this.companyName = companyName;
         this.productType = productType;
         this.issuedDate = issuedDate;
@@ -171,6 +166,7 @@ public class Product extends BaseEntity {
         this.manufactureType = manufactureType;
         this.manufactureMethod = manufactureMethod;
         this.manufactureNation = manufactureNation;
+        this.violationInfo = violationInfo;
     }
 
     public static Product of(String productName,
@@ -199,12 +195,13 @@ public class Product extends BaseEntity {
                              String manufactureType,
                              String manufactureMethod,
                              String manufactureNation,
-                             Brand brand) {
+                             String violation_info
+    ) {
         return new Product(productName, barcode, imageSource, reportNumber, safetyStatus, viewCount, companyName,
                 productType, issuedDate, safetyInspectionStandard, upperItem,
                 item, propose, weight, usage, usagePrecaution, firstAid, mainSubstance, allergicSubstance,
                 otherSubstance, preservative, surfactant,
-                fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, brand);
+                fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, violation_info);
     }
 
     public void updateDetail(
@@ -230,7 +227,8 @@ public class Product extends BaseEntity {
             String manufactureType,
             String manufactureMethod,
             String manufactureNation,
-            Brand brand) {
+            String violationInfo
+    ) {
         this.barcode = barcode;
         this.image = imageSource;
         this.reportNumber = reportNumber;
@@ -253,7 +251,7 @@ public class Product extends BaseEntity {
         this.manufactureType = manufactureType;
         this.manufactureMethod = manufactureMethod;
         this.manufactureNation = manufactureNation;
-        this.brand = brand;
+        this.violationInfo = violationInfo;
     }
 
 }

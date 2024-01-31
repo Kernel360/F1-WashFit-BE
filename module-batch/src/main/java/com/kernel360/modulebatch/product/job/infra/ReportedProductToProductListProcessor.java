@@ -2,16 +2,18 @@ package com.kernel360.modulebatch.product.job.infra;
 
 import com.kernel360.brand.entity.Brand;
 import com.kernel360.brand.repository.BrandRepository;
-import com.kernel360.ecolife.entity.ConcernedProduct;
-import com.kernel360.ecolife.repository.ConcernedProductRepository;
+import com.kernel360.ecolife.entity.ReportedProduct;
+import com.kernel360.ecolife.repository.ReportedProductRepository;
 import com.kernel360.modulebatch.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -22,49 +24,63 @@ import org.springframework.stereotype.Component;
 @Component
 @StepScope
 @RequiredArgsConstructor
-public class ConcernedProductToProductListItemProcessor implements ItemProcessor<Brand, List<Product>> {
+public class ReportedProductToProductListProcessor implements ItemProcessor<Brand, List<Product>> {
 
-    private final ConcernedProductRepository concernedProductRepository;
+    private final ReportedProductRepository reportedProductRepository;
 
     private final ProductRepository productRepository;
 
     private final BrandRepository brandRepository;
 
+    @PostConstruct
+    public void postConstruct() {
+        log.info("ReportedProductToProductListProcessor postConstruct with productRepository: "
+                + productRepository.getClass());
+    }
+
     @Override
     public List<Product> process(Brand brand) throws Exception {
-        List<ConcernedProduct> concernedProductList = concernedProductRepository
+        List<ReportedProduct> reportedProductList = reportedProductRepository
                 .findByBrandNameAndCompanyName(
                         "%" + brand.getBrandName().replaceAll(" ", "%") + "%",
-                        "%" + brand.getCompanyName().replaceAll(" ", "%") + "%");
+                        "%" + brand.getCompanyName().replaceAll(" ", "%") + "%"
+                );
 
-        List<ProductDto> productDtoList = concernedProductList.stream()
-                                                              .filter(cp -> cp.getInspectedOrganization() != null)
-                                                              .map(cp -> ProductDto.of(cp.getProductName(),
-                                                                      null,
-                                                                      null,
-                                                                      "취하".equals(cp.getProductType())
-                                                                              ? SafetyStatus.DANGER
-                                                                              : SafetyStatus.CONCERN,
-                                                                      0,
-                                                                      cp.getCompanyName(),
-                                                                      cp.getReportNumber(),
-                                                                      cp.getProductType(),
-                                                                      LocalDate.from(cp.getIssuedDate()),
-                                                                      cp.getSafetyInspectionStandard(),
-                                                                      cp.getUpperItem(),
-                                                                      cp.getItem(),
-                                                                      null,
-                                                                      null,
-                                                                      null,
-                                                                      null, null, null, null,
-                                                                      null, null, null, null,
-                                                                      cp.getManufacture(), null,
-                                                                      cp.getManufactureNation(), null))
-                                                              .toList();
+        List<ProductDto> productDtoList = reportedProductList.stream()
+                                                             .filter(rp -> rp.getInspectedOrganization() != null)
+                                                             .map(rp -> ProductDto.of(rp.getProductName(),
+                                                                     null,
+                                                                     null,
+                                                                     "취하".equals(rp.getRenewType())
+                                                                             ? SafetyStatus.DANGER
+                                                                             : SafetyStatus.CONCERN,
+                                                                     0,
+                                                                     rp.getCompanyName(),
+                                                                     rp.getSafetyReportNumber(),
+                                                                     rp.getProductType(),
+                                                                     LocalDate.from(rp.getIssuedDate()),
+                                                                     rp.getSafeStandard(), rp.getUpperItem(),
+                                                                     rp.getItem(),
+                                                                     rp.getProductPropose(), rp.getWeightAndBulk(),
+                                                                     rp.getUseMethod(),
+                                                                     rp.getUsageAttentionReport(),
+                                                                     rp.getFirstAid(), rp.getMainSubstance(),
+                                                                     rp.getAllergicSubstance(),
+                                                                     rp.getOtherSubstance(), rp.getPreservative(),
+                                                                     rp.getSurfactant(),
+                                                                     rp.getFluorescentWhiteningAgent(),
+                                                                     rp.getManufacture(), rp.getManufactureMethod(),
+                                                                     rp.getManufactureNation()
+                                                                     , null))
+                                                             .collect(Collectors.toList());
 
         return convertToProductList(productDtoList);
     }
 
+
+    /**
+     * entity 로 변환할 dto 에 해당하는 제품이 있는지 검사하기 위해 product 테이블에서 제품을 검색한 이후, 없으면 새 제품 추가 있으면 업데이트
+     */
     private List<Product> convertToProductList(List<ProductDto> productDtoList) {
         List<Product> productList = new ArrayList<>();
 
@@ -76,7 +92,7 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
                     product -> product.getProductName().equals(productDto.productName()) &&
                             product.getCompanyName().equals(productDto.companyName()));
 
-            if (foundInList) { // 현재 처리할 데이터에 이미 추가가 되어 있다면 무시
+            if (foundInList) { // 현재 처리할 데이터에 이미 추가가 되어 있다면
                 continue;
             }
 
@@ -130,7 +146,7 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
                 productDto.manufactureMethod(), getNation(productDto), productDto.violationInfo());
     }
 
-    public static String getCompanyNameWithoutSlash(String companyName) {
+    public String getCompanyNameWithoutSlash(String companyName) {
         int index = companyName.indexOf("/");
         if (index != -1) {
             return companyName.substring(0, index);
@@ -153,6 +169,4 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
         }
         return "대한민국";
     }
-
-
 }
