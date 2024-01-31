@@ -1,6 +1,7 @@
 package com.kernel360.modulebatch.product.job.infra;
 
 import com.kernel360.brand.entity.Brand;
+import com.kernel360.brand.repository.BrandRepository;
 import com.kernel360.ecolife.entity.ConcernedProduct;
 import com.kernel360.ecolife.repository.ConcernedProductRepository;
 import com.kernel360.modulebatch.product.dto.ProductDto;
@@ -26,6 +27,8 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
     private final ConcernedProductRepository concernedProductRepository;
 
     private final ProductRepository productRepository;
+
+    private final BrandRepository brandRepository;
 
     @Override
     public List<Product> process(Brand brand) throws Exception {
@@ -56,8 +59,7 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
                                                                       null, null, null, null,
                                                                       null, null, null, null,
                                                                       cp.getManufacture(), null,
-                                                                      cp.getManufactureNation(),
-                                                                      brand))
+                                                                      cp.getManufactureNation(), null))
                                                               .toList();
 
         return convertToProductList(productDtoList);
@@ -107,24 +109,25 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
                         productDto.manufactureType(),
                         productDto.manufactureMethod(),
                         getNation(productDto),
-                        productDto.brand());
+                        productDto.violationInfo());
             }
         }
 
         return productList;
     }
 
-    private static Product generateNewProduct(ProductDto productDto) {
+    private Product generateNewProduct(ProductDto productDto) {
 
         return Product.of(productDto.productName(), productDto.barcode(),
                 productDto.imageSource(), productDto.reportNumber(), String.valueOf(productDto.safetyStatus()),
                 productDto.viewCount(), getCompanyNameWithoutSlash(productDto.companyName()), productDto.productType(),
-                productDto.issuedDate(), productDto.safetyInspectionStandard(), productDto.upperItem(),
+                productDto.issuedDate(), productDto.safetyInspectionStandard(),
+                productDto.upperItem(),
                 productDto.item(), productDto.propose(), productDto.weight(), productDto.usage(),
                 productDto.usagePrecaution(), productDto.firstAid(), productDto.mainSubstance(),
                 productDto.allergicSubstance(), productDto.otherSubstance(), productDto.preservative(),
                 productDto.surfactant(), productDto.fluorescentWhitening(), productDto.manufactureType(),
-                productDto.manufactureMethod(), getNation(productDto), productDto.brand());
+                productDto.manufactureMethod(), getNation(productDto), productDto.violationInfo());
     }
 
     public static String getCompanyNameWithoutSlash(String companyName) {
@@ -136,14 +139,19 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
 
     }
 
-    private static String getNation(ProductDto productDto) {
-        String nation;
+    private String getNation(ProductDto productDto) {
         if (productDto.manufactureType().equals("수입")) {
-            nation = productDto.brand().getNationName();
-        } else {
-            nation = "대한민국";
+            if (!productDto.manufactureNation().isBlank()) {
+                return productDto.manufactureNation();
+            }
+            List<Brand> brandList = brandRepository.findByCompanyName(productDto.companyName());
+            for (Brand b : brandList) {
+                if (productDto.productName().contains(b.getBrandName())) {
+                    return b.getNationName();
+                }
+            }
         }
-        return nation;
+        return "대한민국";
     }
 
 
