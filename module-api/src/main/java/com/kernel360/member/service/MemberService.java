@@ -7,6 +7,7 @@ import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.MemberDto;
+import com.kernel360.member.dto.MemberInfo;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
@@ -152,13 +153,20 @@ public class MemberService {
 
     @Transactional
     public void deleteMember(String id) {
-        memberRepository.deleteMemberById(id);
+        Member member = memberRepository.findOneById(id);
+
+        memberRepository.delete(member);
     }
 
 
     @Transactional
-    public void changePassword(MemberDto memberDto) {
-        memberRepository.updatePasswordById(memberDto.id(), memberDto.password());
+    public void changePassword(MemberInfo memberinfo) {
+        Member member = memberRepository.findOneById(memberinfo.id());
+
+        memberRepository.save(Member.of(member.getMemberNo(), member.getId(),
+                member.getEmail(), memberinfo.password(),
+                member.getGender(), member.getAge()
+        ));
     }
 
     @Transactional
@@ -171,7 +179,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public <T> Map<String,Object> getCarInfo(RequestEntity<T> request) {
+    public <T> Map<String, Object> getCarInfo(RequestEntity<T> request) {
         //        CarInfo carInfo = memberService.findCarInfoByToken(request);
         //FIXME :: CarInfo Data 없어서 에러발생 주석 처리해둠
 

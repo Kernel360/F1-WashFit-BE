@@ -56,12 +56,9 @@ class ProductServiceTest {
 
     @Test
     void 전체_제품_목록_조회(){
-        //given
+        //given & when
         List<ProductDto> products = fixtureMonkey.giveMe(ProductDto.class, 3);
         when(productService.getProductList()).thenReturn(products);
-
-        //when
-//        List<ProductDto> actualProducts = productService.getProductList();
 
         //then
         then(products).isEqualTo(products);
@@ -80,7 +77,7 @@ class ProductServiceTest {
             products.add(product);
         }
         //when
-        when(productRepository.findByKeyword(keyword)).thenReturn(products);
+        when(productRepository.findByProductNameContaining(keyword)).thenReturn(products);
         List<ProductDto> productListByKeyword = productService.getProductListByKeyword(keyword);
         //then
         then(productListByKeyword).hasSize(5);
