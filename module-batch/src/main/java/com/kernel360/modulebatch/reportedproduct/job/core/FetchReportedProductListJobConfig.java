@@ -24,7 +24,7 @@ import org.springframework.web.client.ResourceAccessException;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class ReportedProductApiJobConfig {
+public class FetchReportedProductListJobConfig {
 
     private final ReportedProductListItemReader reportedProductListItemReader;
 
