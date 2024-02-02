@@ -211,7 +211,7 @@ public class MemberService {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
         WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
-        washInfo.setMember(member);
+        washInfo.settingMember(member);
         member.updateWashInfo(washInfo);
 
         washInfoRepository.save(washInfo);
@@ -222,7 +222,7 @@ public class MemberService {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
         CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(), carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
-        carInfo.setMember(member);
+        carInfo.settingMember(member);
         member.updateCarInfo(carInfo);
 
         carInfoRepository.save(carInfo);

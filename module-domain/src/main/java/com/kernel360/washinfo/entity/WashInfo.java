@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "wash_info")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,5 +42,10 @@ public class WashInfo extends BaseEntity {
 
     public static WashInfo of(Integer washNo, Integer washCount, Integer monthlyExpense, Integer interest) {
         return new WashInfo(washNo, washCount, monthlyExpense, interest);
+    }
+
+
+    public void settingMember(Member member) {
+        this.member = member;
     }
 }

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "car_info")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,5 +48,9 @@ public class CarInfo extends BaseEntity {
 
     public static CarInfo of(Integer carType, Integer carSize, Integer carColor, Integer drivingEnv, Integer parkingEnv) {
         return new CarInfo(carType, carSize, carColor, drivingEnv, parkingEnv);
+    }
+
+    public void settingMember(Member member) {
+        this.member = member;
     }
 }
