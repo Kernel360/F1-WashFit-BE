@@ -3,9 +3,9 @@ package com.kernel360.product.service;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.main.code.ProductsErrorCode;
 import com.kernel360.main.dto.RecommendProductsDto;
+import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
-import com.kernel360.product.entity.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,10 +20,10 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public ProductDto getProductById(Long id) {
+    public ProductDetailDto getProductById(Long id) {
 
         return productRepository.findById(id)
-                .map(ProductDto::from)
+                .map(ProductDetailDto::from)
                 .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
 
     }
@@ -64,10 +64,12 @@ public class ProductService {
     @Transactional(readOnly = true)
     public List<ProductDto> getViolationProducts() {
 
-        return productRepository.findAllBySafetyStatusEquals(SafetyStatus.DANGER)
-                .stream()
-                .map(ProductDto::from)
-                .toList();
+        return getRecentProducts();
+        //FIXME :: 데이터가 없어서 최근데이터로 대신 리턴
+//        return productRepository.findAllBySafetyStatusEquals(SafetyStatus.DANGER)
+//                .stream()
+//                .map(ProductDto::from)
+//                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -77,5 +79,14 @@ public class ProductService {
                 .stream()
                 .map(ProductDto::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ProductDetailDto getProductDetailById(Long id) {
+
+        return
+        productRepository.findById(id)
+                .map(ProductDetailDto::from)
+                .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
     }
 }

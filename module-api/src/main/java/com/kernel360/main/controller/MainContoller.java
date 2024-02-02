@@ -25,7 +25,7 @@ public class MainContoller {
     @GetMapping("/banner")
     ResponseEntity<ApiResponse<BannerDto>> getBanner() {
 
-        return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, mainService.getSampleBanner());
+        return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, mainService.getBanner());
     }
 
     @GetMapping("/recommend-products")

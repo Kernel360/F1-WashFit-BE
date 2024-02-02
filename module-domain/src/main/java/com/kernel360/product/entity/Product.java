@@ -1,13 +1,6 @@
 package com.kernel360.product.entity;
-
 import com.kernel360.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -50,7 +43,7 @@ public class Product extends BaseEntity {
     private String barcode;
 
     @Column(name = "img_src")
-    private String image;
+    private String imageSource;
 
     @Column(name = "view_count", nullable = false)
     private Integer viewCount;
@@ -142,7 +135,7 @@ public class Product extends BaseEntity {
     ) {
         this.productName = productName;
         this.barcode = barcode;
-        this.image = imageSource;
+        this.imageSource = imageSource;
         this.reportNumber = reportNumber;
         this.safetyStatus = SafetyStatus.valueOf(safetyStatus);
         this.viewCount = viewCount;
@@ -230,7 +223,7 @@ public class Product extends BaseEntity {
             String violationInfo
     ) {
         this.barcode = barcode;
-        this.image = imageSource;
+        this.imageSource = imageSource;
         this.reportNumber = reportNumber;
         this.safetyStatus = SafetyStatus.valueOf(safetyStatus);
         this.issuedDate = issuedDate;
