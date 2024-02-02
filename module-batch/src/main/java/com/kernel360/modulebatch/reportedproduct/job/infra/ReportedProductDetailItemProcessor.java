@@ -6,6 +6,7 @@ import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDetailDto;
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
 import com.kernel360.modulebatch.reportedproduct.service.ReportedProductService;
 import java.time.format.DateTimeFormatter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.lang.NonNull;
@@ -13,14 +14,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ReportedProductDetailItemProcessor implements ItemProcessor<ReportedProduct, ReportedProduct> {
-    private final ReportedProductService service;
-    private final ReportedProductDetailClient client;
 
-    public ReportedProductDetailItemProcessor(ReportedProductService service) {
-        this.service = service;
-        this.client = new ReportedProductDetailClient();
-    }
+    private final ReportedProductService service;
+
+    private final ReportedProductDetailClient client;
 
     /**
      * @param item ItemReader 에서 넘겨받은 엔티티
@@ -54,7 +53,8 @@ public class ReportedProductDetailItemProcessor implements ItemProcessor<Reporte
         return removeInvalidXmlCharacters(xmlResponse);
     }
 
-    public String removeInvalidXmlCharacters(String xmlString) { // XML 1.0 Specification 을 준수하는 ASCII printable characters (REPLACEMENT_CHARACTER)
+    public String removeInvalidXmlCharacters(
+            String xmlString) { // XML 1.0 Specification 을 준수하는 ASCII printable characters (REPLACEMENT_CHARACTER)
         String pattern = "[^\t\r\n -\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]";
 
         return xmlString.replaceAll(pattern, "");
