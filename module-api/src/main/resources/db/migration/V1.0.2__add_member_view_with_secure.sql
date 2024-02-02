@@ -17,6 +17,8 @@ $$ LANGUAGE plpgsql;
 
 
 -- 테이블 복호화 트리거 insert, update 이벤트 후 member_view 업데이트
+DROP TRIGGER IF EXISTS washpedia_member_decrypt_trigger ON member;
+
 CREATE TRIGGER washpedia_member_decrypt_trigger
     AFTER INSERT OR UPDATE
     ON member
@@ -25,6 +27,8 @@ EXECUTE FUNCTION washpedia_member_decrypt();
 
 
 -- 복호화 뷰 생성
+DROP VIEW IF EXISTS member_view;
+
 CREATE OR REPLACE VIEW member_view AS
 SELECT member_no,
        id,
@@ -60,6 +64,8 @@ $$
 
 
 -- 뷰 insert 트리거
+DROP TRIGGER IF EXISTS member_view_insert_trigger ON member;
+
 CREATE TRIGGER member_view_insert_trigger
     INSTEAD OF INSERT
     ON member_view
@@ -91,6 +97,8 @@ $$
 
 
 -- 뷰 update 트리거
+DROP TRIGGER IF EXISTS member_view_update_trigger ON member;
+
 CREATE TRIGGER member_view_update_trigger
     INSTEAD OF UPDATE
     ON member_view
@@ -114,6 +122,8 @@ $$
 
 
 -- 뷰 delete 트리거
+DROP TRIGGER IF EXISTS member_view_delete_trigger ON member;
+
 CREATE TRIGGER member_view_delete_trigger
     INSTEAD OF DELETE
     ON member_view
