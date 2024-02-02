@@ -70,7 +70,7 @@ CREATE TABLE if not exists Car_Info
     created_at  DATE    NOT NULL,
     created_by  VARCHAR NOT NULL,
     modified_at DATE,
-    modified_by CHAR,
+    modified_by VARCHAR,
     FOREIGN KEY (member_no) REFERENCES Member (member_no)
 );
 
