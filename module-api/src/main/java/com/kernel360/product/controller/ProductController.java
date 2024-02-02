@@ -1,5 +1,6 @@
 package com.kernel360.product.controller;
 import com.kernel360.main.code.ProductsBusinessCode;
+import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.service.ProductService;
 import com.kernel360.response.ApiResponse;
@@ -24,8 +25,8 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    ResponseEntity<ApiResponse<ProductDto>> findProductById(@PathVariable("id") Long productId) {
-        ProductDto product = productService.getProductById(productId);
+    ResponseEntity<ApiResponse<ProductDetailDto>> findProductById(@PathVariable("id") Long productId) {
+        ProductDetailDto product = productService.getProductDetailById(productId);
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, product);
     }

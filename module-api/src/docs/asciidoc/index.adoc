@@ -7,7 +7,7 @@
 :sectlinks:
 
 include::overview.adoc[]
-// include::sample-api.adoc[]
+
 include::main-api.adoc[]
 
 include::product-api.adoc[]

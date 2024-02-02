@@ -1,9 +1,14 @@
 package com.kernel360.member.controller;
 
 
+import com.kernel360.carinfo.entity.CarInfo;
+import com.kernel360.member.code.MemberBusinessCode;
+import com.kernel360.member.dto.CarInfoDto;
 import com.kernel360.member.dto.MemberDto;
+import com.kernel360.member.dto.WashInfoDto;
 import com.kernel360.member.service.MemberService;
 import com.kernel360.response.ApiResponse;
+import com.kernel360.washinfo.entity.WashInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +26,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<?> joinMember(@RequestBody MemberDto joinRequestDto) {
+    public ResponseEntity<ApiResponse<Object>> joinMember(@RequestBody MemberDto joinRequestDto) {
 
         memberService.joinMember(joinRequestDto);
 
@@ -29,7 +34,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberDto loginDto) {
+    public ResponseEntity<ApiResponse<MemberDto>> login(@RequestBody MemberDto loginDto) {
 
         MemberDto memberInfo = memberService.login(loginDto);
 
@@ -53,6 +58,21 @@ public class MemberController {
     @PostMapping("/testJwt")
     public String testJwt (){
         return "checked";
+    }
+
+
+    @PostMapping("/wash")
+    public ResponseEntity<ApiResponse<WashInfo>> saveWashInfo(@RequestBody WashInfoDto washInfo, @RequestHeader("Authorization") String authToken){
+        memberService.saveWashInfo(washInfo, authToken);
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_WASH_INFO_MEMBER);
+    }
+
+    @PostMapping("/car")
+    public ResponseEntity<ApiResponse<CarInfo>> saveCarInfo(@RequestBody CarInfoDto carInfo, @RequestHeader("Authorization") String authToken){
+        memberService.saveCarInfo(carInfo, authToken);
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_CAR_INFO_MEMBER);
     }
 
 

@@ -8,11 +8,11 @@ import com.kernel360.product.service.ProductService;
 import com.kernel360.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/mypage")
@@ -22,43 +22,42 @@ public class MyPageController {
     private final ProductService productService;
 
     @GetMapping("/member")
-    <T> ResponseEntity<ApiResponse<MemberDto>> myInfo(RequestEntity<T> request) {
-        MemberDto dto = memberService.findMemberByToken(request);
+    ResponseEntity<ApiResponse<MemberDto>> myInfo(@RequestHeader("Authorization") String authToken) {
+        MemberDto dto = memberService.findMemberByToken(authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_REQUEST_MEMBER, dto);
     }
 
     @GetMapping("/car")
-    <T> ResponseEntity<ApiResponse<Map<String, Object>>> myCar(RequestEntity<T> request) {
-        Map<String, Object> carInfo = memberService.getCarInfo(request);
+    <T> ResponseEntity<ApiResponse<Map<String, Object>>> myCar(@RequestHeader("Authorization") String authToken) {
+        Map<String, Object> carInfo = memberService.getCarInfo(authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_CAR_INFO_IN_MEMBER, carInfo);
     }
 
 
     @DeleteMapping("/member")
-    <T> ResponseEntity<ApiResponse<T>> memberDelete(@RequestBody MemberDto memberDto) {
-        memberService.deleteMember(memberDto.id());
-        log.info("{} 회원 탈퇴 처리 완료", memberDto.id());
+    ResponseEntity<ApiResponse<Void>> memberDelete(@RequestHeader("Authorization") String authToken) {
+        memberService.deleteMemberByToken(authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_DELETE_MEMBER);
     }
 
 
     @PostMapping("/member")
-    <T> ResponseEntity<ApiResponse<T>> changePassword(@RequestBody MemberInfo memberInfo) {
-        memberService.changePassword(memberInfo);
-        log.info("{} 회원 비밀번호 수정 처리 완료", memberInfo.id() );
+    <T> ResponseEntity<ApiResponse<String>> validatePassword(@RequestBody String password, @RequestHeader("Authorization") String authToken) {
+        memberService.changePassword(password, authToken);
 
-        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_CHANGE_PASSWORD_MEMBER);
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_VALIDATE_PASSWORD_MEMBER);
     }
-
 
     @PutMapping("/member")
-    <T> ResponseEntity<ApiResponse<T>> updateMember(@RequestBody MemberDto memberDto) {
-        memberService.updateMember(memberDto);
+    <T> ResponseEntity<ApiResponse<T>> updateMember(@RequestBody MemberInfo memberInfo ) {
+        memberService.updateMember(memberInfo);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_MEMBER);
-
     }
+
+
+
 }

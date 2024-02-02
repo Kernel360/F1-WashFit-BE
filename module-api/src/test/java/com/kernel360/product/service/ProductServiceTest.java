@@ -1,5 +1,6 @@
 package com.kernel360.product.service;
 
+import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.repository.ProductRepository;
@@ -48,7 +49,7 @@ class ProductServiceTest {
                 .sample();
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        ProductDto foundProduct = productService.getProductById(1L);
+        ProductDetailDto foundProduct = productService.getProductById(1L);
 
         //then
         then(foundProduct.productNo()).isEqualTo(product.getProductNo());
