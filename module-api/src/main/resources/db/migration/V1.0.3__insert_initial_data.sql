@@ -1,4 +1,5 @@
--- Insert Into common_code
+-- Insert Into common_code (initial data)
+TRUNCATE public.common_code;
 
 INSERT INTO public.common_code (code_no, code_name, upper_no, upper_name, sort_order, is_used, description, created_at,
                                 created_by, modified_at, modified_by, sub_description)
@@ -96,7 +97,8 @@ VALUES (22, 'gray', 20, 'color', 5, true, '쥐색', '2023-12-28', 'admin', NULL,
 
 
 
--- Insert Into brand
+-- Insert Into brand (initial data)
+TRUNCATE brand;
 
 Insert Into brand (brand_no, brand_name, company_name, nation_name, created_at, created_by)
 VALUES (1, '더클래스', '코스메디슨(CosMedicine)', '대한민국', current_date, 'admin'),
