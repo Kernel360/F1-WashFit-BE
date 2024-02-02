@@ -3,13 +3,16 @@ package com.kernel360.carinfo.entity;
 import com.kernel360.base.BaseEntity;
 import com.kernel360.member.entity.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "car_info")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CarInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_info_id_gen")
@@ -21,19 +24,30 @@ public class CarInfo extends BaseEntity {
     @JoinColumn(name = "member_no")
     private Member member;
 
-    @Column(name = "car_brand")
-    private String carBrand;
-
     @Column(name = "car_type")
-    private String carType;
+    private Integer carType;
 
     @Column(name = "car_size")
-    private String carSize;
+    private Integer carSize;
 
-    @Column(name = "pearl")
-    private Boolean pearl;
+    @Column(name = "car_color")
+    private Integer carColor;
 
-    @Column(name = "clear_coat")
-    private Boolean clearCoat;
+    @Column(name = "driving_env")
+    private Integer drivingEnv;
 
+    @Column(name = "parking_env")
+    private Integer parkingEnv;
+
+    public CarInfo(Integer carType, Integer carSize, Integer carColor, Integer drivingEnv, Integer parkingEnv) {
+        this.carType = carType;
+        this.carSize = carSize;
+        this.carColor = carColor;
+        this.drivingEnv = drivingEnv;
+        this.parkingEnv = parkingEnv;
+    }
+
+    public static CarInfo of(Integer carType, Integer carSize, Integer carColor, Integer drivingEnv, Integer parkingEnv) {
+        return new CarInfo(carType, carSize, carColor, drivingEnv, parkingEnv);
+    }
 }

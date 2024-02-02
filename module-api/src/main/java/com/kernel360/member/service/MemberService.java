@@ -3,22 +3,27 @@ package com.kernel360.member.service;
 import com.kernel360.auth.entity.Auth;
 import com.kernel360.auth.repository.AuthRepository;
 import com.kernel360.carinfo.entity.CarInfo;
+import com.kernel360.carinfo.repository.CarInfoRepository;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
+import com.kernel360.member.dto.CarInfoDto;
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.dto.MemberInfo;
+import com.kernel360.member.dto.WashInfoDto;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
 import com.kernel360.member.repository.MemberRepository;
 import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
+import com.kernel360.washinfo.entity.WashInfo;
+import com.kernel360.washinfo.repository.WashInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +33,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+    private final WashInfoRepository washInfoRepository;
+    private final CarInfoRepository carInfoRepository;
 
     private final JWT jwt;
     private final AuthRepository authRepository;
@@ -138,15 +145,14 @@ public class MemberService {
     }
 
 
-    public <T> MemberDto findMemberByToken(RequestEntity<T> request) {
-        String token = request.getHeaders().getFirst("Authorization");
+    public MemberDto findMemberByToken(String token) {
         String id = JWT.ownerId(token);
 
         return MemberDto.from(memberRepository.findOneById(id));
     }
 
-    public <T> CarInfo findCarInfoByToken(RequestEntity<T> request) {
-        MemberDto memberDto = findMemberByToken(request);
+    public CarInfo findCarInfoByToken(@RequestHeader("Authorization") String authToken) {
+        MemberDto memberDto = findMemberByToken(authToken);
 
         return memberDto.toEntity().getCarInfo();
     }
@@ -158,30 +164,37 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
+    @Transactional
+    public void deleteMemberByToken(String token) {
+        final String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
+        //Fixme :: 멤버 탈퇴시, Deleted Table을 만들고, 데이터를 백업한후, 삭제하는 방식이나, MemberTable에 삭제여부를 표시하는 방식으로 리팩토링 필요
+        memberRepository.delete(member);
+        log.info("{} 회원 탈퇴 처리 완료", id);
+    }
+
 
     @Transactional
-    public void changePassword(MemberInfo memberinfo) {
-        Member member = memberRepository.findOneById(memberinfo.id());
+    public void changePassword(String password, String token) {
+        String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
 
-        memberRepository.save(Member.of(member.getMemberNo(), member.getId(),
-                member.getEmail(), memberinfo.password(),
-                member.getGender(), member.getAge()
-        ));
+        member.updatePassword(password);
+        log.info("{} 회원의 비밀번호가 변경되었습니다.", id);
     }
 
     @Transactional
-    public void updateMember(MemberDto memberDto) {
-        Member member =
-                Member.of(memberDto.memberNo(), memberDto.id(), memberDto.email(), memberDto.password(),
-                        Integer.parseInt(memberDto.gender()), Integer.parseInt(memberDto.age()));
+    public void updateMember(MemberInfo memberinfo) {
+        Member member = memberRepository.findOneById(memberinfo.id());
 
         memberRepository.save(member);
     }
 
     @Transactional(readOnly = true)
-    public <T> Map<String, Object> getCarInfo(RequestEntity<T> request) {
-        //        CarInfo carInfo = memberService.findCarInfoByToken(request);
-        //FIXME :: CarInfo Data 없어서 에러발생 주석 처리해둠
+    public <T> Map<String, Object> getCarInfo(String token) {
+//        String id = JWT.ownerId(token);
+//        Member member = memberRepository.findOneById(id);
+//        CarInfo carInfo = member.getCarInfo();
 
         return Map.of(
 //                "car_info", carInfo,
@@ -192,4 +205,28 @@ public class MemberService {
                 "parking_options", commonCodeService.getCodes("parking")
         );
     }
+
+    @Transactional
+    public void saveWashInfo(WashInfoDto washInfoDto, String token) {
+        String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
+        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
+        washInfo.setMember(member);
+        member.updateWashInfo(washInfo);
+
+        washInfoRepository.save(washInfo);
+    }
+
+    @Transactional
+    public void saveCarInfo(CarInfoDto carInfoDto, String token) {
+        String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
+        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(), carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
+        carInfo.setMember(member);
+        member.updateCarInfo(carInfo);
+
+        carInfoRepository.save(carInfo);
+    }
+
+
 }

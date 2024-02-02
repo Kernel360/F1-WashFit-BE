@@ -22,10 +22,10 @@ public class Member extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     private CarInfo carInfo;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     private WashInfo washInfo;
 
     @Column(name = "email", nullable = false)
@@ -99,5 +99,14 @@ public class Member extends BaseEntity {
         this.password = password;
     }
 
+    public void updatePassword(String password){
+        this.password = password;
+    }
 
+    public void updateWashInfo(WashInfo washInfo){
+        this.washInfo = washInfo;
+    }
+    public void updateCarInfo(CarInfo carInfo) {
+        this.carInfo = carInfo;
+    }
 }

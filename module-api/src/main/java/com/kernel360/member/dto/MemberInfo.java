@@ -1,12 +1,16 @@
 package com.kernel360.member.dto;
 
-public record MemberInfo( String id,
-                          String password
-) {
+public record MemberInfo(String id,
+                         String email,
+                         int gender,
+                         int age
+                         ) {
     static MemberInfo of(
             String id,
-            String password
+            String email,
+            int gender,
+            int age
     ) {
-        return new MemberInfo(id, password);
+        return new MemberInfo(id, email, gender, age);
     }
 }

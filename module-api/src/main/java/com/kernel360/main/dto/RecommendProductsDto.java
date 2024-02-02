@@ -5,19 +5,19 @@ import com.kernel360.product.entity.Product;
 
 public record RecommendProductsDto(
         Long id,
-        String image,
+        String imageSource,
         String alt,
         String productName
 ) {
     public static RecommendProductsDto of(
             Long id,
-            String image,
+            String imageSource,
             String alt,
             String productName
     ) {
         return new RecommendProductsDto(
                 id,
-                image,
+                imageSource,
                 alt,
                 productName
         );

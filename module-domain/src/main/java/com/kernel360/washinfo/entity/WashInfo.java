@@ -3,13 +3,16 @@ package com.kernel360.washinfo.entity;
 import com.kernel360.base.BaseEntity;
 import com.kernel360.member.entity.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "wash_info")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WashInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wash_info_id_gen")
@@ -28,12 +31,17 @@ public class WashInfo extends BaseEntity {
     private Integer monthlyExpense;
 
     @Column(name = "interest")
-    private String interest;
+    private Integer interest;
 
-    @Column(name = "driving_env")
-    private String drivingEnv;
+    private WashInfo(Integer washNo, Integer washCount, Integer monthlyExpense, Integer interest) {
+        this.washNo = washNo;
+        this.washCount = washCount;
+        this.monthlyExpense = monthlyExpense;
+        this.interest = interest;
+    }
 
-    @Column(name = "parking_env")
-    private String parkingEnv;
 
+    public static WashInfo of(Integer washNo, Integer washCount, Integer monthlyExpense, Integer interest) {
+        return new WashInfo(washNo, washCount, monthlyExpense, interest);
+    }
 }
