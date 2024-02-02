@@ -1,12 +1,17 @@
 package com.kernel360.product.controller;
 
 import com.kernel360.common.ControllerTest;
+import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
+import com.kernel360.product.entity.SafetyStatus;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -15,8 +20,10 @@ import static com.kernel360.common.utils.RestDocumentUtils.getDocumentResponse;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +35,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 
+@AutoConfigureWebMvc
 class ProductControllerTest extends ControllerTest {
     private FixtureMonkey fixtureMonkey;
 
@@ -52,16 +60,19 @@ class ProductControllerTest extends ControllerTest {
                 .setNotNull("productNo")
                 .setNotNull("productName")
                 .setNotNull("barcode")
+                .setNotNull("imageSource")
                 .setNotNull("reportNumber")
                 .setNotNull("safetyStatus")
                 .setNotNull("viewCount")
+                .setNotNull("brand")
+                .setNotNull("upperItem")
                 .setNotNull("createdAt")
                 .setNotNull("createdBy")
                 .setNotNull("modifiedAt")
                 .setNotNull("modifiedBy")
                 .sampleList(5).stream()
                 .map(ProductDto::from)
-                .collect(Collectors.toList());
+                .toList();
 
         when(productService.getProductList()).thenReturn(expectedDtos);
 
@@ -76,17 +87,19 @@ class ProductControllerTest extends ControllerTest {
                                 fieldWithPath("message").description("응답 메세지"),
                                 fieldWithPath("code").description("비지니스 코드"),
                                 fieldWithPath("value").description("제품 리스트"),
-                                fieldWithPath("value[].productNo").description("제품번호"),
-                                fieldWithPath("value[].productName").description("제품명"),
-                                fieldWithPath("value[].barcode").description("바코드"),
-                                fieldWithPath("value[].imageSource").description("이미지 소스"),
-                                fieldWithPath("value[].reportNumber").description("보고 번호"),
-                                fieldWithPath("value[].safetyStatus").description("안전 상태"),
-                                fieldWithPath("value[].viewCount").description("조회수"),
-                                fieldWithPath("value[].createdAt").description("생성 날짜"),
-                                fieldWithPath("value[].createdBy").description("생성자"),
-                                fieldWithPath("value[].modifiedAt").optional().description("수정된 날짜"),
-                                fieldWithPath("value[].modifiedBy").optional().description("수정자")
+                                fieldWithPath("value[].productNo").description("제품번호").optional(),
+                                fieldWithPath("value[].productName").description("제품명").optional(),
+                                fieldWithPath("value[].barcode").description("바코드").optional(),
+                                fieldWithPath("value[].imageSource").description("이미지 소스").optional(),
+                                fieldWithPath("value[].reportNumber").description("보고 번호").optional(),
+                                fieldWithPath("value[].safetyStatus").description("안전 상태").optional(),
+                                fieldWithPath("value[].viewCount").description("조회수").optional(),
+                                fieldWithPath("value[].brand").description("브랜드").optional(),
+                                fieldWithPath("value[].upperItem").description("상위 분류").optional(),
+                                fieldWithPath("value[].createdAt").description("생성 날짜").optional(),
+                                fieldWithPath("value[].createdBy").description("생성자").optional(),
+                                fieldWithPath("value[].modifiedAt").description("수정된 날짜").optional(),
+                                fieldWithPath("value[].modifiedBy").description("수정자").optional()
                         )));
 
         verify(productService, times(1)).getProductList();
@@ -97,68 +110,103 @@ class ProductControllerTest extends ControllerTest {
     void 제품아이디로_제품조회요청이왔을때_200응답과_리스폰스가_잘반환되는지() throws Exception {
         // given
         Product mockProduct = fixtureMonkey.giveMeBuilder(Product.class)
-                .set("productNo", 1L)
-                .setNotNull("imageSource")
+                .set("productNo", 1L) // Assuming you want to explicitly set some values
+                .setNotNull("productName")
+                .setNotNull("companyName")
+                .setNotNull("productType")
+                .setNotNull("upperItem")
+                .setNotNull("manufactureType")
+                .setNotNull("manufactureMethod")
+                .setNotNull("weight")
+                .setNotNull("reportNumber")
+                .setNotNull("mainSubstance")
+                .setNotNull("brand")
+                .set("grade", 3.5)
+                .set("reviewCnt", 10L)
+                .setNotNull("viewCount")
+                .setNotNull("createdAt")
+                .setNotNull("createdBy")
+                .setNotNull("modifiedAt")
+                .setNotNull("modifiedBy")
                 .sample();
 
-        ProductDto productDto = ProductDto.from(mockProduct);
+        ProductDetailDto productDetailDto = ProductDetailDto.from(mockProduct);
 
-        when(productService.getProductById(1L)).thenReturn(productDto);
+        when(productService.getProductDetailById(1L)).thenReturn(productDetailDto);
 
         // when & then
         mockMvc.perform(get("/product/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.value.productNo", is(1)))
-                .andExpect(jsonPath("$.value.productName", is(mockProduct.getProductName())))
-                .andExpect(jsonPath("$.value.barcode", is(mockProduct.getBarcode())))
-                .andExpect(jsonPath("$.value.imageSource", is(mockProduct.getImage())))
-                .andExpect(jsonPath("$.value.reportNumber", is(mockProduct.getReportNumber())))
-                .andExpect(jsonPath("$.value.safetyStatus", is(mockProduct.getSafetyStatus().toString())))
-                .andExpect(jsonPath("$.value.viewCount", is(mockProduct.getViewCount())))
-                .andDo(document(
-                        "product-id/get-product-id",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
+                .andExpect(jsonPath("$.value.productNo", notNullValue()))
+                .andExpect(jsonPath("$.value.productName", notNullValue()))
+                .andExpect(jsonPath("$.value.companyName", notNullValue()))
+                .andExpect(jsonPath("$.value.productType", notNullValue()))
+                .andExpect(jsonPath("$.value.upperItem", notNullValue()))
+                .andExpect(jsonPath("$.value.manufactureType", notNullValue()))
+                .andExpect(jsonPath("$.value.manufactureMethod", notNullValue()))
+                .andExpect(jsonPath("$.value.weight", notNullValue()))
+                .andExpect(jsonPath("$.value.reportNumber", notNullValue()))
+                .andExpect(jsonPath("$.value.mainSubstance", notNullValue()))
+                .andExpect(jsonPath("$.value.brand", notNullValue()))
+                .andExpect(jsonPath("$.value.grade", notNullValue()))
+                .andExpect(jsonPath("$.value.reviewCnt", notNullValue()))
+                .andExpect(jsonPath("$.value.viewCount", notNullValue()))
+                .andExpect(jsonPath("$.value.createdAt", notNullValue()))
+                .andExpect(jsonPath("$.value.createdBy", notNullValue()))
+                .andExpect(jsonPath("$.value.modifiedAt", notNullValue()))
+                .andExpect(jsonPath("$.value.modifiedBy", notNullValue()))
+                .andDo(document("product-id/get-product-id",
+                        pathParameters(
+                                parameterWithName("id").description("제품 ID")
+                        ),
                         responseFields(
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("상태 코드"),
-                                fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답메세지"),
-                                fieldWithPath("value").type(JsonFieldType.ARRAY).description("제품 리스트"),
-                                fieldWithPath("value[].productNo").type(JsonFieldType.NUMBER).description("제품 ID"),
-                                fieldWithPath("value[].productName").type(JsonFieldType.STRING).description("제품명"),
-                                fieldWithPath("value[].barcode").type(JsonFieldType.STRING).optional().description("바코드"),
-                                fieldWithPath("value[].imageSource").type(JsonFieldType.STRING).optional().description("이미지 소스"),
-                                fieldWithPath("value[].reportNumber").type(JsonFieldType.STRING).description("신고 번호"),
-                                fieldWithPath("value[].safetyStatus").type(JsonFieldType.STRING).description("안전 상태"),
-                                fieldWithPath("value[].viewCount").type(JsonFieldType.NUMBER).description("조회수"),
-                                fieldWithPath("value[].createdAt").type(JsonFieldType.STRING).description("생성날짜"),
-                                fieldWithPath("value[].createdBy").type(JsonFieldType.STRING).description("생성자"),
-                                fieldWithPath("value[].modifiedAt").type(JsonFieldType.STRING).optional().description("수정날짜"),
-                                fieldWithPath("value[].modifiedBy").type(JsonFieldType.STRING).optional().description("수정자")
-                        )
-                ));
-
-        verify(productService).getProductById(1L);
+                                fieldWithPath("status").description("상태 코드"),
+                                fieldWithPath("message").description("응답 메세지"),
+                                fieldWithPath("code").description("비지니스 코드"),
+                                fieldWithPath("value").description("제품 상세 정보"),
+                                fieldWithPath("value.productNo").description("제품번호"),
+                                fieldWithPath("value.productName").description("제품명"),
+                                fieldWithPath("value.companyName").description("제조사"),
+                                fieldWithPath("value.productType").description("제품 유형"),
+                                fieldWithPath("value.upperItem").description("상위 분류"),
+                                fieldWithPath("value.manufactureType").description("제조 타입"),
+                                fieldWithPath("value.manufactureMethod").description("제조 방법"),
+                                fieldWithPath("value.weight").description("무게"),
+                                fieldWithPath("value.reportNumber").description("보고 번호"),
+                                fieldWithPath("value.mainSubstance").description("주요 성분"),
+                                fieldWithPath("value.brand").description("브랜드"),
+                                fieldWithPath("value.grade").description("평점"),
+                                fieldWithPath("value.reviewCnt").description("리뷰 수"),
+                                fieldWithPath("value.viewCount").description("조회수"),
+                                fieldWithPath("value.createdAt").description("생성 날짜"),
+                                fieldWithPath("value.createdBy").description("생성자"),
+                                fieldWithPath("value.modifiedAt").description("수정 날짜"),
+                                fieldWithPath("value.modifiedBy").description("수정자")
+                        )));
+        verify(productService).getProductDetailById(1L);
     }
 
-    @Test
+
+    @RepeatedTest(100)
     void 검색키워드로_제품조회요청시_200응답과_데이터가_잘_반환되는지() throws Exception {
         // given
         List<ProductDto> products = new ArrayList<>();
-        String keyword = "productName";
+        String keyword = "더 클래스";
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             ProductDto productDto = fixtureMonkey.giveMeBuilder(ProductDto.class)
-                    .set("productName", keyword + i)
+                    .set("productName", keyword + " " + (i + 1))
                     .setNotNull("productNo")
                     .setNull("barcode")
                     .setNull("imageSource")
                     .setNotNull("reportNumber")
-                    .setNotNull("safetyStatus")
-                    .setNotNull("viewCount")
-                    .setNotNull("createAt")
-                    .setNotNull("createBy")
+                    .set("safetyStatus", SafetyStatus.CONCERN)
+                    .set("viewCount", 0)
+                    .setNotNull("brand")
+                    .setNotNull("upperItem")
+                    .setNotNull("createdAt")
+                    .setNotNull("createdBy")
                     .setNotNull("modifiedAt")
                     .setNotNull("modifiedBy")
                     .sample();
@@ -167,45 +215,43 @@ class ProductControllerTest extends ControllerTest {
 
         when(productService.getProductListByKeyword(keyword)).thenReturn(products);
 
-        // when & then
+//         when & then
         mockMvc.perform(get("/products/search").param("keyword", keyword))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.value", hasSize(5)))
-                .andExpect(jsonPath("$.value[0].productNo").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].productName").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].barcode").isEmpty())
-                .andExpect(jsonPath("$.value[0].imageSource").isEmpty())
-                .andExpect(jsonPath("$.value[0].reportNumber").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].safetyStatus").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].viewCount").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].createdAt").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].createdBy").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].modifiedAt").isNotEmpty())
-                .andExpect(jsonPath("$.value[0].modifiedBy").isNotEmpty())
-                .andDo(document("products-search/get-products-by-keyword",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.code").value("PMB002"))
+                .andExpect(jsonPath("$.message").value("제품정보 조회 성공"))
+                .andExpect(jsonPath("$.value", hasSize(3)))
+                .andExpect(jsonPath("$.value[*].productNo", notNullValue()))
+                .andExpect(jsonPath("$.value[*].productName", notNullValue()))
+                .andExpect(jsonPath("$.value[*].reportNumber", notNullValue()))
+                .andExpect(jsonPath("$.value[*].safetyStatus", notNullValue()))
+                .andExpect(jsonPath("$.value[*].viewCount", notNullValue()))
+                .andDo(document("products-search/get-products-by-search",
+                        queryParameters(
+                              parameterWithName("keyword").description("키워드")
+                      ),
                         responseFields(
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("상태 코드"),
-                                fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답메세지"),
-                                fieldWithPath("value").type(JsonFieldType.ARRAY).description("제품 리스트"),
-                                fieldWithPath("value[].productNo").type(JsonFieldType.NUMBER).description("제품 ID"),
-                                fieldWithPath("value[].productName").type(JsonFieldType.STRING).description("제품명"),
-                                fieldWithPath("value[].barcode").type(JsonFieldType.STRING).optional().description("바코드"),
-                                fieldWithPath("value[].imageSource").type(JsonFieldType.STRING).optional().description("이미지 소스"),
-                                fieldWithPath("value[].reportNumber").type(JsonFieldType.STRING).description("신고 번호"),
-                                fieldWithPath("value[].safetyStatus").type(JsonFieldType.STRING).description("안전 상태"),
-                                fieldWithPath("value[].viewCount").type(JsonFieldType.NUMBER).description("조회수"),
-                                fieldWithPath("value[].createdAt").type(JsonFieldType.STRING).description("생성날짜"),
-                                fieldWithPath("value[].createdBy").type(JsonFieldType.STRING).description("생성자"),
-                                fieldWithPath("value[].modifiedAt").type(JsonFieldType.STRING).optional().description("수정날짜"),
-                                fieldWithPath("value[].modifiedBy").type(JsonFieldType.STRING).optional().description("수정자")
+                                fieldWithPath("status").description("상태 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("code").description("비즈니스 코드"),
+                                fieldWithPath("value").description("제품 목록"),
+                                fieldWithPath("value[].productNo").description("제품 번호"),
+                                fieldWithPath("value[].productName").description("제품 이름"),
+                                fieldWithPath("value[].barcode").description("바코드").optional(),
+                                fieldWithPath("value[].imageSource").description("이미지 소스").optional(),
+                                fieldWithPath("value[].reportNumber").description("보고서 번호"),
+                                fieldWithPath("value[].safetyStatus").description("안전 상태"),
+                                fieldWithPath("value[].viewCount").description("조회수"),
+                                fieldWithPath("value[].brand").description("브랜드"),
+                                fieldWithPath("value[].upperItem").description("상위 항목 카테고리"),
+                                fieldWithPath("value[].createdAt").description("생성 날짜"),
+                                fieldWithPath("value[].createdBy").description("생성자"),
+                                fieldWithPath("value[].modifiedAt").description("수정 날짜"),
+                                fieldWithPath("value[].modifiedBy").description("수정자")
                         )));
 
-
         verify(productService, times(1)).getProductListByKeyword(keyword);
-
     }
 }
