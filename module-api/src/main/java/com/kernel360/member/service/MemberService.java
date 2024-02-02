@@ -184,10 +184,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMember(MemberInfo memberinfo) {
-        Member member = memberRepository.findOneById(memberinfo.id());
+    public void updateMember(MemberInfo memberInfo) {
 
-        memberRepository.save(member);
+        memberRepository.save(memberInfo.toEntity());
     }
 
     @Transactional(readOnly = true)

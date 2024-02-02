@@ -40,9 +40,15 @@ public class Member extends BaseEntity {
     @Column(name = "age")
     private int age;
 
+
     public static Member of(Long memberNo, String id, String email, String password, int gender, int age) {
 
         return new Member(memberNo, id, email, password, gender, age);
+    }
+
+    public static Member of(String id, String email, int gender, int age) {
+
+        return new Member(id, email, gender, age);
     }
 
     /**
@@ -60,6 +66,13 @@ public class Member extends BaseEntity {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.gender = gender;
+        this.age = age;
+    }
+
+    private Member(String id, String email, int gender, int age) {
+        this.id = id;
+        this.email = email;
         this.gender = gender;
         this.age = age;
     }
@@ -99,14 +112,16 @@ public class Member extends BaseEntity {
         this.password = password;
     }
 
-    public void updatePassword(String password){
+    public void updatePassword(String password) {
         this.password = password;
     }
 
-    public void updateWashInfo(WashInfo washInfo){
+    public void updateWashInfo(WashInfo washInfo) {
         this.washInfo = washInfo;
     }
+
     public void updateCarInfo(CarInfo carInfo) {
         this.carInfo = carInfo;
     }
+
 }
