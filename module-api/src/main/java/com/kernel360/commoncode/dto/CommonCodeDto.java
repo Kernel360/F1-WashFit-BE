@@ -1,12 +1,9 @@
 package com.kernel360.commoncode.dto;
 
-import com.kernel360.entity.commoncode.CommonCode;
+import com.kernel360.commoncode.command.CommonCodeCommand;
 
 import java.time.LocalDate;
 
-/**
- * DTO for {@link CommonCode}
- */
 public record CommonCodeDto(Long codeNo,
                             String codeName,
                             Integer upperNo,
@@ -52,20 +49,20 @@ public record CommonCodeDto(Long codeNo,
         );
     }
 
-    /** entity -> dto **/
-    public static CommonCodeDto from(CommonCode entity) {
+    /** command -> dto **/
+    public static CommonCodeDto from(CommonCodeCommand command) {
         return CommonCodeDto.of(
-                entity.getCodeNo(),
-                entity.getCodeName(),
-                entity.getUpperNo(),
-                entity.getUpperName(),
-                entity.getSortOrder(),
-                entity.getIsUsed(),
-                entity.getDescription(),
-                entity.getCreatedAt(),
-                entity.getCreatedBy(),
-                entity.getModifiedAt(),
-                entity.getModifiedBy()
+                command.codeNo(),
+                command.codeName(),
+                command.upperNo(),
+                command.upperName(),
+                command.sortOrder(),
+                command.isUsed(),
+                command.description(),
+                command.createdAt(),
+                command.createdBy(),
+                command.modifiedAt(),
+                command.modifiedBy()
         );
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+/** 패키지 리팩터링 이후엔 삭제되야합니다. **/
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)

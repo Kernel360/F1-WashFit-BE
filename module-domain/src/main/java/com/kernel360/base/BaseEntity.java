@@ -12,6 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
+/** 패키지 리팩터링 이후엔 삭제되야합니다. **/
+
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)

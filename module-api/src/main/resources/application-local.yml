@@ -28,3 +28,6 @@ logging:
       max-history: 14
       max-file-size: 50MB
       total-size-cap: 5GB
+mybatis:
+  config-location: classpath:/mybatis/mybatis-config.xml
+  type-aliases-package: com.kernel360
