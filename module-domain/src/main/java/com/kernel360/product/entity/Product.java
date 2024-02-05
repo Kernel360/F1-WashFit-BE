@@ -1,6 +1,13 @@
 package com.kernel360.product.entity;
+
 import com.kernel360.base.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -245,6 +252,11 @@ public class Product extends BaseEntity {
         this.manufactureMethod = manufactureMethod;
         this.manufactureNation = manufactureNation;
         this.violationInfo = violationInfo;
+    }
+
+    public void updateViolatedInfo(String violationInfo) {
+        this.violationInfo = violationInfo;
+        this.safetyStatus = SafetyStatus.DANGER;
     }
 
 }
