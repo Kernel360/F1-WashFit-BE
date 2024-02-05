@@ -39,7 +39,7 @@ public class ViolatedProductScheduler {
     /**
      * 매주 목요일 새벽 1시 실행
      */
-    @Scheduled(cron = "0 0 1 * * TUR", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 1 * * THU", zone = "Asia/Seoul")
     public void executeFetchViolatedProductListJob() {
         executeJob(fetchViolatedProductListJob);
     }
@@ -47,7 +47,7 @@ public class ViolatedProductScheduler {
     /**
      * 매주 목요일 2시, 14시 실행
      */
-    @Scheduled(cron = "0 0 2,14 * * TUR", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 2,14 * * THU", zone = "Asia/Seoul")
     public void executeFetchViolatedProductDetailJob() {
         executeJob(fetchViolatedProductDetailJob);
     }
@@ -55,7 +55,7 @@ public class ViolatedProductScheduler {
     /**
      * 매주 목요일 2시 30분, 14시 30분 실행
      */
-    @Scheduled(cron = "0 30 2,14 * * TUR", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 30 2,14 * * THU", zone = "Asia/Seoul")
     public void executeUpdateProductFromViolatedProductJob() {
         executeJob(updateProductFromViolatedProductJob);
     }
