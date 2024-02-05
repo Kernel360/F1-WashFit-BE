@@ -12,6 +12,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -25,6 +26,8 @@ public class FetchViolatedProductListItemReader implements ItemReader<List<Viola
 
     private final ViolatedProductService service;
 
+    @Value("#{jobParameters['PRODUCT_ARM_CODE']}")
+    private String productArmCode;
     private int maxPageNumber;
     private int nextPage = -1;
 
@@ -51,7 +54,7 @@ public class FetchViolatedProductListItemReader implements ItemReader<List<Viola
 
     private String fetchXmlResponse() {
         log.info("Fetch Page = {}", nextPage);
-        String xmlResponse = client.getXmlResponse("07", nextPage);
+        String xmlResponse = client.getXmlResponse(productArmCode, nextPage);
         log.info("Response accepted : {}", xmlResponse);
         return xmlResponse;
     }
