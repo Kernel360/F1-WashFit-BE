@@ -21,6 +21,7 @@ import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -36,7 +37,8 @@ public class FetchViolatedProductDetailJobConfig {
     private final int chunkSize = 100;
 
     @Bean
-    public Job fetchViolatedProductDetailJob(JobRepository jobRepository, Step fetchViolatedProductDetailStep) {
+    public Job fetchViolatedProductDetailJob(JobRepository jobRepository,
+                                             @Qualifier("fetchViolatedProductDetailStep") Step fetchViolatedProductDetailStep) {
 
         return new JobBuilder("fetchViolatedProductDetailJob", jobRepository)
                 .start(fetchViolatedProductDetailStep)

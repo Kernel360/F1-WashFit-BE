@@ -16,6 +16,7 @@ import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -30,7 +31,8 @@ public class FetchViolatedProductListJobConfig {
     private final FetchViolatedProductListItemWriter fetchViolatedProductListItemWriter;
 
     @Bean
-    public Job fetchViolatedProductListJob(JobRepository jobRepository, Step fetchViolatedProductListStep) {
+    public Job fetchViolatedProductListJob(JobRepository jobRepository,
+                                           @Qualifier("fetchViolatedProductListStep") Step fetchViolatedProductListStep) {
         return new JobBuilder("fetchViolatedProductListJob", jobRepository)
                 .start(fetchViolatedProductListStep)
                 .listener(new FetchViolatedProductListJobListener())
