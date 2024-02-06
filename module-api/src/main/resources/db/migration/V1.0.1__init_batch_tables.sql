@@ -163,3 +163,30 @@ CREATE TABLE if not exists concerned_product
     modified_at                DATE,
     modified_by                VARCHAR(255)
 );
+
+--- 위반제품 내역 테이블 생성
+CREATE TABLE if not exists violated_product
+(
+    product_master_no           VARCHAR(255),
+    product_arm_code            VARCHAR(255),
+    product_arm                 VARCHAR(255),
+    actioned_date               VARCHAR(255),
+    product_name                VARCHAR(255),
+    company_name                VARCHAR(255),
+    product_arm_code_name       VARCHAR(255),
+    origin_institute            VARCHAR(255),
+    model_name                  VARCHAR(255),
+    company_address             VARCHAR(255),
+    violated_cn                 VARCHAR(255),
+    product_manufacture_country VARCHAR(255),
+    act_organization            VARCHAR(255),
+    product_photo_url           TEXT,
+    file_download_url           TEXT,
+    action_cn                   VARCHAR(255),
+    etc_info                    TEXT,
+    created_at                  date,
+    created_by                  VARCHAR(255) NOT NULL,
+    modified_at                 date,
+    modified_by                 VARCHAR(255),
+    CONSTRAINT pk_violated_product PRIMARY KEY (product_master_no, product_arm_code)
+);
