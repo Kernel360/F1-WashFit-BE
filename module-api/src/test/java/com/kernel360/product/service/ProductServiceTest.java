@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +74,13 @@ class ProductServiceTest {
     void 키워드로_제품_목록_조회() {
         // given
         String keyword = "sample";
-        List<Product> productList = fixtureMonkey.giveMe(Product.class, 5);
+        List<Product> productList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Product product = fixtureMonkey.giveMeBuilder(Product.class)
+                    .set("productName", "sample" + i)
+                    .sample();
+            productList.add(product);
+        }
         Page<Product> productsPage = new PageImpl<>(productList, pageable, productList.size());
 
         when(productRepository.findByProductNameContaining(keyword, pageable)).thenReturn(productsPage);
