@@ -9,8 +9,10 @@ import com.navercorp.fixturemonkey.api.introspector.*;
 import com.navercorp.fixturemonkey.jakarta.validation.plugin.JakartaValidationPlugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,7 @@ class ProductServiceTest {
     private FixtureMonkey fixtureMonkey;
     private ProductRepository productRepository;
     private ProductService productService;
+    private Pageable pageable;
     @BeforeEach
     void 테스트준비() {
         fixtureMonkey = FixtureMonkey.builder()
@@ -38,6 +41,7 @@ class ProductServiceTest {
                 .build();
 
         productRepository = mock(ProductRepository.class);
+        pageable = mock(Pageable.class);
         productService = new ProductService(productRepository);
     }
 
@@ -66,22 +70,18 @@ class ProductServiceTest {
     }
 
     @Test
-    void 키워드로_제품_목록_조회(){
-        //given
-        List<Product> products = new ArrayList<>();
+    void 키워드로_제품_목록_조회() {
+        // given
         String keyword = "sample";
+        List<Product> productList = fixtureMonkey.giveMe(Product.class, 5);
+        Page<Product> productsPage = new PageImpl<>(productList, pageable, productList.size());
 
-        for (int i = 0; i < 5; i++) {
-            Product product = fixtureMonkey.giveMeBuilder(Product.class)
-                    .set("productName", keyword + i) // Append a unique number to each productName
-                    .sample();
-            products.add(product);
-        }
-        //when
-        when(productRepository.findByProductNameContaining(keyword)).thenReturn(products);
-        List<ProductDto> productListByKeyword = productService.getProductListByKeyword(keyword);
-        //then
-        then(productListByKeyword).hasSize(5);
-        then(productListByKeyword).allSatisfy(productDto -> then(productDto.productName()).contains(keyword));
+        when(productRepository.findByProductNameContaining(keyword, pageable)).thenReturn(productsPage);
+
+        Page<ProductDto> productDtos = productService.getProductListByKeyword(keyword, pageable);
+
+        // then
+        then(productDtos.getContent()).hasSize(5);
+        then(productDtos.getContent()).allSatisfy(productDto -> then(productDto.productName()).contains(keyword));
     }
 }
