@@ -2,38 +2,39 @@ package com.kernel360.main.controller;
 
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public enum Sort {
 
     VIEW_COUNT_PRODUCT_ORDER("viewCnt-order") {
         @Override
-        List<ProductDto> sort(ProductService productService) {
+        Page<ProductDto> sort(ProductService productService, Pageable pageable) {
 
-            return productService.getProductListOrderByViewCount();
+            return productService.getProductListOrderByViewCount(pageable);
         }
     },
     VIOLATION_PRODUCT_LIST("violation-products") {
         @Override
-        List<ProductDto> sort(ProductService productService) {
+        Page<ProductDto> sort(ProductService productService, Pageable pageable) {
 
-            return productService.getViolationProducts();
+            return productService.getViolationProducts(pageable);
         }
     },
     RECOMMENDATION_PRODUCT_ORDER("recommend-order") {
         @Override
-        List<ProductDto> sort(ProductService productService) {
+        Page<ProductDto> sort(ProductService productService, Pageable pageable) {
 //Fixme :: 향후 Like Table 구현후, 정렬메소드 변경이 필요합니다.(임시로 violationProduct 리턴으로 구현)
 
-            return productService.getViolationProducts();
+            return productService.getViolationProducts(pageable);
         }
     },
     RECENT_PRODUCT_ORDER("recent-order") {
         @Override
-        List<ProductDto> sort(ProductService productService) {
+        Page<ProductDto> sort(ProductService productService, Pageable pageable) {
 
-            return productService.getRecentProducts();
+            return productService.getRecentProducts(pageable);
         }
     };
 
@@ -47,5 +48,5 @@ public enum Sort {
         return orderType;
     }
 
-    abstract List<ProductDto> sort(ProductService productService);
+    abstract Page<ProductDto> sort(ProductService productService, Pageable pageable);
 }
