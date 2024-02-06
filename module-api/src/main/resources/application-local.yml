@@ -28,3 +28,12 @@ logging:
       max-history: 14
       max-file-size: 50MB
       total-size-cap: 5GB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
