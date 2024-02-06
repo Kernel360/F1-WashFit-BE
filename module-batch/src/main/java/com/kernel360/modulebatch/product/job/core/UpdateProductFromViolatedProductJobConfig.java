@@ -63,7 +63,9 @@ public class UpdateProductFromViolatedProductJobConfig {
     @StepScope
     public JpaCursorItemReader<ProductJoinDto> updateProductFromViolatedProductJpaPagingItemReader() throws Exception {
         String query =
-                "SELECT p.product_name, p.company_name, vp.actioned_date, vp.violated_cn, vp.action_cn, vp.etc_info FROM product p INNER JOIN violated_product vp ON REGEXP_REPLACE(vp.company_name, ' ', '', 'g') LIKE"
+                "SELECT p.product_name, p.company_name, vp.actioned_date, vp.violated_cn, vp.action_cn, vp.etc_info "
+                        + "FROM product p "
+                        + "INNER JOIN violated_product vp ON REGEXP_REPLACE(vp.company_name, ' ', '', 'g') LIKE"
                         + "'%' || REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(p.company_name, '주식회사', '', 'g'),"
                         + " '\\([^)]*\\)', '','g'), '\\[[^]]*\\]', '','g'), ' ', '', 'g') || '%'"
                         + "AND vp.product_name = p.product_name;";
