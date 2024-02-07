@@ -1,0 +1,65 @@
+== MyPage API
+
+[[회원정보-조회]]
+=== Member 조회
+
+===== HTTP Request
+include::{snippets}/mypage-member/get-member-info/http-request.adoc[]
+
+==== Response
+include::{snippets}/mypage-member/get-member-info/response-fields.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/mypage-member/get-member-info/http-response.adoc[]
+
+
+[[차량정보-조회]]
+=== CarInfo 조회
+
+===== HTTP Request
+include::{snippets}/mypage-car/get-car-info/http-request.adoc[]
+
+==== Response
+include::{snippets}/mypage-car/get-car-info/response-fields.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/mypage-car/get-car-info/http-response.adoc[]
+
+
+[[회원탈퇴-요청]]
+=== Member Delete 요청
+
+===== HTTP Request
+include::{snippets}/mypage-member/delete-member/http-request.adoc[]
+
+===== Response
+include::{snippets}/mypage-member/delete-member/response-fields.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/mypage-member/delete-member/http-response.adoc[]
+
+
+[[비밀번호검증-요청]]
+=== Password Validate 요청
+
+===== HTTP Request
+include::{snippets}/mypage-member/validate-password/http-request.adoc[]
+
+===== Response
+include::{snippets}/mypage-member/validate-password/response-fields.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/mypage-member/validate-password/http-response.adoc[]
+
+
+[[회원정보수정-요청]]
+=== Update Member 요청
+
+===== HTTP Request
+include::{snippets}/mypage-member/update-member/http-request.adoc[]
+
+===== Response-Body
+include::{snippets}/mypage-member/update-member/response-body.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/mypage-member/update-member/http-response.adoc[]

@@ -190,13 +190,13 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public <T> Map<String, Object> getCarInfo(String token) {
-//        String id = JWT.ownerId(token);
-//        Member member = memberRepository.findOneById(id);
-//        CarInfo carInfo = member.getCarInfo();
+    public Map<String, Object> getCarInfo(String token) {
+        String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
+        CarInfoDto carInfoDto = CarInfoDto.from(member.getCarInfo());
 
         return Map.of(
-//                "car_info", carInfo,
+                "car_info", carInfoDto,
                 "segment_options", commonCodeService.getCodes("segment"),
                 "carType_options", commonCodeService.getCodes("cartype"),
                 "color_options", commonCodeService.getCodes("color"),

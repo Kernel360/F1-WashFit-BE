@@ -36,7 +36,7 @@ public record CarInfoDto(
         );
     }
 
-    public CarInfoDto from(CarInfo entity) {
+    public static CarInfoDto from(CarInfo entity) {
         return CarInfoDto.of(
                 entity.getCarType(),
                 entity.getCarSize(),
