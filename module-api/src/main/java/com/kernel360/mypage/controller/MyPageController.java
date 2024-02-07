@@ -29,7 +29,7 @@ public class MyPageController {
     }
 
     @GetMapping("/car")
-    <T> ResponseEntity<ApiResponse<Map<String, Object>>> myCar(@RequestHeader("Authorization") String authToken) {
+    ResponseEntity<ApiResponse<Map<String, Object>>> myCar(@RequestHeader("Authorization") String authToken) {
         Map<String, Object> carInfo = memberService.getCarInfo(authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_CAR_INFO_IN_MEMBER, carInfo);
@@ -45,7 +45,7 @@ public class MyPageController {
 
 
     @PostMapping("/member")
-    <T> ResponseEntity<ApiResponse<String>> validatePassword(@RequestBody String password, @RequestHeader("Authorization") String authToken) {
+    ResponseEntity<ApiResponse<String>> validatePassword(@RequestBody String password, @RequestHeader("Authorization") String authToken) {
         memberService.changePassword(password, authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_VALIDATE_PASSWORD_MEMBER);
