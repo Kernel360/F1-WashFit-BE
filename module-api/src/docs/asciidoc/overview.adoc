@@ -8,7 +8,7 @@
 |===
 | 환경 | Domain
 | 개발 서버
-| `http://washpedia.my-project.life`
+| `https://dev.washfit.site`
 | 운영 서버
-|
+| `https://www.washfit.site`
 |===
