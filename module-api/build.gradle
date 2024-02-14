@@ -73,6 +73,9 @@ dependencies {
 
     //prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    //mybatis
+    implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '3.0.3'
 }
 
 tasks.named('test') {

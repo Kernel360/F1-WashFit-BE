@@ -33,18 +33,14 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    private final WashInfoRepository washInfoRepository;
-    private final CarInfoRepository carInfoRepository;
 
     private final JWT jwt;
     private final AuthRepository authRepository;
     private final MemberRepository memberRepository;
     private final CommonCodeService commonCodeService;
+    private final CarInfoRepository carInfoRepository;
+    private final WashInfoRepository washInfoRepository;
 
-
-    /**
-     * 가입
-     **/
     @Transactional
     public void joinMember(MemberDto requestDto) {
 
@@ -72,9 +68,6 @@ public class MemberService {
         return Member.createJoinMember(requestDto.id(), requestDto.email(), encodePassword, genderOrdinal, ageOrdinal);
     }
 
-    /**
-     * 로그인
-     **/
     @Transactional
     public MemberDto login(MemberDto loginDto) {
 
