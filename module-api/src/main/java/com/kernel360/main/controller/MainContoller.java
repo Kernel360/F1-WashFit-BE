@@ -31,6 +31,7 @@ public class MainContoller {
         return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, mainService.getBanner());
     }
 
+
     @GetMapping("/recommend-products")
     //
     ResponseEntity<ApiResponse<Page<RecommendProductsDto>>> getRecommendProducts(Pageable pageable) {
@@ -41,6 +42,8 @@ public class MainContoller {
     }
 
     @GetMapping("/products/rank")
+
+    //
     ResponseEntity<ApiResponse<Page<ProductDto>>> getProducts(
             @RequestParam(name = "sortType", defaultValue = "viewCnt-order") Sort sortType, Pageable pageable) {
         Page<ProductDto> productDtos = sortType.sort(productService, pageable);
