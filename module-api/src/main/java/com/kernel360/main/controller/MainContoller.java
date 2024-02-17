@@ -24,6 +24,7 @@ public class MainContoller {
     private final ProductService productService;
     private final MainService mainService;
 
+    //
     @GetMapping("/banner")
     ResponseEntity<ApiResponse<BannerDto>> getBanner() {
 
