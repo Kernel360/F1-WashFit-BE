@@ -19,6 +19,7 @@ public class ProductController {
 
     private final ProductService productService;
 
+    //
     @GetMapping("/products")
     ResponseEntity<ApiResponse<List<ProductDto>>> findProductList(){
         final List<ProductDto> productDtoList = productService.getProductList();
