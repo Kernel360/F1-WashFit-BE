@@ -48,6 +48,7 @@ public class MyPageController {
 
 
     @PostMapping("/member")
+    //
     ResponseEntity<ApiResponse<String>> validatePassword(@RequestBody String password, @RequestHeader("Authorization") String authToken) {
         memberService.changePassword(password, authToken);
 
