@@ -24,6 +24,7 @@ public class CommonCodeService {
                                    .toList();
     }
 
+    //
     public List<CommonCodeDto> getCodesMapper(String codeName) {
 
         return commonCodeMapper.findAllByUpperNameAndIsUsed(codeName,true)
