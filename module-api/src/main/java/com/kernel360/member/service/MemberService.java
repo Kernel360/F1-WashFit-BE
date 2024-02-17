@@ -59,6 +59,7 @@ public class MemberService {
         int ageOrdinal;
 
         try {
+            // enum으로 받으면 다음과 같은 작업을 할 필요가 없음 .
             genderOrdinal = Gender.valueOf(requestDto.gender()).ordinal();
             ageOrdinal = Age.valueOf(requestDto.age()).ordinal();
         } catch (Exception e) {
@@ -124,6 +125,8 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public boolean emailDuplicationCheck(String email) {
+
+        //
         Member member = memberRepository.findOneByEmail(email);
 
         return member != null;
@@ -188,6 +191,7 @@ public class MemberService {
         Member member = memberRepository.findOneById(id);
         CarInfoDto carInfoDto = CarInfoDto.from(member.getCarInfo());
 
+        //
         return Map.of(
                 "car_info", carInfoDto,
                 "segment_options", commonCodeService.getCodes("segment"),
@@ -200,6 +204,7 @@ public class MemberService {
 
     @Transactional
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
+        //
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
         WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());

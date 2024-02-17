@@ -20,8 +20,12 @@ import static com.kernel360.commoncode.code.CommonCodeBusinessCode.GET_COMMON_CO
 public class CommonCodeController {
 
     private final CommonCodeService commonCodeService;
+
+    //
     @GetMapping("/{codeName}")
     public ResponseEntity<ApiResponse<List<CommonCodeDto>>> getCommonCode (@PathVariable String codeName){
+
+        //
         List<CommonCodeDto> codes = commonCodeService.getCodes(codeName);
 
         return ApiResponse.toResponseEntity(GET_COMMON_CODE_SUCCESS, codes);

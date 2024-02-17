@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @MappedSuperclass
+// 중복
 @EntityListeners(AuditingEntityListener.class)
 public class BaseRawEntity {
     // FIXME :: createdAt 자동 생성시, update 로직 진행중에 null or transient 문제가 발생. 임시방편으로 직접 지정하였으나 이후 수정 필요

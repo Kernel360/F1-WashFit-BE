@@ -17,12 +17,14 @@ public class CommonCodeService {
 
     public List<CommonCodeDto> getCodes(String codeName) {
 
+        //
         return commonCodeRepository.findAllByUpperNameAndIsUsed(codeName,true)
                                    .stream()
                                    .map(CommonCodeDto::from)
                                    .toList();
     }
 
+    //
     public List<CommonCodeDto> getCodesMapper(String codeName) {
 
         return commonCodeMapper.findAllByUpperNameAndIsUsed(codeName,true)

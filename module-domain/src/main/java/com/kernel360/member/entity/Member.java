@@ -88,6 +88,7 @@ public class Member extends BaseEntity {
     /**
      * joinMember Binding
      **/
+    //
     private Member(String id, String email, String password, int gender, int age) {
         this.id = id;
         this.email = email;

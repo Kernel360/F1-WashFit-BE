@@ -16,12 +16,13 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByProductNameContaining(String keyword, Pageable pageable);
 
+    //
     Page<Product> findAllByOrderByViewCountDesc(Pageable pageable);
 
     Page<Product> findTop5ByOrderByProductNameDesc(Pageable pageable);
 
     Page<Product> findAllBySafetyStatusEquals(SafetyStatus safetyStatus, Pageable pageable);
-
+거
     Page<Product> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     @Query(value = "SELECT p FROM Product p WHERE p.productName = :productName "

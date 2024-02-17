@@ -9,10 +9,13 @@ import java.time.LocalDate;
 /**
  * DTO for {@link com.kernel360.member.entity.Member}
  */
+
+
 public record MemberDto(Long memberNo,
                         String id,
                         String email,
                         String password,
+                        //
                         String gender,
                         String age,
                         LocalDate createdAt,
