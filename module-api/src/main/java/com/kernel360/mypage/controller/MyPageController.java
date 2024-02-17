@@ -15,10 +15,13 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+//
 @RequestMapping("/mypage")
 @RequiredArgsConstructor
 public class MyPageController {
     private final MemberService memberService;
+
+    //
     private final ProductService productService;
 
     @GetMapping("/member")
