@@ -59,6 +59,7 @@ public class MemberService {
         int ageOrdinal;
 
         try {
+            // enum으로 받으면 다음과 같은 작업을 할 필요가 없음 .
             genderOrdinal = Gender.valueOf(requestDto.gender()).ordinal();
             ageOrdinal = Age.valueOf(requestDto.age()).ordinal();
         } catch (Exception e) {
