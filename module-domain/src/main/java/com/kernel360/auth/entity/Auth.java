@@ -16,6 +16,8 @@ public class Auth extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auth_id_gen")
     @SequenceGenerator(name = "auth_id_gen", sequenceName = "auth_auth_no_seq")
+
+    //
     @Column(name = "auth_no", nullable = false)
     private Long authNo;
 
