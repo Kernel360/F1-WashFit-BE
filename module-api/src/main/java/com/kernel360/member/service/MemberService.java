@@ -188,6 +188,7 @@ public class MemberService {
         Member member = memberRepository.findOneById(id);
         CarInfoDto carInfoDto = CarInfoDto.from(member.getCarInfo());
 
+        //
         return Map.of(
                 "car_info", carInfoDto,
                 "segment_options", commonCodeService.getCodes("segment"),
