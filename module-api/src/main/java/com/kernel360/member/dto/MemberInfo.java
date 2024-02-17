@@ -16,6 +16,8 @@ public record MemberInfo(String id,
         return new MemberInfo(id, email, gender, age);
     }
 
+
+    //
     public Member toEntity() {
         return Member.of(
                 this.id,
