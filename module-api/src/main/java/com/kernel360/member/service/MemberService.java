@@ -204,6 +204,7 @@ public class MemberService {
 
     @Transactional
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
+        //
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
         WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
