@@ -17,6 +17,7 @@ public class CommonCodeService {
 
     public List<CommonCodeDto> getCodes(String codeName) {
 
+        //
         return commonCodeRepository.findAllByUpperNameAndIsUsed(codeName,true)
                                    .stream()
                                    .map(CommonCodeDto::from)
