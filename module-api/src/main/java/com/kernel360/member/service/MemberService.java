@@ -125,6 +125,8 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public boolean emailDuplicationCheck(String email) {
+
+        //
         Member member = memberRepository.findOneByEmail(email);
 
         return member != null;
