@@ -27,7 +27,7 @@ jasypt:
 logging:
   file:
     path: ./logs/api/
-    name: api-log
+    name: local-api-log
   logback:
     rollingpolicy:
       max-history: 14
