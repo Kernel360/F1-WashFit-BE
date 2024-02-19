@@ -38,4 +38,11 @@ public class ProductController {
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, findProductDetailDto);
     }
+
+    @GetMapping("/products/{OCR_No}")
+    ResponseEntity<ApiResponse<Page<ProductDetailDto>>> findProductByOCR(@PathVariable("OCR_No") String reportNo, Pageable pageable) {
+
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productService.getProductByOCR(reportNo, pageable));
+    }
+
 }

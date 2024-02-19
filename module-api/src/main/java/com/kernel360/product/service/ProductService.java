@@ -84,4 +84,11 @@ public class ProductService {
     public void updateViewCount(Long id) {
         productRepository.updateViewCount(id);
     }
+  
+    @Transactional(readOnly = true)
+    public Page<ProductDetailDto> getProductByOCR(String reportNo, Pageable pageable) {
+
+        return  productRepository.findProductByReportNumberEquals(reportNo, pageable)
+                .map(ProductDetailDto::from);
+    }
 }

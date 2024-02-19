@@ -29,7 +29,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             + "AND p.companyName like :companyName")
     Optional<Product> findProductByProductNameAndCompanyName(@Param("productName") String productName,
                                                              @Param("companyName") String companyName);
+
     @Modifying
     @Query("update Product p set p.viewCount = p.viewCount + 1 where p.productNo = :id")
     void updateViewCount(@Param("id") Long id);
+
+
+    Page<Product> findProductByReportNumberEquals(String reportNo, Pageable pageable);
+
 }
