@@ -1,0 +1,96 @@
+name: Project CI/CD with AWS
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Replace SQL Queries
+        run: |
+          file_path="${{ secrets.TARGET_SQL_PATH }}"
+          old_text="changeRequired"
+          new_text="${{ secrets.PUBLIC_KEY }}"
+          sed -i "s/$old_text/$new_text/g" $file_path
+
+      - name: Set application yml file (api)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-api/src/main/resources/application.yml
+        env:
+          spring.profiles.active: "prod"
+
+      - name: Set application-prod yml file (api)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-api/src/main/resources/application-prod.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL_AWS }}
+          spring.datasource.username: ${{ secrets.DB_USER }}
+          spring.datasource.password: ${{ secrets.DB_PW }}
+
+      - name: Grant execute permission And Build with Gradle (api)
+        working-directory: ./module-api
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        working-directory: ./module-api
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: washfit-api
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Application Run
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_KEY}}
+          script: |
+            # Install Docker and Docker Compose
+            sudo dnf update
+            sudo dnf install docker
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+
+            # Docker Compose
+            mkdir -p deploy
+            cd deploy
+            echo "${{ secrets.DOCKER_COMPOSE_AWS }}" > docker-compose.yml
+            
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
