@@ -214,7 +214,7 @@ class ProductControllerTest extends ControllerTest {
 
         Pageable pageable = PageRequest.of(0, 20);
         Page<ProductDto> productsPage = new PageImpl<>(products, pageable, products.size());
-        when(productService.getProductListByKeyword(eq(keyword), any(Pageable.class))).thenReturn(productsPage);
+        when(productService.getProductsByKeyword(eq(keyword), any(Pageable.class))).thenReturn(productsPage);
 
 //         when & then
         mockMvc.perform(get("/products/search").param("keyword", keyword))
@@ -262,6 +262,6 @@ class ProductControllerTest extends ControllerTest {
                                 subsectionWithPath("value.sort").description("정렬 정보")
                         )));
 
-        verify(productService, times(1)).getProductListByKeyword(keyword, pageable);
+        verify(productService, times(1)).getProductsByKeyword(keyword, pageable);
     }
 }

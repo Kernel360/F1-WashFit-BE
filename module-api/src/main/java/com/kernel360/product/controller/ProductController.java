@@ -21,13 +21,13 @@ public class ProductController {
 
     @GetMapping("/products")
     ResponseEntity<ApiResponse<List<ProductDto>>> findProductList(){
-        final List<ProductDto> productDtoList = productService.getProducts();
+        final List<ProductDto> products = productService.getProducts();
 
-        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productDtoList);
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, products);
     }
     @GetMapping("/products/search")
     ResponseEntity<ApiResponse<Page<ProductDto>>> findProductByKeyword(@RequestParam("keyword") String keyword, Pageable pageable){
-        final Page<ProductDto> list = productService.getProductListByKeyword(keyword, pageable);
+        final Page<ProductDto> list = productService.getProductsByKeyword(keyword, pageable);
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, list);
     }
