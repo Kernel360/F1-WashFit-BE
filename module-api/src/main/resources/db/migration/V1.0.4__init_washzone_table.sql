@@ -1,8 +1,8 @@
-CREATE TABLE if not exists washzone
+CREATE TABLE if not exists wash_zone
 (
     washzone_no BIGSERIAL PRIMARY KEY,
-    washZone_name VARCHAR(255) NOT NULL,
-    washZone_address VARCHAR(255) NOT NULL,
+    washzone_name VARCHAR(255) NOT NULL,
+    washzone_address VARCHAR(255) NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL,
     type VARCHAR(50),

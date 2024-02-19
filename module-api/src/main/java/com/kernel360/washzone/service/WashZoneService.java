@@ -21,7 +21,7 @@ public class WashZoneService {
 
         return
                 washZoneRepository.findWashZonesWithinBounds(
-                                kakaoMapDto.minx(), kakaoMapDto.maxx(), kakaoMapDto.miny(), kakaoMapDto.maxy())
+                                kakaoMapDto.minX(), kakaoMapDto.maxY(), kakaoMapDto.minY(), kakaoMapDto.maxY())
                         .stream().map(WashZoneDto::from)
                         .toList();
     }
@@ -34,8 +34,6 @@ public class WashZoneService {
     public WashZone save(WashZoneDto washZoneDto) {
 
         return washZoneRepository.save(washZoneDto.toEntity());
-
-
     }
 }
 
