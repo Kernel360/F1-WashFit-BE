@@ -5,6 +5,8 @@ import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.service.ProductService;
 import com.kernel360.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +34,8 @@ public class ProductController {
     }
 
     @GetMapping("/products/search")
-    ResponseEntity<ApiResponse<List<ProductDto>>> findProductByKeyword(@RequestParam("keyword") String keyword){
-        final List<ProductDto> list = productService.getProductListByKeyword(keyword);
+    ResponseEntity<ApiResponse<Page<ProductDto>>> findProductByKeyword(@RequestParam("keyword") String keyword, Pageable pageable){
+        final Page<ProductDto> list = productService.getProductListByKeyword(keyword, pageable);
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, list);
     }

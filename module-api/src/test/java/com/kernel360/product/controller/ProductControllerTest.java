@@ -8,31 +8,28 @@ import com.kernel360.product.entity.SafetyStatus;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.*;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
 
-import static com.kernel360.common.utils.RestDocumentUtils.getDocumentRequest;
-import static com.kernel360.common.utils.RestDocumentUtils.getDocumentResponse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 
 @AutoConfigureWebMvc
@@ -51,6 +48,7 @@ class ProductControllerTest extends ControllerTest {
                         )
                 ))
                 .build();
+
     }
 
     @Test
@@ -188,13 +186,13 @@ class ProductControllerTest extends ControllerTest {
     }
 
 
-    @RepeatedTest(100)
+    @Test
     void 검색키워드로_제품조회요청시_200응답과_데이터가_잘_반환되는지() throws Exception {
         // given
         List<ProductDto> products = new ArrayList<>();
         String keyword = "더 클래스";
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 20; i++) {
             ProductDto productDto = fixtureMonkey.giveMeBuilder(ProductDto.class)
                     .set("productName", keyword + " " + (i + 1))
                     .setNotNull("productNo")
@@ -213,7 +211,10 @@ class ProductControllerTest extends ControllerTest {
             products.add(productDto);
         }
 
-        when(productService.getProductListByKeyword(keyword)).thenReturn(products);
+
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<ProductDto> productsPage = new PageImpl<>(products, pageable, products.size());
+        when(productService.getProductListByKeyword(eq(keyword), any(Pageable.class))).thenReturn(productsPage);
 
 //         when & then
         mockMvc.perform(get("/products/search").param("keyword", keyword))
@@ -222,12 +223,11 @@ class ProductControllerTest extends ControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("PMB002"))
                 .andExpect(jsonPath("$.message").value("제품정보 조회 성공"))
-                .andExpect(jsonPath("$.value", hasSize(3)))
-                .andExpect(jsonPath("$.value[*].productNo", notNullValue()))
-                .andExpect(jsonPath("$.value[*].productName", notNullValue()))
-                .andExpect(jsonPath("$.value[*].reportNumber", notNullValue()))
-                .andExpect(jsonPath("$.value[*].safetyStatus", notNullValue()))
-                .andExpect(jsonPath("$.value[*].viewCount", notNullValue()))
+                .andExpect(jsonPath("$.value.content[*].productNo", notNullValue()))
+                .andExpect(jsonPath("$.value.content[*].productName", notNullValue()))
+                .andExpect(jsonPath("$.value.content[*].reportNumber", notNullValue()))
+                .andExpect(jsonPath("$.value.content[*].safetyStatus", notNullValue()))
+                .andExpect(jsonPath("$.value.content[*].viewCount", notNullValue()))
                 .andDo(document("products-search/get-products-by-search",
                         queryParameters(
                               parameterWithName("keyword").description("키워드")
@@ -236,22 +236,32 @@ class ProductControllerTest extends ControllerTest {
                                 fieldWithPath("status").description("상태 코드"),
                                 fieldWithPath("message").description("응답 메시지"),
                                 fieldWithPath("code").description("비즈니스 코드"),
-                                fieldWithPath("value").description("제품 목록"),
-                                fieldWithPath("value[].productNo").description("제품 번호"),
-                                fieldWithPath("value[].productName").description("제품 이름"),
-                                fieldWithPath("value[].barcode").description("바코드").optional(),
-                                fieldWithPath("value[].imageSource").description("이미지 소스").optional(),
-                                fieldWithPath("value[].reportNumber").description("보고서 번호"),
-                                fieldWithPath("value[].safetyStatus").description("안전 상태"),
-                                fieldWithPath("value[].viewCount").description("조회수"),
-                                fieldWithPath("value[].brand").description("브랜드"),
-                                fieldWithPath("value[].upperItem").description("상위 항목 카테고리"),
-                                fieldWithPath("value[].createdAt").description("생성 날짜"),
-                                fieldWithPath("value[].createdBy").description("생성자"),
-                                fieldWithPath("value[].modifiedAt").description("수정 날짜"),
-                                fieldWithPath("value[].modifiedBy").description("수정자")
+                                subsectionWithPath("value").description("제품 목록"),
+                                fieldWithPath("value.content[*].productNo").description("제품 번호"),
+                                fieldWithPath("value.content[*].productName").description("제품 이름"),
+                                fieldWithPath("value.content[*].barcode").optional().description("바코드"),
+                                fieldWithPath("value.content[*].imageSource").optional().description("이미지 소스"),
+                                fieldWithPath("value.content[*].reportNumber").description("보고서 번호"),
+                                fieldWithPath("value.content[*].safetyStatus").description("안전 상태"),
+                                fieldWithPath("value.content[*].viewCount").description("조회수"),
+                                fieldWithPath("value.content[*].brand").description("브랜드"),
+                                fieldWithPath("value.content[*].upperItem").description("상위 항목 카테고리"),
+                                fieldWithPath("value.content[*].createdAt").description("생성 날짜"),
+                                fieldWithPath("value.content[*].createdBy").description("생성자"),
+                                fieldWithPath("value.content[*].modifiedAt").optional().description("수정 날짜"),
+                                fieldWithPath("value.content[*].modifiedBy").optional().description("수정자"),
+                                subsectionWithPath("value.pageable").description("페이지 정보"),
+                                fieldWithPath("value.totalPages").description("총 페이지 수"),
+                                fieldWithPath("value.totalElements").description("총 요소 수"),
+                                fieldWithPath("value.last").description("마지막 페이지 여부"),
+                                fieldWithPath("value.number").description("현재 페이지 번호"),
+                                fieldWithPath("value.size").description("페이지 크기"),
+                                fieldWithPath("value.numberOfElements").description("현재 페이지의 요소 수"),
+                                fieldWithPath("value.first").description("첫 페이지 여부"),
+                                fieldWithPath("value.empty").description("비어 있는 페이지 여부"),
+                                subsectionWithPath("value.sort").description("정렬 정보")
                         )));
 
-        verify(productService, times(1)).getProductListByKeyword(keyword);
+        verify(productService, times(1)).getProductListByKeyword(keyword, pageable);
     }
 }

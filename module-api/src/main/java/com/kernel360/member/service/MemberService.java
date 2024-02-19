@@ -33,18 +33,14 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    private final WashInfoRepository washInfoRepository;
-    private final CarInfoRepository carInfoRepository;
 
     private final JWT jwt;
     private final AuthRepository authRepository;
     private final MemberRepository memberRepository;
     private final CommonCodeService commonCodeService;
+    private final CarInfoRepository carInfoRepository;
+    private final WashInfoRepository washInfoRepository;
 
-
-    /**
-     * 가입
-     **/
     @Transactional
     public void joinMember(MemberDto requestDto) {
 
@@ -72,9 +68,6 @@ public class MemberService {
         return Member.createJoinMember(requestDto.id(), requestDto.email(), encodePassword, genderOrdinal, ageOrdinal);
     }
 
-    /**
-     * 로그인
-     **/
     @Transactional
     public MemberDto login(MemberDto loginDto) {
 
@@ -190,13 +183,13 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public <T> Map<String, Object> getCarInfo(String token) {
-//        String id = JWT.ownerId(token);
-//        Member member = memberRepository.findOneById(id);
-//        CarInfo carInfo = member.getCarInfo();
+    public Map<String, Object> getCarInfo(String token) {
+        String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
+        CarInfoDto carInfoDto = CarInfoDto.from(member.getCarInfo());
 
         return Map.of(
-//                "car_info", carInfo,
+                "car_info", carInfoDto,
                 "segment_options", commonCodeService.getCodes("segment"),
                 "carType_options", commonCodeService.getCodes("cartype"),
                 "color_options", commonCodeService.getCodes("color"),
