@@ -33,8 +33,10 @@ public class ProductController {
     }
     @GetMapping("/product/{productNo}")
     ResponseEntity<ApiResponse<ProductDetailDto>> findProductById(@PathVariable("productNo") Long productNo) {
+        ProductDetailDto findProductDetailDto = productService.getProductById(productNo);
+        productService.updateViewCount(findProductDetailDto.productNo());
 
-        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productService.getProductById(productNo));
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, findProductDetailDto);
     }
 
     @GetMapping("/products/{OCR_No}")
