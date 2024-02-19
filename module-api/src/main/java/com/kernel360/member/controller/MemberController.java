@@ -83,7 +83,7 @@ public class MemberController {
 
     @PostMapping("/find/memberId")
     public ResponseEntity<ApiResponse<Object>> sendMemberIdByEmail(@RequestBody FindMemberIdFromEmailDto dto) {
-        String memberId = memberService.findByEmail(dto.email()).getId();
+        String memberId = memberService.findByEmail(dto.email()).id();
 
         if (memberId.isEmpty()) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
