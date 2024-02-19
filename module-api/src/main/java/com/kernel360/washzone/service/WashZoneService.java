@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class WashZoneService {
 
     private final WashZoneRepository washZoneRepository;
 
+    @Transactional(readOnly = true)
     public List<WashZoneDto> getWashZones(KakaoMapDto kakaoMapDto) {
 
         return
@@ -26,11 +28,13 @@ public class WashZoneService {
                         .toList();
     }
 
+    @Transactional(readOnly = true)
     public Page<WashZoneDto> getWashZonesByKeyword(String keyword, Pageable pageable) {
 
         return washZoneRepository.findByKeyword(keyword, pageable).map(WashZoneDto::from);
     }
 
+    @Transactional
     public WashZone save(WashZoneDto washZoneDto) {
 
         return washZoneRepository.save(washZoneDto.toEntity());
