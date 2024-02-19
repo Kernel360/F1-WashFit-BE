@@ -72,7 +72,7 @@ class ProductControllerTest extends ControllerTest {
                 .map(ProductDto::from)
                 .toList();
 
-        when(productService.getProductList()).thenReturn(expectedDtos);
+        when(productService.getProducts()).thenReturn(expectedDtos);
 
         // then
         mockMvc.perform(get("/products"))
@@ -100,7 +100,7 @@ class ProductControllerTest extends ControllerTest {
                                 fieldWithPath("value[].modifiedBy").description("수정자").optional()
                         )));
 
-        verify(productService, times(1)).getProductList();
+        verify(productService, times(1)).getProducts();
     }
 
 
@@ -130,7 +130,7 @@ class ProductControllerTest extends ControllerTest {
 
         ProductDetailDto productDetailDto = ProductDetailDto.from(mockProduct);
 
-        when(productService.getProductDetailById(1L)).thenReturn(productDetailDto);
+        when(productService.getProductById(1L)).thenReturn(productDetailDto);
 
         // when & then
         mockMvc.perform(get("/product/{id}", 1L))
@@ -182,7 +182,7 @@ class ProductControllerTest extends ControllerTest {
                                 fieldWithPath("value.modifiedAt").description("수정 날짜"),
                                 fieldWithPath("value.modifiedBy").description("수정자")
                         )));
-        verify(productService).getProductDetailById(1L);
+        verify(productService).getProductById(1L);
     }
 
 
@@ -214,7 +214,7 @@ class ProductControllerTest extends ControllerTest {
 
         Pageable pageable = PageRequest.of(0, 20);
         Page<ProductDto> productsPage = new PageImpl<>(products, pageable, products.size());
-        when(productService.getProductListByKeyword(eq(keyword), any(Pageable.class))).thenReturn(productsPage);
+        when(productService.getProductsByKeyword(eq(keyword), any(Pageable.class))).thenReturn(productsPage);
 
 //         when & then
         mockMvc.perform(get("/products/search").param("keyword", keyword))
@@ -262,6 +262,6 @@ class ProductControllerTest extends ControllerTest {
                                 subsectionWithPath("value.sort").description("정렬 정보")
                         )));
 
-        verify(productService, times(1)).getProductListByKeyword(keyword, pageable);
+        verify(productService, times(1)).getProductsByKeyword(keyword, pageable);
     }
 }
