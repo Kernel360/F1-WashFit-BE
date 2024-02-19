@@ -31,5 +31,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                              @Param("companyName") String companyName);
     @Modifying
     @Query("update Product p set p.viewCount = p.viewCount + 1 where p.productNo = :id")
-    Product updateViewCount(Long id);
+    void updateViewCount(@Param("id") Long id);
 }
