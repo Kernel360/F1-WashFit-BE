@@ -33,6 +33,7 @@ include::{snippets}/product-id/get-product-id//http-response.adoc[]
 ===== HTTP Request
 
 include::{snippets}/products-search/get-products-by-search/http-request.adoc[]
+include::{snippets}/products-search/get-products-by-search/query-parameters.adoc[]
 
 ==== Response
 include::{snippets}/products-search/get-products-by-search/response-fields.adoc[]
