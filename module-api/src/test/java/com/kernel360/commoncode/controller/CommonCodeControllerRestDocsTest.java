@@ -58,7 +58,7 @@ class CommonCodeControllerRestDocsTest extends ControllerTest {
 
         //when
         ResultActions result = this.mockMvc.perform(
-                get("/commoncode/test/{codeName}", pathVariable));
+                get("/commoncode/{codeName}", pathVariable));
 
 
         //then
