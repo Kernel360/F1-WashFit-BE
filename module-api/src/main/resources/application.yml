@@ -1,3 +1,18 @@
 spring:
   profiles:
     active: local
+
+  mail:
+    host: smtp.gmail.com
+    username: ENC(U0vAy8zw0HXxQko9Z3JGfxGEbKWkgIMUbg1fgq8qAxgMfWjYlpVAYw==)
+    password: ENC(4c7XVJmiLYFfahxZFSQLOase93b/OSC/GyS9FidIHanGx7PlAJRLLw==)
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          starttls:
+            enable: true
+          timeout: 5000
+          writetimeout: 5000
