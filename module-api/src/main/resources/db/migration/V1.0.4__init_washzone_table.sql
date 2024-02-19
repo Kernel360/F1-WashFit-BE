@@ -1,6 +1,6 @@
-CREATE TABLE if not exists wash_zone
+CREATE TABLE if not exists washzone
 (
-    washZone_no BIGSERIAL PRIMARY KEY,
+    washzone_no BIGSERIAL PRIMARY KEY,
     washZone_name VARCHAR(255) NOT NULL,
     washZone_address VARCHAR(255) NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE if not exists wash_zone
     remarks TEXT
     );
 
-alter sequence wash_zone_washZone_no_seq increment by 50;
+alter sequence wash_zone_washzone_no_seq increment by 50;
 
 INSERT INTO wash_zone (washZone_name, washZone_address, latitude, longitude, type, remarks)
 VALUES

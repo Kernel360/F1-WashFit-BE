@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum WashZoneBusinessCode implements BusinessCode {
 
-    SUCCESS_REQUEST_WASH_ZONE_INFO(HttpStatus.CREATED.value(), "BWZC001", "Wash Zone 정보조회 성공");
+    SUCCESS_REQUEST_WASH_ZONE_INFO(HttpStatus.CREATED.value(), "BWZC001", "Wash Zone 정보조회 성공"),
+    SUCCESS_SAVED_WASH_ZONE_INFO(HttpStatus.CREATED.value(), "BWZC002", "Wash Zone 정보등록 성공");
 
 
     private final int status;

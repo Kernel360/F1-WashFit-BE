@@ -13,7 +13,7 @@ public class WashZone {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "washZone_id_gen")
-    @SequenceGenerator(name = "washZone_id_gen", sequenceName = "wash_zone_washZone_no_seq")
+    @SequenceGenerator(name = "washZone_id_gen", sequenceName = "wash_zone_washzone_no_seq")
     @Column(name = "washzone_no", nullable = false)
     private Long washZoneNo;
 
@@ -30,9 +30,22 @@ public class WashZone {
     private Double longitude;
 
     @Column(name = "type" , nullable = true)
-    private String type; // This and the next field can be null as per your description
+    private String type;
 
     @Column(name = "remarks" , nullable = true)
     private String remarks;
 
+    private WashZone( String name, String address, Double latitude, Double longitude, String type, String remarks) {
+        this.name = name;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.type = type;
+        this.remarks = remarks;
+    }
+
+    public static WashZone of(String name, String address,
+                              Double latitude, Double longitude, String type, String remarks) {
+        return new WashZone(name, address, latitude, longitude, type, remarks);
+    }
 }

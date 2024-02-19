@@ -40,4 +40,16 @@ public record WashZoneDto(
                     washZone.getType(),
                     washZone.getRemarks());
     }
+
+    public WashZone toEntity(){
+
+        return WashZone.of(
+                this.name,
+                this.address,
+                this.latitude,
+                this.longitude,
+                this.type,
+                this.remarks
+        );
+    }
 }

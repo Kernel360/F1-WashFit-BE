@@ -1,6 +1,5 @@
 package com.kernel360.product.dto;
 
-import com.kernel360.brand.entity.Brand;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
 import java.time.LocalDate;
