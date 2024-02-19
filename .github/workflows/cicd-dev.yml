@@ -61,6 +61,8 @@ jobs:
           spring.datasource.password: ${{ secrets.DB_PW }}
           external.ecolife-api.path: ${{ secrets.ECOLIFE_PATH }}
           external.ecolife-api.service-key: ${{ secrets.ECOLIFE_KEY }}
+          spring.mail.username: ${{ secrets.SMTP_GOOGLE_EMAIL }}
+          spring.mail.password: ${{ secrets.SMTP_PASSWORD }}
 
       - name: Grant execute permission And Build with Gradle (api)
         working-directory: ./module-api
