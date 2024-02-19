@@ -23,17 +23,10 @@ jobs:
 
       - name: Replace SQL Queries
         run: |
-          sql_dir_path="./module-api/src/main/resources/db/migration"
-          sql_old_text="changeRequired"
-          sql_new_text="${{ secrets.PUBLIC_KEY }}"
-          find "$sql_dir_path" -type f -name "*.sql" -exec sed -i "s|$sql_old_text|$sql_new_text|g" {} +
-
-      - name: Replace Java Config
-        run: |
-          java_file_path="./module-common/src/main/java/com/kernel360/utils/jasypt/EncryptionConfiguration.java"
-          java_old_text="이 곳에 secret-key를 넣으세요"
-          java_new_text="${{ secrets.PUBLIC_KEY }}"
-          sed -i "s/$java_old_text/$java_new_text/g" $java_file_path
+          file_path="${{ secrets.TARGET_SQL_PATH }}"
+          old_text="changeRequired"
+          new_text="${{ secrets.PUBLIC_KEY }}"
+          sed -i "s/$old_text/$new_text/g" $file_path
 
       - name: Set application yml file (api)
         uses: microsoft/variable-substitution@v1

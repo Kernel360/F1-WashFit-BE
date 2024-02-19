@@ -64,7 +64,7 @@ class ProductServiceTest {
     void 전체_제품_목록_조회(){
         //given & when
         List<ProductDto> products = fixtureMonkey.giveMe(ProductDto.class, 3);
-        when(productService.getProductList()).thenReturn(products);
+        when(productService.getProducts()).thenReturn(products);
 
         //then
         then(products).isEqualTo(products);
@@ -85,7 +85,7 @@ class ProductServiceTest {
 
         when(productRepository.findByProductNameContaining(keyword, pageable)).thenReturn(productsPage);
 
-        Page<ProductDto> productDtos = productService.getProductListByKeyword(keyword, pageable);
+        Page<ProductDto> productDtos = productService.getProductsByKeyword(keyword, pageable);
 
         // then
         then(productDtos.getContent()).hasSize(5);

@@ -22,16 +22,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public ProductDetailDto getProductById(Long id) {
-
-        return productRepository.findById(id)
-                .map(ProductDetailDto::from)
-                .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
-
-    }
-
-    @Transactional(readOnly = true)
-    public List<ProductDto> getProductList() {
+    public List<ProductDto> getProducts() {
 
         return productRepository.findAll()
                 .stream()
@@ -40,7 +31,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDto> getProductListByKeyword(String keyword, Pageable pageable) {
+    public Page<ProductDto> getProductsByKeyword(String keyword, Pageable pageable) {
         Page<Product> products = productRepository.findByProductNameContaining(keyword, pageable);
 
         return products.map(ProductDto::from);
@@ -56,7 +47,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<RecommendProductsDto> getRecommendProductList(Pageable pageable) {
+    public Page<RecommendProductsDto> getRecommendProducts(Pageable pageable) {
         Page<Product> productList = productRepository.findTop5ByOrderByProductNameDesc(pageable);
 
         return productList.map(RecommendProductsDto::from);
@@ -83,10 +74,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductDetailDto getProductDetailById(Long id) {
+    public ProductDetailDto getProductById(Long id) {
 
-        return
-        productRepository.findById(id)
+        return  productRepository.findById(id)
                 .map(ProductDetailDto::from)
                 .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
     }

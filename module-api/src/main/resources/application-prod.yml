@@ -1,10 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    # local docker db
-    url: ENC(DPvTlKCZniOLZz5QHwB2I1p6FbeyEhWeo6DXSHL7kq8idfthgqkC/VJX78osBC5D/hzFwdXGDkxWUZ2euYPrAA==)
-    username: ENC(izKjVNL/2x4aTDQeLxQg4VU0v5kAKduTrnVq7LUa80U=)
-    password: ENC(VcPYkEOg9OzuwNw1UeYOgLqKsRkFoRUHwjRcxZzGgZQ=)
+    url: ${DB_URL_AWS}
+    username: ${DB_USER}
+    password: ${DB_PW}
   jpa:
     show-sql: true
     properties:
@@ -15,19 +14,14 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    validate-on-migrate: false
     #JPA보다 flyway 우선 실행
     autoconfigure:
       exclude: org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
-jasypt:
-  encryptor:
-    algorithm: PBEWithMD5AndTripleDES
-
 logging:
   file:
     path: ./logs/api/
-    name: local-api-log
+    name: api-log
   logback:
     rollingpolicy:
       max-history: 14
