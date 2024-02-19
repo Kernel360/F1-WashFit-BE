@@ -80,4 +80,11 @@ public class ProductService {
                 .map(ProductDetailDto::from)
                 .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
     }
+
+    @Transactional(readOnly = true)
+    public Page<ProductDetailDto> getProductByOCR(String reportNo, Pageable pageable) {
+
+        return  productRepository.findProductByReportNumberEquals(reportNo, pageable)
+                .map(ProductDetailDto::from);
+    }
 }
