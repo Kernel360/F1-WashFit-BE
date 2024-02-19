@@ -11,6 +11,7 @@ CREATE TABLE if not exists wash_zone
 
 alter sequence wash_zone_washzone_no_seq increment by 50;
 
+TRUNCATE wash_zone;
 INSERT INTO wash_zone (washZone_name, washZone_address, latitude, longitude, type, remarks)
 VALUES ('오아시스셀프세차장', '충북 청주시 흥덕구 서현중로35번길 51', 36.6201044081534, 127.427299069691, '실내', NULL),
        ('청주시민셀프세차장', '충북 청주시 상당구 용암북로120번길 15', 36.6199834136669, 127.511998444085, '실내', NULL),
@@ -115,10 +116,4 @@ VALUES ('오아시스셀프세차장', '충북 청주시 흥덕구 서현중로3
        ('워시보이게러지 실내셀프세차', '인천 서구 청마로 109', 37.58805814, 126.67577768941, NULL, NULL),
        ('마이온게러지', '경기 파주시 평화로 208 마이온게러지', 37.7712928807524, 126.758439177099, NULL, NULL),
        ('마이개러지카페', '경기 하남시 산곡동로 31', 37.5065820573677, 127.230560960249, NULL, NULL),
-       ('로얄게러지', '충북 충주시 원호암4길 26', 36.9552164638785, 127.937717481269, NULL, NULL)
-ON CONFLICT (washZone_name, washZone_address) DO
-UPDATE SET
-    latitude = EXCLUDED.latitude,
-    longitude = EXCLUDED.longitude,
-    type = EXCLUDED.type,
-    remarks = EXCLUDED.remarks;
+       ('로얄게러지', '충북 충주시 원호암4길 26', 36.9552164638785, 127.937717481269, NULL, NULL);
