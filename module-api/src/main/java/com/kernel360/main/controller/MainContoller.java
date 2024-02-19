@@ -33,9 +33,9 @@ public class MainContoller {
 
     @GetMapping("/recommend-products")
     ResponseEntity<ApiResponse<Page<RecommendProductsDto>>> getRecommendProducts(Pageable pageable) {
-        Page<RecommendProductsDto> recommendProductList = productService.getRecommendProducts(pageable);
+        Page<RecommendProductsDto> recommendProducts = productService.getRecommendProducts(pageable);
 
-        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProductList);
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProducts);
 
     }
 

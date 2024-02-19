@@ -31,7 +31,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDto> getProductListByKeyword(String keyword, Pageable pageable) {
+    public Page<ProductDto> getProductsByKeyword(String keyword, Pageable pageable) {
         Page<Product> products = productRepository.findByProductNameContaining(keyword, pageable);
 
         return products.map(ProductDto::from);
