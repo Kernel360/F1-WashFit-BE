@@ -220,5 +220,8 @@ public class MemberService {
         carInfoRepository.save(carInfo);
     }
 
+    public Member findByEmail(String email) {
 
+        return memberRepository.findOneByEmail(email);
+    }
 }

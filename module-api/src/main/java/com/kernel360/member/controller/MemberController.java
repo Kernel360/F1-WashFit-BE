@@ -2,10 +2,14 @@ package com.kernel360.member.controller;
 
 
 import com.kernel360.carinfo.entity.CarInfo;
+import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberBusinessCode;
+import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.CarInfoDto;
+import com.kernel360.member.dto.FindMemberIdFromEmailDto;
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.dto.WashInfoDto;
+import com.kernel360.member.service.FindService;
 import com.kernel360.member.service.MemberService;
 import com.kernel360.response.ApiResponse;
 import com.kernel360.washinfo.entity.WashInfo;
@@ -24,6 +28,8 @@ import static com.kernel360.member.code.MemberBusinessCode.SUCCESS_REQUEST_LOGIN
 public class MemberController {
 
     private final MemberService memberService;
+
+    private final FindService findService;
 
     @PostMapping("/join")
     public ResponseEntity<ApiResponse<Object>> joinMember(@RequestBody MemberDto joinRequestDto) {
@@ -75,5 +81,17 @@ public class MemberController {
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_CAR_INFO_MEMBER);
     }
 
+    @PostMapping("/find/memberId")
+    public ResponseEntity<ApiResponse<Object>> sendMemberIdByEmail(@RequestBody FindMemberIdFromEmailDto dto) {
+        String memberId = memberService.findByEmail(dto.email()).getId();
 
+        if (memberId.isEmpty()) {
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
+
+        findService.sendMemberId(dto.email(), memberId);
+
+        return ApiResponse.toResponseEntity(
+                MemberBusinessCode.SUCCESS_REQUEST_FIND_MEMBER_ID); // 아이디는 이메일로 보내고, 외부 노출 X
+    }
 }
