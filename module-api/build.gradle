@@ -77,6 +77,9 @@ dependencies {
 
     //mybatis
     implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '3.0.3'
+
+    // aws s3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.625'
 }
 
 tasks.named('test') {
