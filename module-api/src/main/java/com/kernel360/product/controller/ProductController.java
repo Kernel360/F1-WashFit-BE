@@ -21,23 +21,19 @@ public class ProductController {
 
     @GetMapping("/products")
     ResponseEntity<ApiResponse<List<ProductDto>>> findProductList(){
-        final List<ProductDto> productDtoList = productService.getProductList();
+        final List<ProductDto> productDtoList = productService.getProducts();
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productDtoList);
     }
-
-    @GetMapping("/product/{id}")
-    ResponseEntity<ApiResponse<ProductDetailDto>> findProductById(@PathVariable("id") Long productId) {
-        ProductDetailDto product = productService.getProductDetailById(productId);
-
-        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, product);
-    }
-
     @GetMapping("/products/search")
     ResponseEntity<ApiResponse<Page<ProductDto>>> findProductByKeyword(@RequestParam("keyword") String keyword, Pageable pageable){
         final Page<ProductDto> list = productService.getProductListByKeyword(keyword, pageable);
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, list);
     }
+    @GetMapping("/product/{productNo}")
+    ResponseEntity<ApiResponse<ProductDetailDto>> findProductById(@PathVariable("productNo") Long productNo) {
 
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productService.getProductById(productNo));
+    }
 }

@@ -64,7 +64,7 @@ class ProductServiceTest {
     void 전체_제품_목록_조회(){
         //given & when
         List<ProductDto> products = fixtureMonkey.giveMe(ProductDto.class, 3);
-        when(productService.getProductList()).thenReturn(products);
+        when(productService.getProducts()).thenReturn(products);
 
         //then
         then(products).isEqualTo(products);
