@@ -169,6 +169,14 @@ public class Product extends BaseEntity {
         this.violationInfo = violationInfo;
     }
 
+    private Product(
+            Long productNo,
+            String productName
+    ) {
+        this.productNo = productNo;
+        this.productName = productName;
+    }
+
     public static Product of(String productName,
                              String barcode,
                              String imageSource,
@@ -202,6 +210,10 @@ public class Product extends BaseEntity {
                 item, propose, weight, usage, usagePrecaution, firstAid, mainSubstance, allergicSubstance,
                 otherSubstance, preservative, surfactant,
                 fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, violation_info);
+    }
+
+    public static Product of(Long productNo, String productName) {
+        return new Product(productNo, productName);
     }
 
     public void updateDetail(

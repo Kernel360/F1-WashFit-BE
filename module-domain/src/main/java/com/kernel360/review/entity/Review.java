@@ -22,11 +22,11 @@ public class Review extends BaseEntity {
     private Long reviewNo;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_no", nullable = false)
+    @JoinColumn(name = "product_no", nullable = false, updatable = false)
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "member_no", nullable = false)
+    @JoinColumn(name = "member_no", nullable = false, updatable = false)
     private Member member;
 
     @Column(name = "star_rating", nullable = false, precision = 3, scale = 1)

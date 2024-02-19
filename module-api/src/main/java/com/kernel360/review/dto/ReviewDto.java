@@ -62,15 +62,14 @@ public record ReviewDto(Long reviewNo,
         );
     }
 
-    // FIXME ::
-//    public Review toEntity() {
-//        return Review.of(
-//                reviewNo,
-//                productDto.toEntity(),
-//                memberDto.toEntity(),
-//                starRating,
-//                title,
-//                contents
-//        );
-//    }
+    public Review toEntity() {
+        return Review.of(
+                reviewNo,
+                productDto.toEntity(),
+                memberDto.toEntity(),
+                starRating,
+                title,
+                contents
+        );
+    }
 }
