@@ -1,6 +1,7 @@
 package com.kernel360.modulebatch.product.job.core;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
+import com.kernel360.modulebatch.product.job.infra.FilterUnusedProductTasklet;
 import com.kernel360.modulebatch.product.job.infra.ReportedProductToProductItemProcessor;
 import com.kernel360.product.entity.Product;
 import jakarta.persistence.EntityManagerFactory;
@@ -38,15 +39,19 @@ public class ImportProductFromReportedProductJobConfig {
 
     private final ReportedProductToProductItemProcessor reportedProductToProductItemProcessor;
 
+    private final FilterUnusedProductTasklet filterUnusedProductTasklet;
+
     private final EntityManagerFactory emf;
 
     @Bean
     public Job importProductFromReportedProductJob(JobRepository jobRepository,
-                                                   @Qualifier("importProductFromReportedProductStep") Step importProductFromReportedProductStep) {
+                                                   @Qualifier("importProductFromReportedProductStep") Step importProductFromReportedProductStep,
+                                                   @Qualifier("filterUnusedProductStep") Step filterUnusedProductStep) {
         log.info("Import Product from ReportedProduct by Brand Job Build Configuration");
 
         return new JobBuilder("ImportProductFromReportedProductJob", jobRepository)
                 .start(importProductFromReportedProductStep)
+                .next(filterUnusedProductStep)
                 .incrementer(new RunIdIncrementer())
                 .listener(new ImportProductFromReportedProductJobListener())
                 .build();
@@ -98,6 +103,15 @@ public class ImportProductFromReportedProductJobConfig {
     public JpaItemWriter<Product> productJpaItemWriter() {
         return new JpaItemWriterBuilder<Product>()
                 .entityManagerFactory(emf)
+                .build();
+    }
+
+    @Bean
+    public Step filterUnusedProductStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+
+        return new StepBuilder("filterUnusedProductStep", jobRepository)
+                .tasklet(filterUnusedProductTasklet, transactionManager)
+                .listener(new ImportProductFromReportedProductStepListener())
                 .build();
     }
 
