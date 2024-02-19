@@ -115,11 +115,10 @@ VALUES ('오아시스셀프세차장', '충북 청주시 흥덕구 서현중로3
        ('워시보이게러지 실내셀프세차', '인천 서구 청마로 109', 37.58805814, 126.67577768941, NULL, NULL),
        ('마이온게러지', '경기 파주시 평화로 208 마이온게러지', 37.7712928807524, 126.758439177099, NULL, NULL),
        ('마이개러지카페', '경기 하남시 산곡동로 31', 37.5065820573677, 127.230560960249, NULL, NULL),
-       ('로얄게러지', '충북 충주시 원호암4길 26', 36.9552164638785, 127.937717481269, NULL, NULL);
+       ('로얄게러지', '충북 충주시 원호암4길 26', 36.9552164638785, 127.937717481269, NULL, NULL)
 ON CONFLICT (washZone_name, washZone_address) DO
 UPDATE SET
     latitude = EXCLUDED.latitude,
     longitude = EXCLUDED.longitude,
     type = EXCLUDED.type,
     remarks = EXCLUDED.remarks;
-
