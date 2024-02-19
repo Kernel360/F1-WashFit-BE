@@ -18,6 +18,20 @@ spring:
     autoconfigure:
       exclude: org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
+  mail:
+    host: smtp.gmail.com
+    username: ${SMTP_GOOGLE_EMAIL}
+    password: ${SMTP_PASSWORD}
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          starttls:
+            enable: true
+          timeout: 5000
+          writetimeout: 5000
 logging:
   file:
     path: ./logs/api/
