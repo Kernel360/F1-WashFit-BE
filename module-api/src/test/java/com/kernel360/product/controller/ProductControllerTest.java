@@ -268,7 +268,10 @@ class ProductControllerTest extends ControllerTest {
                 .andExpect(jsonPath("$.value.content[*].viewCount", notNullValue()))
                 .andDo(document("products-search/get-products-by-search",
                         queryParameters(
-                              parameterWithName("keyword").description("키워드")
+                              parameterWithName("keyword").description("키워드"),
+                                parameterWithName("size").description("사이즈").optional(),
+                                parameterWithName("page").description("페이지").optional(),
+                                parameterWithName("sort").description("정렬").optional()
                       ),
                         responseFields(
                                 fieldWithPath("status").description("상태 코드"),
