@@ -45,6 +45,9 @@ jobs:
           spring.datasource.password: ${{ secrets.DB_PW }}
           spring.mail.username: ${{ secrets.SMTP_GOOGLE_EMAIL }}
           spring.mail.password: ${{ secrets.SMTP_PASSWORD }}
+          aws.credentials.access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws.credentials.secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws.s3.bucket: ${{ secrets.AWS_S3_BUCKET }}
 
       - name: Grant execute permission And Build with Gradle (api)
         working-directory: ./module-api
