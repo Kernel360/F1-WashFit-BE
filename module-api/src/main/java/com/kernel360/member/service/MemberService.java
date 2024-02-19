@@ -220,5 +220,12 @@ public class MemberService {
         carInfoRepository.save(carInfo);
     }
 
+    public MemberDto findByEmail(String email) {
+        Member member = memberRepository.findOneByEmail(email);
+        if (member == null) {
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
 
+        return MemberDto.from(member);
+    }
 }
