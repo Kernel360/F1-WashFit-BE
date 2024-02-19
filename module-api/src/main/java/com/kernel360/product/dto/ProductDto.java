@@ -1,26 +1,27 @@
 package com.kernel360.product.dto;
 
-import com.kernel360.brand.entity.Brand;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
+
 import java.time.LocalDate;
 
 /**
  * DTO for {@link com.kernel360.product.entity.Product}
  */
-public record ProductDto(Long productNo,
-                         String productName,
-                         String barcode,
-                         String imageSource,
-                         String reportNumber,
-                         SafetyStatus safetyStatus,
-                         Integer viewCount,
-                         String brand,
-                         String upperItem,
-                         LocalDate createdAt,
-                         String createdBy,
-                         LocalDate modifiedAt,
-                         String modifiedBy
+public record ProductDto(
+        Long productNo,
+        String productName,
+        String barcode,
+        String imageSource,
+        String reportNumber,
+        SafetyStatus safetyStatus,
+        Integer viewCount,
+        String brand,
+        String upperItem,
+        LocalDate createdAt,
+        String createdBy,
+        LocalDate modifiedAt,
+        String modifiedBy
 ) {
 
     public static ProductDto of(
