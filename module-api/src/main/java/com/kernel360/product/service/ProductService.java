@@ -7,13 +7,12 @@ import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.repository.ProductRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +24,9 @@ public class ProductService {
     public List<ProductDto> getProducts() {
 
         return productRepository.findAll()
-                .stream()
-                .map(ProductDto::from)
-                .toList();
+                                .stream()
+                                .map(ProductDto::from)
+                                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +56,7 @@ public class ProductService {
     public Page<ProductDto> getViolationProducts(Pageable pageable) {
 
         return productRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(ProductDto::from);
+                                .map(ProductDto::from);
         //FIXME :: 데이터가 없어서 최근데이터로 대신 리턴
 //        return productRepository.findAllBySafetyStatusEquals(SafetyStatus.DANGER)
 //                .stream()
@@ -79,5 +78,10 @@ public class ProductService {
         return  productRepository.findById(id)
                 .map(ProductDetailDto::from)
                 .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
+    }
+
+    @Transactional
+    public void updateViewCount(Long id) {
+        productRepository.updateViewCount(id);
     }
 }
