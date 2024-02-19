@@ -92,7 +92,7 @@ class MainContollerTest extends ControllerTest {
 
         Pageable pageable = PageRequest.of(0, 5);
         Page<RecommendProductsDto> page = new PageImpl<>(recommendProductsDtos, pageable, recommendProductsDtos.size());
-        when(productService.getRecommendProductList(any(Pageable.class))).thenReturn(page);
+        when(productService.getRecommendProducts(any(Pageable.class))).thenReturn(page);
 
 //         when & then
         mockMvc.perform(get("/recommend-products"))
