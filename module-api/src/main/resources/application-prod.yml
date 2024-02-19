@@ -51,3 +51,10 @@ management:
   endpoint:
     health:
       show-details: always
+
+aws:
+  credentials:
+    access-key-id: ${AWS_ACCESS_KEY}
+    secret-access-key: ${AWS_SECRET_KEY}
+  s3:
+    bucket: ${AWS_S3_BUCKET}
