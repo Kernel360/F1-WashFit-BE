@@ -1,6 +1,10 @@
 package com.kernel360.product.dto;
 
 import com.kernel360.product.entity.Product;
+import jakarta.persistence.Column;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 
@@ -35,7 +39,12 @@ public record ProductDetailDto(
         String manufactureType,
         String manufactureMethod,
         String manufactureNation,
-        String violationInfo
+        String violationInfo,
+        LocalDate createdAt,
+        String createdBy,
+        LocalDate modifiedAt,
+        String modifiedBy
+        //TODO 브랜드 엔티티
 ) {
 
     public static ProductDetailDto of(
@@ -66,7 +75,11 @@ public record ProductDetailDto(
             String manufactureType,
             String manufactureMethod,
             String manufactureNation,
-            String violationInfo
+            String violationInfo,
+            LocalDate createdAt,
+            String createdBy,
+            LocalDate modifiedAt,
+            String modifiedBy
     ) {
         return new ProductDetailDto(
                 productNo,
@@ -96,7 +109,11 @@ public record ProductDetailDto(
                 manufactureType,
                 manufactureMethod,
                 manufactureNation,
-                violationInfo
+                violationInfo,
+                createdAt,
+                createdBy,
+                modifiedAt,
+                modifiedBy
         );
     }
 
@@ -129,7 +146,11 @@ public record ProductDetailDto(
             entity.getManufactureType(),
             entity.getManufactureMethod(),
             entity.getManufactureNation(),
-            entity.getViolationInfo()
+            entity.getViolationInfo(),
+            entity.getCreatedAt(),
+            entity.getCreatedBy(),
+            entity.getModifiedAt(),
+            entity.getModifiedBy()
         );
     }
 }
