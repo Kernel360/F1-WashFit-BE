@@ -18,8 +18,8 @@ public class FilterUnusedProductTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        jdbcTemplate.update("delete from product where upper_item like '%세탁%'");
-        jdbcTemplate.update("delete from product where product_name similar to '(방향제|그라스|통풍구|선바이저|살라딘|세탁|체인)%'");
+        jdbcTemplate.update("delete from product where product.upper_item like '%세탁%'");
+        jdbcTemplate.update("delete from product where product.product_name similar to '%(방향제|그라스|통풍구|선바이저|살라딘|세탁|체인)%'");
 
         return RepeatStatus.FINISHED;
     }
