@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthControllerTest extends ControllerTest {
 
     @Test
-    void 토큰_갱신요청이_왔을때_갱신이_잘_되는지() throws Exception {
+    void 토큰_갱신요청이_왔을때_리스폰스로_상태코드201과_갱신토큰이_잘_보내지는지() throws Exception {
         String requestToken = "token";
         String resultToken = "reissuanceToken";
 
