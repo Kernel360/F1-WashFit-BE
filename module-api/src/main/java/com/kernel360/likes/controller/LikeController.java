@@ -38,7 +38,7 @@ public class LikeController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Like>> delete(@RequestParam("productNo") Long productNo,
+    public ResponseEntity<ApiResponse<Like>> likeOff(@RequestParam("productNo") Long productNo,
                                                     @RequestHeader("Authorization") String token) {
         likeService.heartOff(productNo, token);
 

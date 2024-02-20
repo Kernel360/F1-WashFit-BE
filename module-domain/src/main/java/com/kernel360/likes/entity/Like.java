@@ -18,23 +18,23 @@ public class Like extends BaseEntity {
     @Column(name = "like_no", nullable = false)
     private Long id;
 
-    @JoinColumn(name = "member_id")
-    private String memberId;
+    @JoinColumn(name = "member_no")
+    private Long memberNo;
 
     @JoinColumn(name = "product_no")
     private Long productNo;
 
-    private Like( String memberId, Long productNo) {
-        this.memberId = memberId;
+    private Like( Long memberNo, Long productNo) {
+        this.memberNo = memberNo;
         this.productNo = productNo;
     }
 
     public static Like of(
-            String memberId,
+            Long memberNo,
             Long productNo
     ){
         return new Like(
-                memberId, productNo
+                memberNo, productNo
         );
     }
 }

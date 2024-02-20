@@ -27,17 +27,17 @@ public class LikeService {
 
     @Transactional
     public void heartOn(Long productNo, String token) {
-        String memberId = memberService.findMemberByToken(token).id();
+        Long memberNo = memberService.findMemberByToken(token).memberNo();
         Product product = productRepository.findById(productNo)
                                            .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
 
-        likeRepository.save(Like.of(memberId, product.getProductNo()));
+        likeRepository.save(Like.of(memberNo, product.getProductNo()));
     }
 
     @Transactional
     public void heartOff(Long productNo, String token) {
-        String memberId = memberService.findMemberByToken(token).id();
-        Like like = likeRepository.findByMemberIdAndProductNo(memberId, productNo)
+        Long memberNo = memberService.findMemberByToken(token).memberNo();
+        Like like = likeRepository.findByMemberNoAndProductNo(memberNo, productNo)
                                   .orElseThrow(() -> new BusinessException(LikeErrorCode.NO_EXIST_LIKE_INFO));
 
         likeRepository.delete(like);
@@ -45,9 +45,9 @@ public class LikeService {
 
     @Transactional(readOnly = true)
     public Page<ProductDto> findAllLikes(String token, Pageable pageable) {
-        String memberId = memberService.findMemberByToken(token).id();
+        Long memberNo = memberService.findMemberByToken(token).memberNo();
 
-        return likeRepository.findAllByMemberId(memberId, pageable)
+        return likeRepository.findAllByMemberNo(memberNo, pageable)
                 .map(like -> productRepository.findById(like.getId())
                         .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT)))
                 .map(ProductDto::from);

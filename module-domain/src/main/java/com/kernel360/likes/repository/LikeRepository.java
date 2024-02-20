@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
-    Optional<Like> findByMemberIdAndProductNo(String memberId, Long productNo);
-    Page<Like> findAllByMemberId(String memberId, Pageable pageable);
+    Optional<Like> findByMemberNoAndProductNo(Long memberNo, Long productNo);
+    Page<Like> findAllByMemberNo(Long memberNo, Pageable pageable);
 
 }
