@@ -2,6 +2,7 @@ package com.kernel360.member.service;
 
 import com.kernel360.auth.entity.Auth;
 import com.kernel360.auth.repository.AuthRepository;
+import com.kernel360.auth.service.AuthService;
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.repository.MemberRepository;
@@ -34,6 +35,9 @@ class MemberServiceTest {
 
     @InjectMocks
     private MemberService memberService;
+
+    @InjectMocks
+    private AuthService authService;
 
     @Mock
     private ConvertSHA256 convertSHA256;
@@ -119,8 +123,8 @@ class MemberServiceTest {
         Auth authJwt = authRepository.findOneByMemberNo(memberEntity.getMemberNo());
 
         authJwt = Optional.ofNullable(authJwt)
-                          .map(modifyAuth -> memberService.modifyAuthJwt(modifyAuth, encryptToken))
-                          .orElseGet(() -> memberService.createAuthJwt(memberEntity.getMemberNo(), encryptToken));
+                          .map(modifyAuth -> authService.modifyAuthJwt(modifyAuth, encryptToken))
+                          .orElseGet(() -> authService.createAuthJwt(memberEntity.getMemberNo(), encryptToken));
 
         authRepository.save(authJwt);
 
