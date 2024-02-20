@@ -19,7 +19,7 @@ public abstract class BaseEntity {
 
     private static final int MAX_STRING_LENGTH = 255;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     private LocalDate createdAt;
 
