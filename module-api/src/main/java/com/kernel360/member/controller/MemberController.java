@@ -51,21 +51,13 @@ public class MemberController {
 
     @GetMapping("/duplicatedCheckId/{id}")
     public boolean duplicatedCheckId (@PathVariable String id){
-
         return memberService.idDuplicationCheck(id);
     }
 
     @GetMapping("/duplicatedCheckEmail/{email}")
     public boolean duplicatedCheckEmail (@PathVariable String email){
-
         return memberService.emailDuplicationCheck(email);
     }
-
-    @PostMapping("/testJwt")
-    public String testJwt (){
-        return "checked";
-    }
-
 
     @PostMapping("/wash")
     public ResponseEntity<ApiResponse<WashInfo>> saveWashInfo(@RequestBody WashInfoDto washInfo, @RequestHeader("Authorization") String authToken){

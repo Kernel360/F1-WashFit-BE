@@ -1,6 +1,8 @@
 package com.kernel360.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernel360.auth.controller.AuthController;
+import com.kernel360.auth.service.AuthService;
 import com.kernel360.commoncode.controller.CommonCodeController;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.global.Interceptor.AcceptInterceptor;
@@ -23,7 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
         MemberController.class,
         ProductController.class,
         MainContoller.class,
-        MyPageController.class
+        MyPageController.class,
+        AuthController.class
 })
 @AutoConfigureRestDocs
 public abstract class ControllerTest {
@@ -51,4 +54,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected FindService findService;
+
+    @MockBean
+    protected AuthService authService;
 }
