@@ -43,10 +43,11 @@ public class MemberService {
     @Transactional
     public void joinMember(MemberDto requestDto) {
         Member entity = getNewJoinMemberEntity(requestDto);
-        if (entity == null) { throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO); }
+        if (entity == null) {   throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);  }
 
         memberRepository.save(entity);
     }
+
     protected Member getNewJoinMemberEntity(MemberDto requestDto) {
         String encodePassword = ConvertSHA256.convertToSHA256(requestDto.password());
         int genderOrdinal;
@@ -55,17 +56,20 @@ public class MemberService {
         try {
             genderOrdinal = Gender.valueOf(requestDto.gender()).ordinal();
             ageOrdinal = Age.valueOf(requestDto.age()).ordinal();
-        } catch (Exception e) { throw new BusinessException(MemberErrorCode.FAILED_NOT_MAPPING_ENUM_VALUEOF); }
+        } catch (Exception e) {
+            throw new BusinessException(MemberErrorCode.FAILED_NOT_MAPPING_ENUM_VALUEOF);
+        }
 
         return Member.createJoinMember(requestDto.id(), requestDto.email(), encodePassword, genderOrdinal, ageOrdinal);
     }
+
     @Transactional
     public MemberDto login(MemberDto loginDto) {
         Member loginEntity = newReqeustLoginEntity(loginDto);
-        if (Objects.isNull(loginEntity)) {  throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);    }
+        if (Objects.isNull(loginEntity)) { throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);    }
 
         Member memberEntity = memberRepository.findOneByIdAndPassword(loginEntity.getId(), loginEntity.getPassword());
-        if (Objects.isNull(memberEntity)) { throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN); }
+        if (Objects.isNull(memberEntity)) { throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);  }
 
         String loginToken = jwt.generateToken(memberEntity.getId());
 
@@ -73,17 +77,20 @@ public class MemberService {
 
         return MemberDto.login(memberEntity, loginToken);
     }
+
     private Member newReqeustLoginEntity(MemberDto loginDto) {
         String encodePassword = ConvertSHA256.convertToSHA256(loginDto.password());
 
         return Member.loginMember(loginDto.id(), encodePassword);
     }
+
     @Transactional(readOnly = true)
     public boolean idDuplicationCheck(String id) {
         Member member = memberRepository.findOneById(id);
 
         return member != null;
     }
+
     @Transactional(readOnly = true)
     public boolean emailDuplicationCheck(String email) {
         Member member = memberRepository.findOneByEmail(email);
@@ -96,17 +103,20 @@ public class MemberService {
 
         return MemberDto.from(memberRepository.findOneById(id));
     }
+
     public CarInfo findCarInfoByToken(@RequestHeader("Authorization") String authToken) {
         MemberDto memberDto = findMemberByToken(authToken);
 
         return memberDto.toEntity().getCarInfo();
     }
+
     @Transactional
     public void deleteMember(String id) {
         Member member = memberRepository.findOneById(id);
 
         memberRepository.delete(member);
     }
+
     @Transactional
     public void deleteMemberByToken(String token) {
         final String id = JWT.ownerId(token);
@@ -115,6 +125,7 @@ public class MemberService {
         memberRepository.delete(member);
         log.info("{} 회원 탈퇴 처리 완료", id);
     }
+
     @Transactional
     public void changePassword(String password, String token) {
         String id = JWT.ownerId(token);
@@ -123,8 +134,10 @@ public class MemberService {
         member.updatePassword(password);
         log.info("{} 회원의 비밀번호가 변경되었습니다.", id);
     }
+
     @Transactional
     public void updateMember(MemberInfo memberInfo) {   memberRepository.save(memberInfo.toEntity());   }
+
     @Transactional(readOnly = true)
     public Map<String, Object> getCarInfo(String token) {
         String id = JWT.ownerId(token);
@@ -140,6 +153,7 @@ public class MemberService {
                 "parking_options", commonCodeService.getCodes("parking")
         );
     }
+
     @Transactional
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
@@ -150,6 +164,7 @@ public class MemberService {
 
         washInfoRepository.save(washInfo);
     }
+
     @Transactional
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
@@ -160,6 +175,7 @@ public class MemberService {
 
         carInfoRepository.save(carInfo);
     }
+
     public MemberDto findByEmail(String email) {
         Member member = memberRepository.findOneByEmail(email);
         if (member == null) {   throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);   }

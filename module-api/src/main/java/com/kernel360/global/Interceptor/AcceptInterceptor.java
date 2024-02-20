@@ -23,6 +23,8 @@ public class AcceptInterceptor implements HandlerInterceptor {
 
         if (!authService.validRequestToken(requestToken)) { throw new BusinessException(AcceptInterceptorErrorCode.FAILED_VALID_REQUEST_TOKEN); }
 
+        //IP수집 후 테이블에 저장
+
         return result;
     }
 
