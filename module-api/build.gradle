@@ -85,24 +85,17 @@ tasks.named('test') {
 }
 
 asciidoctor {
-    dependsOn test
-    configurations 'asciidoctorExt'
     baseDirFollowsSourceFile()
     inputs.dir snippetsDir
-}
-
-asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
-}
-
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
+    configurations 'asciidoctorExt'
+    dependsOn test
 }
 
 bootJar {
-    dependsOn copyDocument
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }
 
 tasks.register("prepareKotlinBuildScriptModel") {}
