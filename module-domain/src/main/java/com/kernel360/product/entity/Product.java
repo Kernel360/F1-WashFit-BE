@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_id_gen")
     @SequenceGenerator(name = "product_id_gen", sequenceName = "product_product_no_seq", allocationSize = 50)
