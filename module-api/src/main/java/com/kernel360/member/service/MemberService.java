@@ -19,14 +19,13 @@ import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
 import com.kernel360.washinfo.entity.WashInfo;
 import com.kernel360.washinfo.repository.WashInfoRepository;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestHeader;
-
-import java.util.Map;
-import java.util.Optional;
 
 
 @Slf4j
@@ -89,8 +88,8 @@ public class MemberService {
 
         //결과 없으면 entity로 신규 생성
         authJwt = Optional.ofNullable(authJwt)
-                .map(modifyAuth -> modifyAuthJwt(modifyAuth, encryptToken))
-                .orElseGet(() -> createAuthJwt(memberEntity.getMemberNo(), encryptToken));
+                          .map(modifyAuth -> modifyAuthJwt(modifyAuth, encryptToken))
+                          .orElseGet(() -> createAuthJwt(memberEntity.getMemberNo(), encryptToken));
 
         authRepository.save(authJwt);
 
@@ -166,7 +165,6 @@ public class MemberService {
         log.info("{} 회원 탈퇴 처리 완료", id);
     }
 
-
     @Transactional
     public void changePassword(String password, String token) {
         String id = JWT.ownerId(token);
@@ -202,7 +200,8 @@ public class MemberService {
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
+        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(),
+                washInfoDto.interest());
         washInfo.settingMember(member);
         member.updateWashInfo(washInfo);
 
@@ -213,7 +212,8 @@ public class MemberService {
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(), carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
+        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
+                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
         carInfo.settingMember(member);
         member.updateCarInfo(carInfo);
 
@@ -228,4 +228,24 @@ public class MemberService {
 
         return MemberDto.from(member);
     }
+
+    public MemberDto findByMemberId(String memberId) {
+        Member member = memberRepository.findOneById(memberId);
+        if (member == null) {
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
+
+        return MemberDto.from(member);
+    }
+
+    public void resetPasswordByMemberId(String memberId, String newPassword) {
+        Member member = memberRepository.findOneById(memberId);
+        if (member == null) {
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
+        member.updatePassword(newPassword);
+
+        memberRepository.save(member);
+    }
+
 }
