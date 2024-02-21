@@ -8,8 +8,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 public interface RestDocumentUtils {
 
     static OperationRequestPreprocessor getDocumentRequest() {
-        return preprocessRequest(modifyUris().scheme("http")
-                                             .host("washpedia.my-project.life")
+        return preprocessRequest(modifyUris().scheme("https")
+                                             .host("devapi.washfit.site")
                                              .removePort(), prettyPrint());
     }
 
