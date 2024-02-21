@@ -1,6 +1,14 @@
 package com.kernel360.member.controller;
 
+import static com.kernel360.common.utils.RestDocumentUtils.getDocumentRequest;
+import static com.kernel360.common.utils.RestDocumentUtils.getDocumentResponse;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.common.ControllerTest;
@@ -10,6 +18,8 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -111,9 +121,110 @@ class MemberControllerTest extends ControllerTest {
         String dtoAsString = objectMapper.writeValueAsString(dto);
 
         /** then **/
-        mockMvc.perform(MockMvcRequestBuilders.post("/member/find/memberId")
+        mockMvc.perform(MockMvcRequestBuilders.post("/member/find-memberId")
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(dtoAsString))
-               .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+               .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document(
+                       "member/find-memberId", getDocumentRequest(), getDocumentResponse(),
+                       requestFields(
+                               fieldWithPath("email").type(JsonFieldType.STRING).description("회원가입시 입력한 이메일"),
+                               fieldWithPath("authToken").type(JsonFieldType.NULL).description("비밀번호 재설정 UUID 토큰(사용하지 않음)"),
+                               fieldWithPath("memberId").type(JsonFieldType.NULL).description("회원 아이디(사용하지 않음)"),
+                               fieldWithPath("password").type(JsonFieldType.NULL).description("변경할 비밀번호(사용하지 않음)")
+                       ),
+                       responseFields(
+                               fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                               fieldWithPath("code").type(JsonFieldType.STRING).description("비즈니스 코드"),
+                               fieldWithPath("message").type(JsonFieldType.STRING).description("상세 메시지"),
+                               fieldWithPath("value").type(JsonFieldType.NULL).description("JSON BODY 데이터")
+                       )));
+    }
+
+    @Test
+    @DisplayName("회원 아이디를 입력받아 비밀번호 재설정 이메일 발송에 성공한다")
+    void 회원_아이디로_비밀번호_재설정_이메일_발송_검사() throws Exception {
+        // given
+        MemberCredentialDto credentialDto = MemberCredentialDto.of(null, null, "kernel360", null);
+        MemberDto memberDto = MemberDto.of("testMemberId", "testPassword001");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        given(memberService.findByMemberId(credentialDto.memberId())).willReturn(memberDto);
+        given(findCredentialService.generatePasswordResetUri(request, memberDto)).willReturn("테스트 URI");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String dtoAsString = objectMapper.writeValueAsString(credentialDto);
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/member/find-password")
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(dtoAsString))
+               .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document(
+                       "member/find-password", getDocumentRequest(), getDocumentResponse(),
+                       requestFields(
+                               fieldWithPath("email").type(JsonFieldType.NULL).description("회원가입시 입력한 이메일(사용하지 않음)"),
+                               fieldWithPath("authToken").type(JsonFieldType.NULL).description("비밀번호 재설정 UUID 토큰(사용하지 않음)"),
+                               fieldWithPath("memberId").type(JsonFieldType.STRING).description("회원 아이디"),
+                               fieldWithPath("password").type(JsonFieldType.NULL).description("변경할 비밀번호(사용하지 않음)")
+                       ),
+                       responseFields(
+                               fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                               fieldWithPath("code").type(JsonFieldType.STRING).description("비즈니스 코드"),
+                               fieldWithPath("message").type(JsonFieldType.STRING).description("상세 메시지"),
+                               fieldWithPath("value").type(JsonFieldType.NULL).description("JSON BODY 데이터")
+                       )));
+    }
+
+    @Test
+    @DisplayName("비밀번호 재설정 토큰을 확인하여 비밀번호 재설정 페이지 반환에 성공")
+    void 비밀번호_재설정_토큰을_확인하고_비밀번호_재설정_페이지로_이동_검사() throws Exception {
+        String token = "testToken-1234-5678";
+        given(findCredentialService.getData(token)).willReturn("kernel360-testId");
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/member/reset-password?token="+token)
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(token))
+               .andExpect(MockMvcResultMatchers.status().isFound()).andDo(document(
+                       "member/get-reset-password", getDocumentRequest(), getDocumentResponse(),
+                       queryParameters(
+                               parameterWithName("token").description("비밀번호 재설정 UUID 토큰")
+                       ),
+                       responseFields(
+                               fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                               fieldWithPath("code").type(JsonFieldType.STRING).description("비즈니스 코드"),
+                               fieldWithPath("message").type(JsonFieldType.STRING).description("상세 메시지"),
+                               fieldWithPath("value").type(JsonFieldType.STRING).description("JSON BODY 데이터 - 비밀번호 재설정 토큰")
+                       )
+               ));
+    }
+
+    @Test
+    @DisplayName("재설정할 비밀번호와 재설정 토큰을 입력받아 비밀번호 재설정에 성공한다")
+    void 비밀번호_재설정_검사() throws Exception{
+        MemberCredentialDto credentialDto = MemberCredentialDto.of("testToken", null, null, "resetPassword");
+        given(findCredentialService.resetPassword(credentialDto)).willReturn("testToken");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String dtoAsString = objectMapper.writeValueAsString(credentialDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/member/reset-password")
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(dtoAsString))
+               .andExpect(MockMvcResultMatchers.status().isOk())
+               .andDo(document(
+                       "member/post-reset-password", getDocumentRequest(), getDocumentResponse(),
+                       requestFields(
+                               fieldWithPath("authToken").type(JsonFieldType.STRING).description("비밀번호 재설정 UUID 토큰"),
+                               fieldWithPath("email").type(JsonFieldType.NULL).description("회원가입시 입력한 이메일(사용하지 않음)"),
+                               fieldWithPath("memberId").type(JsonFieldType.NULL).description("회원 아이디(사용하지 않음)"),
+                               fieldWithPath("password").type(JsonFieldType.STRING).description("변경할 비밀번호")
+                       ),
+                       responseFields(
+                               fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                               fieldWithPath("code").type(JsonFieldType.STRING).description("비즈니스 코드"),
+                               fieldWithPath("message").type(JsonFieldType.STRING).description("상세 메시지"),
+                               fieldWithPath("value").type(JsonFieldType.NULL).description("JSON BODY 데이터")
+                       )
+               ));
     }
 }
+
