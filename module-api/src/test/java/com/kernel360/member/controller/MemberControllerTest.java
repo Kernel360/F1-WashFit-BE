@@ -4,7 +4,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.common.ControllerTest;
-import com.kernel360.member.dto.FindMemberIdFromEmailDto;
+import com.kernel360.member.dto.MemberCredentialDto;
 import com.kernel360.member.dto.MemberDto;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
@@ -102,7 +102,7 @@ class MemberControllerTest extends ControllerTest {
     @DisplayName("이메일을 입력 받아 아이디 찾기 이메일 발송")
     void 아이디_찾기_이메일_발송_검사() throws Exception {
         /** given 목데이터 세팅 **/
-        FindMemberIdFromEmailDto dto = FindMemberIdFromEmailDto.of("kernel360@gmail.com");
+        MemberCredentialDto dto = MemberCredentialDto.of(null, "kernel360@gmail.com", null, null);
         MemberDto memberDto = MemberDto.of("testMemberId", "testPassword001");
 
         given(memberService.findByEmail(dto.email())).willReturn(memberDto);
