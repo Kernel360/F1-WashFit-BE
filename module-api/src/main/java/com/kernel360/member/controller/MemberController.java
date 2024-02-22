@@ -2,9 +2,7 @@ package com.kernel360.member.controller;
 
 
 import com.kernel360.carinfo.entity.CarInfo;
-import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberBusinessCode;
-import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.CarInfoDto;
 import com.kernel360.member.dto.MemberCredentialDto;
 import com.kernel360.member.dto.MemberDto;
@@ -13,7 +11,6 @@ import com.kernel360.member.service.FindCredentialService;
 import com.kernel360.member.service.MemberService;
 import com.kernel360.response.ApiResponse;
 import com.kernel360.washinfo.entity.WashInfo;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -86,12 +83,11 @@ public class MemberController {
     }
 
     @PostMapping("/find-password")
-    public ResponseEntity<ApiResponse<Object>> sendPasswordResetUriByEmail(@RequestBody MemberCredentialDto dto,
-                                                                           HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Object>> sendPasswordResetUriByEmail(@RequestBody MemberCredentialDto dto) {
         //--입력받은 아이디를 데이터베이스에 조회, 없으면 예외 발생--/
         MemberDto memberDto = memberService.findByMemberId(dto.memberId());
         //--유효성이 검증된 아이디에 대해서 만료시간이 있는 비밀번호 초기화 (호스트 + UUID) 링크 생성 --//
-        String resetUri = findCredentialService.generatePasswordResetUri(request, memberDto);
+        String resetUri = findCredentialService.generatePasswordResetUri( memberDto);
         //-- 가입시 입력한 이메일로 비밀번호 초기화 이메일 발송 --//
         findCredentialService.sendPasswordResetUri(resetUri, memberDto);
 
@@ -100,10 +96,7 @@ public class MemberController {
 
     @GetMapping("/reset-password")
     public ResponseEntity<ApiResponse<Object>> getPasswordResetPage(@RequestParam String token) {
-        String memberId = findCredentialService.getData(token);
-        if (memberId == null) {
-            throw new BusinessException(MemberErrorCode.EXPIRED_PASSWORD_RESET_TOKEN);
-        }
+        findCredentialService.getData(token);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_RESET_PASSWORD_PAGE, token);
     }
@@ -111,7 +104,7 @@ public class MemberController {
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<Object>> resetPassword(@RequestBody MemberCredentialDto credentialDto) {
         String authKey = findCredentialService.resetPassword(credentialDto);
-        findCredentialService.expireData(authKey);
+        findCredentialService.getAndExpireData(authKey);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_RESET_PASSWORD);
     }

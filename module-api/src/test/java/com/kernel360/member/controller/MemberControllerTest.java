@@ -146,10 +146,9 @@ class MemberControllerTest extends ControllerTest {
         // given
         MemberCredentialDto credentialDto = MemberCredentialDto.of(null, null, "kernel360", null);
         MemberDto memberDto = MemberDto.of("testMemberId", "testPassword001");
-        MockHttpServletRequest request = new MockHttpServletRequest();
 
         given(memberService.findByMemberId(credentialDto.memberId())).willReturn(memberDto);
-        given(findCredentialService.generatePasswordResetUri(request, memberDto)).willReturn("테스트 URI");
+        given(findCredentialService.generatePasswordResetUri(memberDto)).willReturn("테스트 URI");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String dtoAsString = objectMapper.writeValueAsString(credentialDto);

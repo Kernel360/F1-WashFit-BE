@@ -8,5 +8,5 @@ public interface RedisUtils {
 
     void setExpiringData(String key, String value, int duration);
 
-    void expireData(String key);
+    void getAndExpireData(String key);
 }
