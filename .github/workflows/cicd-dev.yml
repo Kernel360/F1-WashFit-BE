@@ -52,6 +52,9 @@ jobs:
           spring.datasource.password: ${{ secrets.DB_PW }}
           spring.mail.username: ${{ secrets.SMTP_GOOGLE_EMAIL }}
           spring.mail.password: ${{ secrets.SMTP_PASSWORD }}
+          spring.data.redis.host: ${{ secrets.REDIS_DEV_HOST }}
+          spring.data.redis.password: ${{ secrets.REDIS_DEV_PASSWORD }}
+          constants.host-url: ${{ secrets.DEV_HOST_URL }}
 
       - name: Set application-dev yml file (batch)
         uses: microsoft/variable-substitution@v1
