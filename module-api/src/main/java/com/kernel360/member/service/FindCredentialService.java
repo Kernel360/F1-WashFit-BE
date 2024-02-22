@@ -5,6 +5,7 @@ import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.MemberCredentialDto;
 import com.kernel360.member.dto.MemberDto;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,7 +115,7 @@ public class FindCredentialService implements RedisUtils {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String value = valueOperations.get(credentialDto.authToken());
 
-        if (value == null) {
+        if (Objects.isNull(value)) {
             throw new BusinessException(MemberErrorCode.EXPIRED_PASSWORD_RESET_TOKEN);
         }
 
@@ -131,7 +132,7 @@ public class FindCredentialService implements RedisUtils {
     @Override
     public String getData(String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        if (valueOperations.get(key) == null) {
+        if (Objects.isNull(valueOperations.get(key))) {
             throw new BusinessException(MemberErrorCode.EXPIRED_PASSWORD_RESET_TOKEN);
         }
 
@@ -154,7 +155,7 @@ public class FindCredentialService implements RedisUtils {
     @Override
     public void getAndExpireData(String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        if (valueOperations.get(key) == null) {
+        if (Objects.isNull(valueOperations.get(key))) {
             throw new BusinessException(MemberErrorCode.EXPIRED_PASSWORD_RESET_TOKEN);
         }
 
