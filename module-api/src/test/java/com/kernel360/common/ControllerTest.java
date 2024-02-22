@@ -9,7 +9,7 @@ import com.kernel360.global.Interceptor.AcceptInterceptor;
 import com.kernel360.main.controller.MainContoller;
 import com.kernel360.main.service.MainService;
 import com.kernel360.member.controller.MemberController;
-import com.kernel360.member.service.FindService;
+import com.kernel360.member.service.FindCredentialService;
 import com.kernel360.member.service.MemberService;
 import com.kernel360.mypage.controller.MyPageController;
 import com.kernel360.product.controller.ProductController;
@@ -53,7 +53,7 @@ public abstract class ControllerTest {
     protected MainService mainService;
 
     @MockBean
-    protected FindService findService;
+    protected FindCredentialService findCredentialService;
 
     @MockBean
     protected AuthService authService;
