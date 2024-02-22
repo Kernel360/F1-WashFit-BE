@@ -6,10 +6,7 @@ import com.kernel360.carinfo.repository.CarInfoRepository;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
-import com.kernel360.member.dto.CarInfoDto;
-import com.kernel360.member.dto.MemberDto;
-import com.kernel360.member.dto.MemberInfo;
-import com.kernel360.member.dto.WashInfoDto;
+import com.kernel360.member.dto.*;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
@@ -39,6 +36,7 @@ public class MemberService {
     private final CommonCodeService commonCodeService;
     private final CarInfoRepository carInfoRepository;
     private final WashInfoRepository washInfoRepository;
+    private final KakaoRequest kakaoRequest;
 
     @Transactional
     public void joinMember(MemberDto requestDto) {
@@ -181,5 +179,29 @@ public class MemberService {
         if (member == null) {   throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);   }
 
         return MemberDto.from(member);
+    }
+
+    @Transactional
+    public MemberDto loginForKakao(String accessToken) {
+
+        //TODO 카카오로 API 발신
+        KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
+
+        //TODO entity에 바인딩, gender와 age_range를 우리쪽에 맞게 변경
+        Member kakao = Member.createJoinMember(kakaoUser.id(), kakaoUser.email(), "", kakaoUser.age(), kakaoUser.gender());
+
+        MemberDto dto = MemberDto.from(memberRepository.findOneById(kakao.getId()));
+
+        //TODO ID는 실제 결과 값을 보고 해싱할지 그냥쓸지 결정.
+        if(Objects.isNull(dto)){
+            memberRepository.save(kakao);
+            dto.from(kakao);
+        }
+
+        String loginToken = jwt.generateToken(dto.id());
+
+        authService.saveAuthByMember(kakao.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken));
+
+        return dto;
     }
 }

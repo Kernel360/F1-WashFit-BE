@@ -1,6 +1,7 @@
 package com.kernel360.member.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kernel360.carinfo.entity.CarInfo;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberBusinessCode;
@@ -85,5 +86,15 @@ public class MemberController {
 
         return ApiResponse.toResponseEntity(
                 MemberBusinessCode.SUCCESS_REQUEST_FIND_MEMBER_ID); // 아이디는 이메일로 보내고, 외부 노출 X
+    }
+
+    @GetMapping("/login/forKakao")
+    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(String code) throws JsonProcessingException {
+
+        MemberDto memberInfo = memberService.loginForKakao(code);
+
+        //부가정보가 입력 되어있는가 > 차량정보, 세차정보, boolean (감싸서 보내든 말든 노상관)
+
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, memberInfo);
     }
 }
