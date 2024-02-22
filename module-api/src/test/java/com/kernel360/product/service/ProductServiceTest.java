@@ -1,5 +1,6 @@
 package com.kernel360.product.service;
 
+import com.kernel360.likes.repository.LikeRepository;
 import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
@@ -27,6 +28,8 @@ class ProductServiceTest {
     private ProductRepository productRepository;
     private ProductService productService;
     private Pageable pageable;
+
+    private LikeRepository likeRepository;
     @BeforeEach
     void 테스트준비() {
         fixtureMonkey = FixtureMonkey.builder()
@@ -43,7 +46,7 @@ class ProductServiceTest {
 
         productRepository = mock(ProductRepository.class);
         pageable = mock(Pageable.class);
-        productService = new ProductService(productRepository);
+        productService = new ProductService(productRepository, likeRepository);
     }
 
     @Test
