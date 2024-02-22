@@ -40,8 +40,8 @@ spring:
         pool:
           max-active: 20
           max-idle: 20
-      host: ${REDIS_DEV_HOST} # 아직 안 만듬
-      password: ${REDIS_DEV_PASSWORD} # 아직 안 만듬
+      host: ${REDIS_DEV_HOST}
+      password: ${REDIS_DEV_PASSWORD}
 
 logging:
   file:

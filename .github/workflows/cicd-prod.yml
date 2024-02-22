@@ -91,6 +91,7 @@ jobs:
             # Docker Compose
             mkdir -p deploy
             cd deploy
+            echo "${{ secrets.PROD_REDIS_CONF }}" > redis.conf
             echo "${{ secrets.DOCKER_COMPOSE_AWS }}" > docker-compose.yml
             
             docker-compose pull
