@@ -89,12 +89,10 @@ public class MemberController {
     }
 
     @GetMapping("/login/forKakao")
-    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(String code) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(String code) {
 
-        MemberDto memberInfo = memberService.loginForKakao(code);
+        MemberDto member = memberService.loginForKakao(code);
 
-        //부가정보가 입력 되어있는가 > 차량정보, 세차정보, boolean (감싸서 보내든 말든 노상관)
-
-        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, memberInfo);
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, member);
     }
 }

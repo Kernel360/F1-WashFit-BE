@@ -193,15 +193,12 @@ public class MemberService {
         MemberDto dto = MemberDto.from(memberRepository.findOneById(kakao.getId()));
 
         //TODO ID는 실제 결과 값을 보고 해싱할지 그냥쓸지 결정.
-        if(Objects.isNull(dto)){
-            memberRepository.save(kakao);
-            dto.from(kakao);
-        }
+        if(Objects.isNull(dto)){    dto.from(memberRepository.save(kakao)); }
 
         String loginToken = jwt.generateToken(dto.id());
 
-        authService.saveAuthByMember(kakao.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken));
+        authService.saveAuthByMember(dto.memberNo(), ConvertSHA256.convertToSHA256(loginToken));
 
-        return dto;
+        return MemberDto.fromKakao(dto, loginToken);
     }
 }
