@@ -1,7 +1,6 @@
 package com.kernel360.member.service;
 
-import com.kernel360.auth.entity.Auth;
-import com.kernel360.auth.repository.AuthRepository;
+import com.kernel360.auth.service.AuthService;
 import com.kernel360.carinfo.entity.CarInfo;
 import com.kernel360.carinfo.repository.CarInfoRepository;
 import com.kernel360.commoncode.service.CommonCodeService;
@@ -19,13 +18,14 @@ import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
 import com.kernel360.washinfo.entity.WashInfo;
 import com.kernel360.washinfo.repository.WashInfoRepository;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestHeader;
+
+import java.util.Map;
+import java.util.Objects;
 
 
 @Slf4j
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public class MemberService {
 
     private final JWT jwt;
-    private final AuthRepository authRepository;
+    private final AuthService authService;
     private final MemberRepository memberRepository;
     private final CommonCodeService commonCodeService;
     private final CarInfoRepository carInfoRepository;
@@ -42,17 +42,13 @@ public class MemberService {
 
     @Transactional
     public void joinMember(MemberDto requestDto) {
-
         Member entity = getNewJoinMemberEntity(requestDto);
-        if (entity == null) {
-            throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);
-        }
+        if (entity == null) {   throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);  }
 
         memberRepository.save(entity);
     }
 
     protected Member getNewJoinMemberEntity(MemberDto requestDto) {
-
         String encodePassword = ConvertSHA256.convertToSHA256(requestDto.password());
         int genderOrdinal;
         int ageOrdinal;
@@ -69,46 +65,20 @@ public class MemberService {
 
     @Transactional
     public MemberDto login(MemberDto loginDto) {
-
-        Member loginEntity = getReqeustLoginEntity(loginDto);
-        if (loginEntity == null) {
-            throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);
-        }
+        Member loginEntity = newReqeustLoginEntity(loginDto);
+        if (Objects.isNull(loginEntity)) { throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);    }
 
         Member memberEntity = memberRepository.findOneByIdAndPassword(loginEntity.getId(), loginEntity.getPassword());
-        if (memberEntity == null) {
-            throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);
-        }
+        if (Objects.isNull(memberEntity)) { throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);  }
 
-        String token = jwt.generateToken(memberEntity.getId());
+        String loginToken = jwt.generateToken(memberEntity.getId());
 
-        String encryptToken = ConvertSHA256.convertToSHA256(token);
+        authService.saveAuthByMember(memberEntity.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken));
 
-        Auth authJwt = authRepository.findOneByMemberNo(memberEntity.getMemberNo());
-
-        //결과 없으면 entity로 신규 생성
-        authJwt = Optional.ofNullable(authJwt)
-                          .map(modifyAuth -> modifyAuthJwt(modifyAuth, encryptToken))
-                          .orElseGet(() -> createAuthJwt(memberEntity.getMemberNo(), encryptToken));
-
-        authRepository.save(authJwt);
-
-        return MemberDto.login(memberEntity, token);
+        return MemberDto.login(memberEntity, loginToken);
     }
 
-    public Auth modifyAuthJwt(Auth modifyAuth, String encryptToken) {
-        modifyAuth.updateJwt(encryptToken);
-
-        return modifyAuth;
-    }
-
-    protected Auth createAuthJwt(Long memberNo, String encryptToken) {
-
-        return Auth.of(null, memberNo, encryptToken, null);
-    }
-
-
-    private Member getReqeustLoginEntity(MemberDto loginDto) {
+    private Member newReqeustLoginEntity(MemberDto loginDto) {
         String encodePassword = ConvertSHA256.convertToSHA256(loginDto.password());
 
         return Member.loginMember(loginDto.id(), encodePassword);
@@ -127,15 +97,6 @@ public class MemberService {
 
         return member != null;
     }
-
-    public Auth findOneAuthByJwt(String encryptToken) {
-        return authRepository.findOneByJwtToken(encryptToken);
-    }
-
-    public void reissuanceJwt(Auth storedAuthInfo) {
-        authRepository.save(storedAuthInfo);
-    }
-
 
     public MemberDto findMemberByToken(String token) {
         String id = JWT.ownerId(token);
@@ -175,10 +136,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMember(MemberInfo memberInfo) {
-
-        memberRepository.save(memberInfo.toEntity());
-    }
+    public void updateMember(MemberInfo memberInfo) {   memberRepository.save(memberInfo.toEntity());   }
 
     @Transactional(readOnly = true)
     public Map<String, Object> getCarInfo(String token) {
@@ -200,8 +158,7 @@ public class MemberService {
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(),
-                washInfoDto.interest());
+        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
         washInfo.settingMember(member);
         member.updateWashInfo(washInfo);
 
@@ -212,8 +169,7 @@ public class MemberService {
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
-                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
+        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(), carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
         carInfo.settingMember(member);
         member.updateCarInfo(carInfo);
 
@@ -222,9 +178,7 @@ public class MemberService {
 
     public MemberDto findByEmail(String email) {
         Member member = memberRepository.findOneByEmail(email);
-        if (member == null) {
-            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
-        }
+        if (member == null) {   throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);   }
 
         return MemberDto.from(member);
     }

@@ -62,12 +62,6 @@ public class MemberController {
         return memberService.emailDuplicationCheck(email);
     }
 
-    @PostMapping("/testJwt")
-    public String testJwt() {
-        return "checked";
-    }
-
-
     @PostMapping("/wash")
     public ResponseEntity<ApiResponse<WashInfo>> saveWashInfo(@RequestBody WashInfoDto washInfo, @RequestHeader("Authorization") String authToken){
         memberService.saveWashInfo(washInfo, authToken);

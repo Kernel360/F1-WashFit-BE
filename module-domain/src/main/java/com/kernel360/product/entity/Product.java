@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_id_gen")
     @SequenceGenerator(name = "product_id_gen", sequenceName = "product_product_no_seq", allocationSize = 50)
@@ -169,6 +170,14 @@ public class Product extends BaseEntity {
         this.violationInfo = violationInfo;
     }
 
+    private Product(
+            Long productNo,
+            String productName
+    ) {
+        this.productNo = productNo;
+        this.productName = productName;
+    }
+
     public static Product of(String productName,
                              String barcode,
                              String imageSource,
@@ -202,6 +211,10 @@ public class Product extends BaseEntity {
                 item, propose, weight, usage, usagePrecaution, firstAid, mainSubstance, allergicSubstance,
                 otherSubstance, preservative, surfactant,
                 fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, violation_info);
+    }
+
+    public static Product of(Long productNo, String productName) {
+        return new Product(productNo, productName);
     }
 
     public void updateDetail(

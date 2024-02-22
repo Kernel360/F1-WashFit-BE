@@ -1,0 +1,14 @@
+== Auth API
+
+// [[]] 안에는 a 태그 이름 들어갑니다 (http://localhost:8080/docs/index#공통코드-조회)
+[[Auth-JWT재발급]]
+=== <JWT재발급요청>
+
+===== HTTP Request
+include::{snippets}/auth/reissuanceJWT/http-request.adoc[]
+
+==== Response
+include::{snippets}/auth/reissuanceJWT/response-fields.adoc[]
+
+===== HTTP Response 예시
+include::{snippets}/auth/reissuanceJWT/http-response.adoc[]
