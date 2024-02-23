@@ -25,9 +25,8 @@ public enum Sort {
     RECOMMENDATION_PRODUCT_ORDER("recommend-order") {
         @Override
         Page<ProductDto> sort(ProductService productService, Pageable pageable) {
-//Fixme :: 향후 Like Table 구현후, 정렬메소드 변경이 필요합니다.(임시로 violationProduct 리턴으로 구현)
 
-            return productService.getViolationProducts(pageable);
+            return productService.getFavoriteProducts(pageable);
         }
     },
     RECENT_PRODUCT_ORDER("recent-order") {
@@ -38,7 +37,7 @@ public enum Sort {
         }
     };
 
-    private String orderType;
+    private final String orderType;
 
     Sort(String orderType) {
         this.orderType = orderType;

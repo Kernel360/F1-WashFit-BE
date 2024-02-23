@@ -45,6 +45,9 @@ jobs:
           spring.datasource.password: ${{ secrets.DB_PW }}
           spring.mail.username: ${{ secrets.SMTP_GOOGLE_EMAIL }}
           spring.mail.password: ${{ secrets.SMTP_PASSWORD }}
+          spring.data.redis.host: ${{ secrets.REDIS_PROD_HOST }}
+          spring.data.redis.password: ${{ secrets.REDIS_PROD_PASSWORD }}
+          constants.host-url: ${{ secrets.PROD_HOST_URL }}
           aws.credentials.access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws.credentials.secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws.s3.bucket: ${{ secrets.AWS_S3_BUCKET }}
@@ -81,7 +84,7 @@ jobs:
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
-          key: ${{ secrets.AWS_KEY}}
+          key: ${{ secrets.AWS_KEY }}
           script: |
             # Install Docker and Docker Compose
             sudo dnf update
@@ -94,6 +97,7 @@ jobs:
             # Docker Compose
             mkdir -p deploy
             cd deploy
+            echo "${{ secrets.PROD_REDIS_CONF }}" > redis.conf
             echo "${{ secrets.DOCKER_COMPOSE_AWS }}" > docker-compose.yml
             
             docker-compose pull

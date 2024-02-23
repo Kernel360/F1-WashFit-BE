@@ -50,6 +50,11 @@ jobs:
           spring.datasource.url: ${{ secrets.DB_URL }}
           spring.datasource.username: ${{ secrets.DB_USER }}
           spring.datasource.password: ${{ secrets.DB_PW }}
+          spring.mail.username: ${{ secrets.SMTP_GOOGLE_EMAIL }}
+          spring.mail.password: ${{ secrets.SMTP_PASSWORD }}
+          spring.data.redis.host: ${{ secrets.REDIS_DEV_HOST }}
+          spring.data.redis.password: ${{ secrets.REDIS_DEV_PASSWORD }}
+          constants.host-url: ${{ secrets.DEV_HOST_URL }}
           aws.credentials.access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws.credentials.secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws.s3.bucket: ${{ secrets.AWS_S3_BUCKET }}
@@ -64,8 +69,6 @@ jobs:
           spring.datasource.password: ${{ secrets.DB_PW }}
           external.ecolife-api.path: ${{ secrets.ECOLIFE_PATH }}
           external.ecolife-api.service-key: ${{ secrets.ECOLIFE_KEY }}
-          spring.mail.username: ${{ secrets.SMTP_GOOGLE_EMAIL }}
-          spring.mail.password: ${{ secrets.SMTP_PASSWORD }}
 
       - name: Grant execute permission And Build with Gradle (api)
         working-directory: ./module-api
@@ -116,6 +119,7 @@ jobs:
             mkdir -p deploy
             cd deploy
             echo "${{ secrets.DB_INIT_SQL }}" > init.sql
+            echo "${{ secrets.DEV_REDIS_CONF }}" > redis.conf
             echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
             docker-compose pull
             docker-compose down

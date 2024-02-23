@@ -33,6 +33,16 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
+  data:
+    redis:
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 20
+      host: ${REDIS_PROD_HOST}
+      password: ${REDIS_PROD_PASSWORD}
+
 logging:
   file:
     path: ./logs/api/
@@ -51,6 +61,11 @@ management:
   endpoint:
     health:
       show-details: always
+
+constants:
+  host-url: ${PROD_HOST_URL}
+  password-reset-token:
+    duration-minute: 5
 
 aws:
   credentials:
