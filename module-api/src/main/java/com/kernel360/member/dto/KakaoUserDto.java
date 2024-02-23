@@ -2,21 +2,15 @@ package com.kernel360.member.dto;
 
 public record KakaoUserDto(
         String id,
-        String email,
-        int age,
-        int gender
+        String email
 ) {
     public static KakaoUserDto of(
             String id,
-            String email,
-            int age,
-            int gender
+            String email
     ){
         return new KakaoUserDto(
             id,
-            email,
-            age,
-            gender
+            email
         );
     }
 }

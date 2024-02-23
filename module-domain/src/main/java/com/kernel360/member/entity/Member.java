@@ -41,7 +41,6 @@ public class Member extends BaseEntity {
     @Column(name = "age")
     private int age;
 
-
     public static Member of(Long memberNo, String id, String email, String password, int gender, int age) {
 
         return new Member(memberNo, id, email, password, gender, age);
@@ -123,6 +122,11 @@ public class Member extends BaseEntity {
 
     public void updateCarInfo(CarInfo carInfo) {
         this.carInfo = carInfo;
+    }
+
+    public static Member createForKakao(String id, String email, String password, int gender, int age) {
+
+        return new Member(id, email, password, gender, age);
     }
 
 }

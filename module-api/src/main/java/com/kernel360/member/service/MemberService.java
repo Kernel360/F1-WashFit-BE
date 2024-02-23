@@ -1,5 +1,6 @@
 package com.kernel360.member.service;
 
+import com.kernel360.auth.entity.Auth;
 import com.kernel360.auth.service.AuthService;
 import com.kernel360.carinfo.entity.CarInfo;
 import com.kernel360.carinfo.repository.CarInfoRepository;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Slf4j
@@ -184,21 +186,18 @@ public class MemberService {
     @Transactional
     public MemberDto loginForKakao(String accessToken) {
 
-        //TODO 카카오로 API 발신
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
+        System.err.println("kakaoUser >>>> " + kakaoUser);
+        if(Objects.isNull(memberRepository.findOneById(kakaoUser.id()))){
+            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", 0, 0));
+        }
 
-        //TODO entity에 바인딩, gender와 age_range를 우리쪽에 맞게 변경
-        Member kakao = Member.createJoinMember(kakaoUser.id(), kakaoUser.email(), "", kakaoUser.age(), kakaoUser.gender());
+        MemberDto memberDto = MemberDto.from(memberRepository.findOneById(kakaoUser.id()));
 
-        MemberDto dto = MemberDto.from(memberRepository.findOneById(kakao.getId()));
+        String loginToken = jwt.generateToken(memberDto.id());
 
-        //TODO ID는 실제 결과 값을 보고 해싱할지 그냥쓸지 결정.
-        if(Objects.isNull(dto)){    dto.from(memberRepository.save(kakao)); }
+        authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken));
 
-        String loginToken = jwt.generateToken(dto.id());
-
-        authService.saveAuthByMember(dto.memberNo(), ConvertSHA256.convertToSHA256(loginToken));
-
-        return MemberDto.fromKakao(dto, loginToken);
+        return MemberDto.fromKakao(memberDto, loginToken);
     }
 }

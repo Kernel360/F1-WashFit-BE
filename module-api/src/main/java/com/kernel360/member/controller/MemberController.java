@@ -89,9 +89,9 @@ public class MemberController {
     }
 
     @GetMapping("/login/forKakao")
-    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(String code) {
+    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(@RequestHeader("Authorization") String accessToken) {
 
-        MemberDto member = memberService.loginForKakao(code);
+        MemberDto member = memberService.loginForKakao(accessToken);
 
         return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, member);
     }
