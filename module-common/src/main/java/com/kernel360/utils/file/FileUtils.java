@@ -28,6 +28,9 @@ public class FileUtils {
     @Value("${aws.s3.bucket.url}")
     private String bucketUrl;
 
+    @Value("${spring.profiles.active}")
+    private String profile;
+
     public String upload(S3BucketPath s3BucketPath, MultipartFile multipartFile) {
         String filePath = makeFilePath(s3BucketPath);
         String filename = makeFileName();
@@ -54,16 +57,17 @@ public class FileUtils {
         return amazonS3.getUrl(bucketName, fileKey).toString();
     }
 
-    private static String makeFilePath(S3BucketPath s3BucketPath) {
+    private String makeFilePath(S3BucketPath s3BucketPath) {
 
         return String.join(
                 "/",
+                profile,
                 s3BucketPath.getModulePath(),
                 s3BucketPath.getDomainPath(),
                 s3BucketPath.getCustomPath());
     }
 
-    private static String makeFileName() {
+    private String makeFileName() {
 
         return String.join(
                 "-",
@@ -71,7 +75,7 @@ public class FileUtils {
                 UUID.randomUUID().toString());
     }
 
-    private static String getFileExtension(String originalFilename) {
+    private String getFileExtension(String originalFilename) {
         try {
             return originalFilename.substring(originalFilename.lastIndexOf("."));
         } catch (StringIndexOutOfBoundsException e) {
