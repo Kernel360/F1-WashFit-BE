@@ -191,15 +191,14 @@ public class MemberService {
 
         return MemberDto.from(member);
     }
-
+    @Transactional
     public void resetPasswordByMemberId(String memberId, String newPassword) {
         Member member = memberRepository.findOneById(memberId);
         if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
         }
-        member.updatePassword(newPassword);
 
-        memberRepository.save(member);
+        member.updatePassword(ConvertSHA256.convertToSHA256(newPassword));
     }
 
 }
