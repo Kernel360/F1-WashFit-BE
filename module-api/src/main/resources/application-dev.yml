@@ -72,4 +72,6 @@ aws:
     access-key-id: ${AWS_ACCESS_KEY}
     secret-access-key: ${AWS_SECRET_KEY}
   s3:
-    bucket: ${AWS_S3_BUCKET}
+    bucket:
+      name: ${AWS_S3_BUCKET_NAME}
+      url: ${AWS_S3_BUCKET_URL}

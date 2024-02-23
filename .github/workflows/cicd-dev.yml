@@ -57,7 +57,8 @@ jobs:
           constants.host-url: ${{ secrets.DEV_HOST_URL }}
           aws.credentials.access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws.credentials.secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws.s3.bucket: ${{ secrets.AWS_S3_BUCKET }}
+          aws.s3.bucket.name: ${{ secrets.AWS_S3_BUCKET_NAME }}
+          aws.s3.bucket.url: ${{ secrets.AWS_S3_BUCKET_URL }}
 
       - name: Set application-dev yml file (batch)
         uses: microsoft/variable-substitution@v1

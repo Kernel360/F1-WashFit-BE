@@ -78,4 +78,6 @@ aws:
     access-key-id: ENC(vx2H0E5tIohXqzynDez9M7Kn3Vjj0t3sS3Wq6uyN5kgYeXhDyIylOA==)
     secret-access-key: ENC(m/2qCJve4UP86W7Q0ZQhKSDGBnltnbGOnso7d/9wiNovq1Mzyto608rUnCQ+AhqUThpClK1cmxSOj6WHfAbZTQ==)
   s3:
-    bucket: ENC(JQIi11b8LB+99FnX02wCGwdXTOEax3VkuzgNqAVshK4=)
+    bucket:
+      name: ENC(JQIi11b8LB+99FnX02wCGwdXTOEax3VkuzgNqAVshK4=)
+      url: ENC(9P2gRaZoGkR4SCgoTS/6sEQP0kVWwVWFaDckr1/FUoRV1MPnGXQL6OJKsGlHegk8h1d69uFDKTuZpLntfyn3nVMXLz18t8ls)
