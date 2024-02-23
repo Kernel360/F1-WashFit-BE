@@ -197,8 +197,8 @@ public class MemberService {
         if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
         }
+
         member.updatePassword(ConvertSHA256.convertToSHA256(newPassword));
-//        memberRepository.save(member);
     }
 
 }
