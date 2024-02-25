@@ -36,9 +36,12 @@ public class Member extends BaseEntity {
     private String password;
 
     @Column(name = "gender")
+    @Enumerated(EnumType.STRING)
     private int gender;
 
+
     @Column(name = "age")
+    @Enumerated(EnumType.STRING)
     private int age;
 
     public static Member of(Long memberNo, String id, String email, String password, int gender, int age) {
@@ -124,9 +127,15 @@ public class Member extends BaseEntity {
         this.carInfo = carInfo;
     }
 
-    public static Member createForKakao(String id, String email, String password, int gender, int age) {
+    public static Member createForKakao(String id, String email, String password) {
 
-        return new Member(id, email, password, gender, age);
+        return new Member(id, email, password);
+    }
+
+    private Member(String id, String email, String password) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
     }
 
 }

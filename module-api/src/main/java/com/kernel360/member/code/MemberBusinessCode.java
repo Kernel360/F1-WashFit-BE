@@ -17,7 +17,8 @@ public enum MemberBusinessCode implements BusinessCode {
     SUCCESS_VALIDATE_PASSWORD_MEMBER(HttpStatus.OK.value(), "BMC008", "비밀번호가 확인 되었습니다."),
     SUCCESS_REQUEST_UPDATE_WASH_INFO_MEMBER(HttpStatus.OK.value(), "BMC009", "WashInfo 정보가 변경 되었습니다."),
     SUCCESS_REQUEST_UPDATE_CAR_INFO_MEMBER(HttpStatus.OK.value(), "BMC010", "CarInfo 정보가 변경 되었습니다."),
-    SUCCESS_REQUEST_FIND_MEMBER_ID(HttpStatus.OK.value(), "BMC011","회원 아이디 찾기 메일이 발송되었습니다.");
+    SUCCESS_REQUEST_FIND_MEMBER_ID(HttpStatus.OK.value(), "BMC011","회원 아이디 찾기 메일이 발송되었습니다."),
+    SUCCESS_REQUEST_LOGIN_MEMBER_KAKAO(HttpStatus.OK.value(), "BMC012", "로그인 성공");
 
 
     private final int status;

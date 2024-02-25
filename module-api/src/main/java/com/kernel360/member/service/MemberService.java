@@ -187,9 +187,8 @@ public class MemberService {
     public MemberDto loginForKakao(String accessToken) {
 
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
-        System.err.println("kakaoUser >>>> " + kakaoUser);
         if(Objects.isNull(memberRepository.findOneById(kakaoUser.id()))){
-            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", 0, 0));
+            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao"));
         }
 
         MemberDto memberDto = MemberDto.from(memberRepository.findOneById(kakaoUser.id()));

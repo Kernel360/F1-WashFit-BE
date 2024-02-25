@@ -1,14 +1,11 @@
 package com.kernel360.member.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernel360.exception.BusinessException;
+import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.KakaoUserDto;
-import com.kernel360.member.enumset.AgeForKakao;
-import com.kernel360.member.enumset.GenderForKakao;
-import com.kernel360.washzone.dto.KakaoMapDto;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -28,20 +25,16 @@ public class KakaoRequest {
         headers.set("charset", "utf-8");
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
         RestTemplate restTemplate = new RestTemplate();
-
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
 
-        System.err.println("response :: " + responseEntity);
-
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> kakaoResponse = new HashMap<>();
+        Map<String, Object> kakaoResponse;
 
         try {
             kakaoResponse = mapper.readValue(responseEntity.getBody(), HashMap.class);
         }catch (Exception e){
-            System.err.println("Exception : " + e);
+            throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN_FOR_KAKAO);
         }
         Map<String, Object> kakaoAccount = mapper.convertValue(kakaoResponse.get("kakao_account"), HashMap.class);
 
