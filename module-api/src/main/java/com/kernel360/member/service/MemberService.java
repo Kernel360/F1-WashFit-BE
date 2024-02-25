@@ -1,6 +1,5 @@
 package com.kernel360.member.service;
 
-import com.kernel360.auth.entity.Auth;
 import com.kernel360.auth.service.AuthService;
 import com.kernel360.carinfo.entity.CarInfo;
 import com.kernel360.carinfo.repository.CarInfoRepository;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 
 @Slf4j
@@ -188,7 +186,7 @@ public class MemberService {
 
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
         if(Objects.isNull(memberRepository.findOneById(kakaoUser.id()))){
-            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao"));
+            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(), Age.AGE_99.ordinal()));
         }
 
         MemberDto memberDto = MemberDto.from(memberRepository.findOneById(kakaoUser.id()));

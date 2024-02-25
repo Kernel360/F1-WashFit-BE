@@ -21,7 +21,7 @@ class MemberControllerTest extends ControllerTest {
     void 회원가입요청() throws Exception {
 
         /** given 목데이터 세팅 **/
-        MemberDto memberDto = MemberDto.of("testID", "gunsight777@naver.com", "testPassword", "man", "30");
+        MemberDto memberDto = MemberDto.of("testID", "gunsight777@naver.com", "testPassword", "MALE", "30");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String param = objectMapper.writeValueAsString(memberDto);
