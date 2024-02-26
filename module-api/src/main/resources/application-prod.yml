@@ -66,3 +66,12 @@ constants:
   host-url: ${PROD_HOST_URL}
   password-reset-token:
     duration-minute: 5
+
+aws:
+  credentials:
+    access-key-id: ${AWS_ACCESS_KEY}
+    secret-access-key: ${AWS_SECRET_KEY}
+  s3:
+    bucket:
+      name: ${AWS_S3_BUCKET_NAME}
+      url: ${AWS_S3_BUCKET_URL}

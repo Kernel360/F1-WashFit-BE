@@ -48,6 +48,10 @@ jobs:
           spring.data.redis.host: ${{ secrets.REDIS_PROD_HOST }}
           spring.data.redis.password: ${{ secrets.REDIS_PROD_PASSWORD }}
           constants.host-url: ${{ secrets.PROD_HOST_URL }}
+          aws.credentials.access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws.credentials.secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws.s3.bucket.name: ${{ secrets.AWS_S3_BUCKET_NAME }}
+          aws.s3.bucket.url: ${{ secrets.AWS_S3_BUCKET_URL }}
 
       - name: Grant execute permission And Build with Gradle (api)
         working-directory: ./module-api
