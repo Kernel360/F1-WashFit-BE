@@ -1,6 +1,7 @@
 package com.kernel360.member.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kernel360.carinfo.entity.CarInfo;
 import com.kernel360.member.code.MemberBusinessCode;
 import com.kernel360.member.dto.CarInfoDto;
@@ -107,5 +108,13 @@ public class MemberController {
         findCredentialService.getAndExpireData(authKey);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_RESET_PASSWORD);
+    }
+
+    @GetMapping("/login/forKakao")
+    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(@RequestHeader("Authorization") String accessToken) {
+
+        MemberDto member = memberService.loginForKakao(accessToken);
+
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, member);
     }
 }

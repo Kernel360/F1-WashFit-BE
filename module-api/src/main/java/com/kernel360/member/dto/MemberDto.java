@@ -66,6 +66,22 @@ public record MemberDto(Long memberNo,
         );
     }
 
+    public static MemberDto fromKakao(MemberDto dto, String token) {
+        return MemberDto.of(
+                dto.memberNo(),
+                dto.id(),
+                dto.email(),
+                dto.password(),
+                dto.gender(),
+                dto.age(),
+                dto.createdAt(),
+                dto.createdBy(),
+                dto.modifiedAt(),
+                dto.modifiedBy(),
+                token
+        );
+    }
+
     public Member toEntity() {
         return Member.of(
                 this.memberNo(),

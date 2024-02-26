@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static com.kernel360.common.utils.RestDocumentUtils.getDocumentRequest;
+import static com.kernel360.common.utils.RestDocumentUtils.getDocumentResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -36,6 +38,8 @@ class AuthControllerTest extends ControllerTest {
                .andExpect(jsonPath("$.code").value("BAC001"))
                .andExpect(jsonPath("$.message").value("JWT 토큰 재발급 성공"))
                 .andDo(document("auth/reissuanceJWT",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("status").description("상태 코드"),
                                 fieldWithPath("message").description("응답 메시지"),

@@ -6,10 +6,7 @@ import com.kernel360.carinfo.repository.CarInfoRepository;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
-import com.kernel360.member.dto.CarInfoDto;
-import com.kernel360.member.dto.MemberDto;
-import com.kernel360.member.dto.MemberInfo;
-import com.kernel360.member.dto.WashInfoDto;
+import com.kernel360.member.dto.*;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
@@ -39,6 +36,7 @@ public class MemberService {
     private final CommonCodeService commonCodeService;
     private final CarInfoRepository carInfoRepository;
     private final WashInfoRepository washInfoRepository;
+    private final KakaoRequest kakaoRequest;
 
     @Transactional
     public void joinMember(MemberDto requestDto) {
@@ -191,6 +189,7 @@ public class MemberService {
 
         return MemberDto.from(member);
     }
+  
     @Transactional
     public void resetPasswordByMemberId(String memberId, String newPassword) {
         Member member = memberRepository.findOneById(memberId);
@@ -201,4 +200,20 @@ public class MemberService {
         member.updatePassword(ConvertSHA256.convertToSHA256(newPassword));
     }
 
+    @Transactional
+    public MemberDto loginForKakao(String accessToken) {
+
+        KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
+        if(Objects.isNull(memberRepository.findOneById(kakaoUser.id()))){
+            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(), Age.AGE_99.ordinal()));
+        }
+
+        MemberDto memberDto = MemberDto.from(memberRepository.findOneById(kakaoUser.id()));
+
+        String loginToken = jwt.generateToken(memberDto.id());
+
+        authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken));
+
+        return MemberDto.fromKakao(memberDto, loginToken);
+    }
 }
