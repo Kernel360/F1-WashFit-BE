@@ -42,7 +42,8 @@ public class MemberService {
     public void joinMember(MemberDto requestDto) {
         Member entity = getNewJoinMemberEntity(requestDto);
         if (entity == null) {   throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);  }
-
+        // TODO :: ControllerAdvice 추가 고민해보기
+        if(memberRepository.findOneById(entity.getId()) != null){ throw new BusinessException(MemberErrorCode.FAILED_DUPLICATED_JOIN_MEMBER_INFO);}
         memberRepository.save(entity);
     }
 
@@ -55,7 +56,7 @@ public class MemberService {
             genderOrdinal = Gender.valueOf(requestDto.gender()).ordinal();
             ageOrdinal = Age.valueOf(requestDto.age()).ordinal();
         } catch (Exception e) {
-            throw new BusinessException(MemberErrorCode.FAILED_NOT_MAPPING_ENUM_VALUEOF);
+            throw new BusinessException(MemberErrorCode.FAILED_NOT_MAPPING_ENUM_VALUE_OF);
         }
 
         return Member.createJoinMember(requestDto.id(), requestDto.email(), encodePassword, genderOrdinal, ageOrdinal);
