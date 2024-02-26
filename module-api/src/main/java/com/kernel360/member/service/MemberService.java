@@ -181,6 +181,23 @@ public class MemberService {
         return MemberDto.from(member);
     }
 
+    public MemberDto findByMemberId(String memberId) {
+        Member member = memberRepository.findOneById(memberId);
+        if (member == null) {
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
+
+        return MemberDto.from(member);
+    }
+    @Transactional
+    public void resetPasswordByMemberId(String memberId, String newPassword) {
+        Member member = memberRepository.findOneById(memberId);
+        if (member == null) {
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
+
+        member.updatePassword(ConvertSHA256.convertToSHA256(newPassword));
+    }
     @Transactional
     public MemberDto loginForKakao(String accessToken) {
 
