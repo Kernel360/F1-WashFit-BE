@@ -19,7 +19,8 @@ public enum MemberErrorCode implements ErrorCode {
     EXPIRED_PASSWORD_RESET_TOKEN(HttpStatus.NOT_FOUND.value(), "EMC008", "유효하지 않은 비밀번호 초기화 토큰입니다"),
     FAILED_REQUEST_LOGIN_FOR_KAKAO(HttpStatus.BAD_REQUEST.value(), "EMC009", "카카오 로그인 정보를 찾을 수 없습니다."),
     FAILED_FIND_MEMBER_CAR_INFO(HttpStatus.BAD_REQUEST.value(), "EMC010", "요청 회원의 차량정보가 존재하지 않습니다."),
-    FAILED_FIND_MEMBER_WASH_INFO(HttpStatus.BAD_REQUEST.value(), "EMC011", "요청 회원의 세차정보가 존재하지 않습니다.");
+    FAILED_FIND_MEMBER_WASH_INFO(HttpStatus.BAD_REQUEST.value(), "EMC011", "요청 회원의 세차정보가 존재하지 않습니다."),
+    WRONG_PASSWORD_REQUEST(HttpStatus.BAD_REQUEST.value(), "EMC012", "잘못된 비밀번호 입니다.");
 
 
     private final int status;
