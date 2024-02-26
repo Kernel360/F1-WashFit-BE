@@ -41,6 +41,9 @@ dependencies {
 
     // codec
     implementation 'commons-codec:commons-codec:1.15'
+
+    // aws s3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.625'
 }
 
 tasks.named('test') {

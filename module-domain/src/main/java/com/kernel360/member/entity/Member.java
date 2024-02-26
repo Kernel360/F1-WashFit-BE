@@ -20,7 +20,7 @@ public class Member extends BaseEntity {
     @Column(name = "member_no", nullable = false)
     private Long memberNo;
 
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, updatable = false)
     private String id;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)

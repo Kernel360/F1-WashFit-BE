@@ -4,7 +4,9 @@ import com.kernel360.code.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum CommonErrorCode implements ErrorCode {
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "E001", "Server Error");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "E001", "Server Error"),
+    FAIL_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR.value(), "E002", "파일 업로드 실패"),
+    INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST.value(), "E003", "유효하지 않은 파일 확장자");
 
     private final int status;
     private final String code;

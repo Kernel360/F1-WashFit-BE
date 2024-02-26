@@ -189,6 +189,7 @@ public class MemberService {
 
         return MemberDto.from(member);
     }
+  
     @Transactional
     public void resetPasswordByMemberId(String memberId, String newPassword) {
         Member member = memberRepository.findOneById(memberId);
@@ -198,6 +199,7 @@ public class MemberService {
 
         member.updatePassword(ConvertSHA256.convertToSHA256(newPassword));
     }
+
     @Transactional
     public MemberDto loginForKakao(String accessToken) {
 

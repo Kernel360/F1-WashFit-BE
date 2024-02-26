@@ -34,6 +34,17 @@ spring:
             enable: true
           timeout: 5000
           writetimeout: 5000
+
+  data:
+    redis:
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 20
+      host: 127.0.0.1
+      password: wash1234
+
 jasypt:
   encryptor:
     algorithm: PBEWithMD5AndTripleDES
@@ -56,3 +67,17 @@ management:
   endpoint:
     health:
       show-details: always
+
+constants:
+  host-url: "http://localhost:8080"
+  password-reset-token:
+    duration-minute: 5
+
+aws:
+  credentials:
+    access-key-id: ENC(vx2H0E5tIohXqzynDez9M7Kn3Vjj0t3sS3Wq6uyN5kgYeXhDyIylOA==)
+    secret-access-key: ENC(m/2qCJve4UP86W7Q0ZQhKSDGBnltnbGOnso7d/9wiNovq1Mzyto608rUnCQ+AhqUThpClK1cmxSOj6WHfAbZTQ==)
+  s3:
+    bucket:
+      name: ENC(JQIi11b8LB+99FnX02wCGwdXTOEax3VkuzgNqAVshK4=)
+      url: ENC(9P2gRaZoGkR4SCgoTS/6sEQP0kVWwVWFaDckr1/FUoRV1MPnGXQL6OJKsGlHegk8h1d69uFDKTuZpLntfyn3nVMXLz18t8ls)

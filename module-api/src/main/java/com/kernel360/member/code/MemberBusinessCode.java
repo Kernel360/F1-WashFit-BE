@@ -23,7 +23,6 @@ public enum MemberBusinessCode implements BusinessCode {
     SUCCESS_REQUEST_RESET_PASSWORD(HttpStatus.OK.value(), "BMC014", "비밀번호가 초기화되었습니다."),
     SUCCESS_REQUEST_LOGIN_MEMBER_KAKAO(HttpStatus.OK.value(), "BMC015", "로그인 성공");
 
-
     private final int status;
     private final String code;
     private final String message;

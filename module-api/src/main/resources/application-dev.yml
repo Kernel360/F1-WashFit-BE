@@ -32,6 +32,17 @@ spring:
             enable: true
           timeout: 5000
           writetimeout: 5000
+
+  data:
+    redis:
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 20
+      host: ${REDIS_DEV_HOST}
+      password: ${REDIS_DEV_PASSWORD}
+
 logging:
   file:
     path: ./logs/api/
@@ -50,3 +61,17 @@ management:
   endpoint:
     health:
       show-details: always
+
+constants:
+  host-url: ${DEV_HOST_URL}
+  password-reset-token:
+    duration-minute: 5
+
+aws:
+  credentials:
+    access-key-id: ${AWS_ACCESS_KEY}
+    secret-access-key: ${AWS_SECRET_KEY}
+  s3:
+    bucket:
+      name: ${AWS_S3_BUCKET_NAME}
+      url: ${AWS_S3_BUCKET_URL}
