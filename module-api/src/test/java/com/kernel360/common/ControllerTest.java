@@ -6,7 +6,7 @@ import com.kernel360.auth.service.AuthService;
 import com.kernel360.commoncode.controller.CommonCodeController;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.global.Interceptor.AcceptInterceptor;
-import com.kernel360.main.controller.MainContoller;
+import com.kernel360.main.controller.MainController;
 import com.kernel360.main.service.MainService;
 import com.kernel360.member.controller.MemberController;
 import com.kernel360.member.service.FindCredentialService;
@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
         CommonCodeController.class,
         MemberController.class,
         ProductController.class,
-        MainContoller.class,
+        MainController.class,
         MyPageController.class,
         AuthController.class
 })
