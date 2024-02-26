@@ -141,6 +141,9 @@ public class MemberService {
     public Map<String, Object> getCarInfo(String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
+        if(member.getCarInfo() == null){
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_CAR_INFO);
+        }
         CarInfoDto carInfoDto = CarInfoDto.from(member.getCarInfo());
 
         return Map.of(
