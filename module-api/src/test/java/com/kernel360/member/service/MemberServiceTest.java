@@ -53,7 +53,7 @@ class MemberServiceTest {
     void 회원가입_로직_테스트() {
 
         /** given **/
-        MemberDto requestDto = MemberDto.of("testID", "gunsight777@naver.com", "testPassword", "man", "AGE_40");
+        MemberDto requestDto = MemberDto.of("testID", "gunsight777@naver.com", "testPassword", "MALE", "AGE_40");
         Member member = memberService.getNewJoinMemberEntity(requestDto);
 
         /** when **/
