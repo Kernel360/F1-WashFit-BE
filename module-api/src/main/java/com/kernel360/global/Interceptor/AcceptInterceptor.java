@@ -20,7 +20,7 @@ public class AcceptInterceptor implements HandlerInterceptor {
         boolean result = true;
         String requestToken = request.getHeader("Authorization");
 
-        if (StringUtils.hasLength(requestToken)) { throw new BusinessException(AcceptInterceptorErrorCode.DOSE_NOT_EXIST_REQUEST_TOKEN); }
+        if (!StringUtils.hasLength(requestToken)) { throw new BusinessException(AcceptInterceptorErrorCode.DOSE_NOT_EXIST_REQUEST_TOKEN); }
 
         if (!authService.validRequestToken(requestToken)) { throw new BusinessException(AcceptInterceptorErrorCode.FAILED_VALID_REQUEST_TOKEN); }
 
