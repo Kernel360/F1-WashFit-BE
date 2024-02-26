@@ -1,0 +1,34 @@
+## MyPage API
+
+### 마이페이지 테스트를 위한 회원가입#
+POST http://localhost:8080/member/join
+Content-Type: application/json
+
+{
+  "id": "test1",
+  "password": "zxcv1234",
+  "email": "kernel360@kernel360.co.kr",
+  "gender": "MALE",
+  "age": "AGE_20"
+}
+
+### 마이페이지 검증을 위한 로그인 #1
+POST http://localhost:8080/member/login
+Content-Type: application/json
+
+{
+  "id": "test1",
+  "password": "zxcv1234"
+}
+
+<> 2024-02-23T164810.200.json
+<> 2024-02-23T163953.200.json
+<> 2024-02-23T161553-1.200.json
+
+
+### 마이페이지 회원(내)정보
+GET http://localhost:8080/mypage/member
+Authorization: {{ authorization }}
+
+<> 2024-02-23T164831.200.json
+<> 2024-02-23T164011.200.json
