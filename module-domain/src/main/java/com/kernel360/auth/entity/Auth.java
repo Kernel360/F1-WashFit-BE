@@ -1,7 +1,13 @@
 package com.kernel360.auth.entity;
 
 import com.kernel360.base.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,23 +34,27 @@ public class Auth extends BaseEntity {
     @Column(name = "sns_token")
     private String snsToken;
 
+    @Column(name = "client_ip")
+    private String clientIP;
+
 
     /**
      * all create
      **/
-    public static Auth of(Long authNo, Long memberNo, String jwtToken, String snsToken) {
+    public static Auth of(Long authNo, Long memberNo, String jwtToken, String snsToken, String clientIP) {
 
-        return new Auth(authNo, memberNo, jwtToken, snsToken);
+        return new Auth(authNo, memberNo, jwtToken, snsToken, clientIP);
     }
 
     /**
      * all binding
      **/
-    private Auth(Long authNo, Long memberNo, String jwtToken, String snsToken) {
+    private Auth(Long authNo, Long memberNo, String jwtToken, String snsToken, String clientIP) {
         this.authNo = authNo;
         this.memberNo = memberNo;
         this.jwtToken = jwtToken;
         this.snsToken = snsToken;
+        this.clientIP = clientIP;
     }
 
 
@@ -62,8 +72,9 @@ public class Auth extends BaseEntity {
         this.jwtToken = jwtToken;
     }
 
-    public void updateJwt(String encryptToken) {
+    public void updateJwt(String encryptToken, String clientIP) {
         this.jwtToken = encryptToken;
+        this.clientIP = clientIP;
     }
 
 }
