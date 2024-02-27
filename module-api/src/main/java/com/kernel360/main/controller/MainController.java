@@ -1,10 +1,10 @@
 package com.kernel360.main.controller;
 
 import com.kernel360.main.code.BannerBusinessCode;
-import com.kernel360.main.code.ProductsBusinessCode;
 import com.kernel360.main.dto.BannerDto;
 import com.kernel360.main.dto.RecommendProductsDto;
 import com.kernel360.main.service.MainService;
+import com.kernel360.product.code.ProductsBusinessCode;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.service.ProductService;
 import com.kernel360.response.ApiResponse;

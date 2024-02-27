@@ -1,5 +1,5 @@
 package com.kernel360.product.controller;
-import com.kernel360.main.code.ProductsBusinessCode;
+import com.kernel360.product.code.ProductsBusinessCode;
 import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.service.ProductService;
