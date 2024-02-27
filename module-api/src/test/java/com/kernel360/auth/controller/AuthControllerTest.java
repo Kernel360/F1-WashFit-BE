@@ -17,23 +17,28 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 @Disabled
 @AutoConfigureWebMvc
 class AuthControllerTest extends ControllerTest {
 
-
     @Test
     void 토큰_갱신요청이_왔을때_리스폰스로_상태코드201과_갱신토큰이_잘_보내지는지() throws Exception {
         String requestToken = "token";
         String resultToken = "reissuanceToken";
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization",requestToken);
+
+        when(authService.generateTokenAndSaveAuth(request))
+                .thenReturn(resultToken);
+
         when(acceptInterceptor.preHandle(any(), any(),
                 any())).thenReturn(true);
 
-        when(authService.generateTokenAndSaveAuth(requestToken))
-                .thenReturn(resultToken);
+        when(authService.generateTokenAndSaveAuth(request)).thenReturn(resultToken);
 
         mockMvc.perform(get("/auth/reissuanceJWT")
                        .header("Authorization", requestToken))
