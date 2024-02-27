@@ -2,8 +2,8 @@ package com.kernel360.product.service;
 
 import com.kernel360.exception.BusinessException;
 import com.kernel360.likes.repository.LikeRepository;
-import com.kernel360.main.code.ProductsErrorCode;
 import com.kernel360.main.dto.RecommendProductsDto;
+import com.kernel360.product.code.ProductsErrorCode;
 import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
