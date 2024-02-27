@@ -117,4 +117,12 @@ public class MemberController {
 
         return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, member);
     }
+
+    @GetMapping("/signout")
+    public ResponseEntity<ApiResponse<MemberDto>> signOut(@RequestHeader("Authorization") String accessToken) {
+
+        memberService.signOut(accessToken);
+
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER);
+    }
 }
