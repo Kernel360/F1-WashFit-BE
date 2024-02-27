@@ -2,22 +2,22 @@ package com.kernel360.product.service;
 
 import com.kernel360.exception.BusinessException;
 import com.kernel360.likes.repository.LikeRepository;
-import com.kernel360.main.dto.RecommendProductsDto;
 import com.kernel360.product.code.ProductsErrorCode;
 import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
+import com.kernel360.product.dto.ProductUpdateRequest;
+import com.kernel360.product.dto.RecommendProductsDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;
-
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -90,6 +90,7 @@ public class ProductService {
                 .map(ProductDetailDto::from);
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductDto> getFavoriteProducts(Pageable pageable) {
         Page<Object[]> results = likeRepository.findTop20ByProductNoOrderByLikeCountDesc(pageable);
 
@@ -105,6 +106,36 @@ public class ProductService {
         return new PageImpl<>(productDtos, pageable, results.getTotalElements());
     }
 
+    @Transactional
+    public void updateProduct(ProductUpdateRequest productUpdateRequest) {
+        Product product = productRepository.findById(productUpdateRequest.productNo())
+                .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
 
+        product.updateDetail(
+                productUpdateRequest.barcode(),
+                productUpdateRequest.imageSource(),
+                productUpdateRequest.reportNumber(),
+                productUpdateRequest.safetyStatus(),
+                productUpdateRequest.issuedDate(),
+                productUpdateRequest.safetyInspectionStandard(),
+                productUpdateRequest.upperItem(),
+                productUpdateRequest.item(),
+                productUpdateRequest.propose(),
+                productUpdateRequest.weight(),
+                productUpdateRequest.usage(),
+                productUpdateRequest.usagePrecaution(),
+                productUpdateRequest.firstAid(),
+                productUpdateRequest.mainSubstance(),
+                productUpdateRequest.allergicSubstance(),
+                productUpdateRequest.otherSubstance(),
+                productUpdateRequest.preservative(),
+                productUpdateRequest.surfactant(),
+                productUpdateRequest.fluorescentWhitening(),
+                productUpdateRequest.manufactureType(),
+                productUpdateRequest.manufactureMethod(),
+                productUpdateRequest.manufactureNation(),
+                productUpdateRequest.violationInfo()
+            );
 
+    }
 }
