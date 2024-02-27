@@ -1,9 +1,8 @@
 package com.kernel360.member.dto;
 
 
-import com.kernel360.carinfo.entity.CarInfo;
-import com.kernel360.member.entity.Member;
 import com.kernel360.washinfo.entity.WashInfo;
+
 
 public record WashInfoDto(
         Integer washNo,
@@ -34,13 +33,13 @@ public record WashInfoDto(
         );
     }
 
-    public CarInfoDto from(CarInfo entity) {
-        return CarInfoDto.of(
-                entity.getCarType(),
-                entity.getCarSize(),
-                entity.getCarColor(),
-                entity.getDrivingEnv(),
-                entity.getParkingEnv()
+    public static WashInfoDto from(WashInfo entity) {
+
+        return WashInfoDto.of(
+                entity.getWashNo(),
+                entity.getWashCount(),
+                entity.getMonthlyExpense(),
+                entity.getInterest()
         );
     }
 }
