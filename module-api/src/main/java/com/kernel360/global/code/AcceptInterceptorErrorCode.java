@@ -10,7 +10,8 @@ public enum AcceptInterceptorErrorCode implements ErrorCode {
     DOSE_NOT_EXIST_REQUEST_TOKEN(HttpStatus.UNAUTHORIZED.value(), "AIEC001", "요청자의 토큰이 존재하지 않음."),
     FAILED_VALID_REQUEST_TOKEN(HttpStatus.UNAUTHORIZED.value(), "AIEC002", "요청자의 토큰이 유효하지 않음."),
     FAILED_VALID_REQUEST_TOKEN_PERIOD(HttpStatus.BAD_REQUEST.value(), "AIEC003", "토큰 유효시간 조건이 충족되지 않음."),
-    FAILED_VALID_REQUEST_TOKEN_HASH(HttpStatus.BAD_REQUEST.value(), "AIEC004", "로그인시 발급한 토큰의 해시값과 불일치함.");
+    FAILED_VALID_REQUEST_TOKEN_HASH(HttpStatus.BAD_REQUEST.value(), "AIEC004", "로그인시 발급한 토큰의 해시값과 불일치함."),
+    FAILED_VERIFY_REQUEST_CLIENT_IP(HttpStatus.UNAUTHORIZED.value(), "AIEC005","로그인시 IP 주소와 불일치함");
 
     private final int status;
     private final String code;
