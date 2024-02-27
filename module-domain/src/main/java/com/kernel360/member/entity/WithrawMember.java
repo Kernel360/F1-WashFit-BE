@@ -25,22 +25,25 @@ public class WithrawMember extends BaseEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
-    //TODO 아이피 추가
+    @Column(name="ip")
+    private String ip;
 
 
-    public static WithrawMember of(Long memberNo, String id, String email) {
+    public static WithrawMember of(Long memberNo, String id, String email, String ip) {
 
-        return new WithrawMember(memberNo, id, email);
+        return new WithrawMember(memberNo, id, email, ip);
     }
 
     private WithrawMember(
             Long memberNo,
             String id,
-            String email
+            String email,
+            String ip
     ) {
         this.memberNo = memberNo;
         this.id = id;
         this.email = email;
+        this.ip = ip;
     }
 
 }

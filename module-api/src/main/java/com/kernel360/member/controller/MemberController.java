@@ -17,8 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kernel360.member.code.MemberBusinessCode.SUCCESS_REQUEST_JOIN_MEMBER_CREATED;
-import static com.kernel360.member.code.MemberBusinessCode.SUCCESS_REQUEST_LOGIN_MEMBER;
+import static com.kernel360.member.code.MemberBusinessCode.*;
 
 @Slf4j
 @RestController
@@ -123,6 +122,6 @@ public class MemberController {
 
         memberService.signOut(accessToken);
 
-        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER);
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_SIGN_OUT_MEMBER);
     }
 }

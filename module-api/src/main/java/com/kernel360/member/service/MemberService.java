@@ -220,10 +220,11 @@ public class MemberService {
         return MemberDto.fromKakao(memberDto, loginToken);
     }
 
+    @Transactional
     public void signOut(String accessToken) {
         Member member = memberRepository.findOneById(jwt.ownerId(accessToken));
 
-        withrawMemberRepository.save(WithrawMember.of(member.getMemberNo(),member.getId(), member.getEmail()));
+        withrawMemberRepository.save(WithrawMember.of(member.getMemberNo(),member.getId(), member.getEmail(), null));
 
         memberRepository.delete(member);
     }
