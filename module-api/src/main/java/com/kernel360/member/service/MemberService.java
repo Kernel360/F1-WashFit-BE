@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Slf4j
@@ -130,12 +131,21 @@ public class MemberService {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
 
-        member.updatePassword(password);
+        if ( !member.getPassword().equals(ConvertSHA256.convertToSHA256(password)))
+            throw new BusinessException(MemberErrorCode.WRONG_PASSWORD_REQUEST);
+
+        member.updatePassword(ConvertSHA256.convertToSHA256(password));
         log.info("{} 회원의 비밀번호가 변경되었습니다.", id);
     }
 
     @Transactional
-    public void updateMember(MemberInfo memberInfo) {   memberRepository.save(memberInfo.toEntity());   }
+    public void updateMember(MemberInfo memberInfo, String token) {
+        String id = JWT.ownerId(token);
+        Member existingMember = memberRepository.findOneById(id);
+        existingMember.updateFromInfo( memberInfo.gender(), memberInfo.age());
+
+        memberRepository.save(existingMember);
+    }
 
     @Transactional(readOnly = true)
     public Map<String, Object> getCarInfo(String token) {
@@ -154,6 +164,16 @@ public class MemberService {
                 "driving_options", commonCodeService.getCodes("driving"),
                 "parking_options", commonCodeService.getCodes("parking")
         );
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<WashInfoDto> getWashInfo(String token) {
+        String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
+        if (member == null)
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+
+        return Optional.of(WashInfoDto.from(member.getWashInfo()));
     }
 
     @Transactional
@@ -178,13 +198,17 @@ public class MemberService {
         carInfoRepository.save(carInfo);
     }
 
+    @Transactional(readOnly = true)
     public MemberDto findByEmail(String email) {
         Member member = memberRepository.findOneByEmail(email);
-        if (member == null) {   throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);   }
+        if (member == null) {
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
 
         return MemberDto.from(member);
     }
 
+    @Transactional(readOnly = true)
     public MemberDto findByMemberId(String memberId) {
         Member member = memberRepository.findOneById(memberId);
         if (member == null) {
@@ -208,7 +232,7 @@ public class MemberService {
     public MemberDto loginForKakao(String accessToken) {
 
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
-        if(Objects.isNull(memberRepository.findOneById(kakaoUser.id()))){
+        if (Objects.isNull(memberRepository.findOneById(kakaoUser.id()))) {
             memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(), Age.AGE_99.ordinal()));
         }
 
@@ -219,5 +243,13 @@ public class MemberService {
         authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken));
 
         return MemberDto.fromKakao(memberDto, loginToken);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean validatePassword(String password, String token) {
+        String id = JWT.ownerId(token);
+        Member member = memberRepository.findOneById(id);
+
+        return member.getPassword().equals(ConvertSHA256.convertToSHA256(password));
     }
 }
