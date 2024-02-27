@@ -13,7 +13,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(acceptInterceptor)
-                .addPathPatterns("/auth/validToken");
+                .addPathPatterns("/auth/**");
 //                .addPathPatterns("/mypage/**");
                 //.excludePathPatterns("/public/**"); // 제외할 URL 패턴
     }
