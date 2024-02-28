@@ -101,6 +101,7 @@ jobs:
             echo "${{ secrets.PROD_REDIS_CONF }}" > redis.conf
             echo "${{ secrets.DOCKER_COMPOSE_AWS }}" > docker-compose.yml
             
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
             docker-compose pull
             docker-compose down
             docker-compose up -d
