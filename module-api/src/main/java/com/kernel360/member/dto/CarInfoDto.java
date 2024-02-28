@@ -1,13 +1,14 @@
 package com.kernel360.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kernel360.carinfo.entity.CarInfo;
 
 public record CarInfoDto(
-        Integer carType,
-        Integer carSize,
-        Integer carColor,
-        Integer drivingEnv,
-        Integer parkingEnv
+        @JsonProperty(value = "cartype") Integer carType,
+        @JsonProperty(value = "segment") Integer carSize,
+        @JsonProperty(value = "color") Integer carColor,
+        @JsonProperty(value = "driving") Integer drivingEnv,
+        @JsonProperty(value ="parking") Integer parkingEnv
 ) {
 
     public static CarInfoDto of(
