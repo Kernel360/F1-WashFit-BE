@@ -47,7 +47,7 @@ class MemberControllerTest extends ControllerTest {
     @Test
     @DisplayName("아이디_비밀번호를_받아_로그인_성공시_200반환")
     void 로그인() throws Exception {
-
+        // given
         MemberDto memberDto = MemberDto.of("testID", "testPassword");
         MemberDto memberInfo = new MemberDto(1L,
                 "test01",
@@ -61,10 +61,13 @@ class MemberControllerTest extends ControllerTest {
                 null,
                 "dummyToken"
         );
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        // when
         ObjectMapper objectMapper = new ObjectMapper();
         String param = objectMapper.writeValueAsString(memberDto);
 
-        given(memberService.login(memberDto)).willReturn(memberInfo);
+        given(memberService.login(memberDto, request)).willReturn(memberInfo);
 
         /** then **/
         mockMvc.perform(MockMvcRequestBuilders.post("/member/login")

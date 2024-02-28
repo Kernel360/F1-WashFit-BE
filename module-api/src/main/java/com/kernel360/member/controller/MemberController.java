@@ -12,6 +12,7 @@ import com.kernel360.member.service.FindCredentialService;
 import com.kernel360.member.service.MemberService;
 import com.kernel360.response.ApiResponse;
 import com.kernel360.washinfo.entity.WashInfo;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +39,9 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<MemberDto>> login(@RequestBody MemberDto loginDto) {
+    public ResponseEntity<ApiResponse<MemberDto>> login(@RequestBody MemberDto loginDto, HttpServletRequest request) {
 
-        MemberDto memberInfo = memberService.login(loginDto);
+        MemberDto memberInfo = memberService.login(loginDto, request);
 
         //부가정보가 입력 되어있는가 > 차량정보, 세차정보, boolean (감싸서 보내든 말든 노상관)
 
@@ -110,9 +111,9 @@ public class MemberController {
     }
 
     @GetMapping("/login/forKakao")
-    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(@RequestHeader("Authorization") String accessToken,HttpServletRequest request) {
 
-        MemberDto member = memberService.loginForKakao(accessToken);
+        MemberDto member = memberService.loginForKakao(accessToken,request);
 
         return ApiResponse.toResponseEntity(SUCCESS_REQUEST_LOGIN_MEMBER, member);
     }

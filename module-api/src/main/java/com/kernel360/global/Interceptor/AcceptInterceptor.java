@@ -15,6 +15,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AcceptInterceptor implements HandlerInterceptor {
 
     private final AuthService authService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         boolean result = true;
@@ -24,7 +25,10 @@ public class AcceptInterceptor implements HandlerInterceptor {
 
         if (!authService.validRequestToken(requestToken)) { throw new BusinessException(AcceptInterceptorErrorCode.FAILED_VALID_REQUEST_TOKEN); }
 
-        // TODO:: IP 수집 후 테이블에 저장 -> 토큰 갱신 요청시 확인해서 토큰 재발급
+        //** 로그인한 IP와 다른 IP로 JWT 갱신을 시도하는 경우 **//
+        if (!authService.verifyClientIP(request)) {
+            throw new BusinessException(AcceptInterceptorErrorCode.FAILED_VERIFY_REQUEST_CLIENT_IP);
+        }
 
         return result;
     }

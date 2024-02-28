@@ -17,15 +17,15 @@ import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
 import com.kernel360.washinfo.entity.WashInfo;
 import com.kernel360.washinfo.repository.WashInfoRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestHeader;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 
 @Slf4j
@@ -67,21 +67,23 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberDto login(MemberDto loginDto) {
-        Member loginEntity = newReqeustLoginEntity(loginDto);
-        if (Objects.isNull(loginEntity)) { throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);    }
+    public MemberDto login(MemberDto loginDto, HttpServletRequest request) {
+        Member loginEntity = newRequestLoginEntity(loginDto);
+        if (Objects.isNull(loginEntity)) {
+            throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);
+        }
 
         Member memberEntity = memberRepository.findOneByIdAndPassword(loginEntity.getId(), loginEntity.getPassword());
         if (Objects.isNull(memberEntity)) { throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);  }
 
         String loginToken = jwt.generateToken(memberEntity.getId());
 
-        authService.saveAuthByMember(memberEntity.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken));
+        authService.saveAuthByMember(memberEntity.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken), request);
 
         return MemberDto.login(memberEntity, loginToken);
     }
 
-    private Member newReqeustLoginEntity(MemberDto loginDto) {
+    private Member newRequestLoginEntity(MemberDto loginDto) {
         String encodePassword = ConvertSHA256.convertToSHA256(loginDto.password());
 
         return Member.loginMember(loginDto.id(), encodePassword);
@@ -134,8 +136,9 @@ public class MemberService {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
 
-        if ( !member.getPassword().equals(ConvertSHA256.convertToSHA256(password)))
+        if (!member.getPassword().equals(ConvertSHA256.convertToSHA256(password))) {
             throw new BusinessException(MemberErrorCode.WRONG_PASSWORD_REQUEST);
+        }
 
         member.updatePassword(ConvertSHA256.convertToSHA256(password));
         log.info("{} 회원의 비밀번호가 변경되었습니다.", id);
@@ -173,8 +176,9 @@ public class MemberService {
     public Optional<WashInfoDto> getWashInfo(String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        if (member == null)
+        if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
 
         return Optional.of(WashInfoDto.from(member.getWashInfo()));
     }
@@ -183,7 +187,8 @@ public class MemberService {
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
+        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(),
+                washInfoDto.interest());
         washInfo.settingMember(member);
         member.updateWashInfo(washInfo);
 
@@ -194,7 +199,8 @@ public class MemberService {
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(), carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
+        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
+                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
         carInfo.settingMember(member);
         member.updateCarInfo(carInfo);
 
@@ -220,7 +226,7 @@ public class MemberService {
 
         return MemberDto.from(member);
     }
-  
+
     @Transactional
     public void resetPasswordByMemberId(String memberId, String newPassword) {
         Member member = memberRepository.findOneById(memberId);
@@ -232,18 +238,20 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberDto loginForKakao(String accessToken) {
+    public MemberDto loginForKakao(String accessToken, HttpServletRequest request) {
 
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
         if (Objects.isNull(memberRepository.findOneById(kakaoUser.id()))) {
-            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(), Age.AGE_99.ordinal()));
+            memberRepository.save(
+                    Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(),
+                            Age.AGE_99.ordinal()));
         }
 
         MemberDto memberDto = MemberDto.from(memberRepository.findOneById(kakaoUser.id()));
 
         String loginToken = jwt.generateToken(memberDto.id());
 
-        authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken));
+        authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken), request);
 
         return MemberDto.fromKakao(memberDto, loginToken);
     }
