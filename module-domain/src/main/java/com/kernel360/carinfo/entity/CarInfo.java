@@ -2,11 +2,18 @@ package com.kernel360.carinfo.entity;
 
 import com.kernel360.base.BaseEntity;
 import com.kernel360.member.entity.Member;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Entity
@@ -46,11 +53,21 @@ public class CarInfo extends BaseEntity {
         this.parkingEnv = parkingEnv;
     }
 
-    public static CarInfo of(Integer carType, Integer carSize, Integer carColor, Integer drivingEnv, Integer parkingEnv) {
+    public static CarInfo of(Integer carType, Integer carSize, Integer carColor, Integer drivingEnv,
+                             Integer parkingEnv) {
         return new CarInfo(carType, carSize, carColor, drivingEnv, parkingEnv);
     }
 
     public void settingMember(Member member) {
         this.member = member;
+    }
+
+    public void updateCarInfo(Integer carType, Integer carSize, Integer carColor, Integer drivingEnv,
+                              Integer parkingEnv) {
+        this.carType = carType;
+        this.carColor = carColor;
+        this.carSize = carSize;
+        this.drivingEnv = drivingEnv;
+        this.parkingEnv = parkingEnv;
     }
 }

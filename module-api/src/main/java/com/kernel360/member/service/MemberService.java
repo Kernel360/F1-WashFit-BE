@@ -187,24 +187,34 @@ public class MemberService {
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(),
-                washInfoDto.interest());
-        washInfo.settingMember(member);
-        member.updateWashInfo(washInfo);
+        WashInfo washInfo = washInfoRepository.findWashInfoByMember(member);
 
-        washInfoRepository.save(washInfo);
+        if (washInfo == null) { // 세차 정보가 없는 경우
+            WashInfo newWashInfo = WashInfo.of( washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
+            newWashInfo.settingMember(member); // FIXME :: newWashInfo.settingMember(member); 가 아니라 생성자를 호출할 때 Member 를 넣어줘도 될 거 같습니다.
+            washInfoRepository.save(newWashInfo);
+            return;
+        }
+        // 세차 정보가 있는 경우
+        washInfo.updateWashInfo( washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
     }
 
     @Transactional
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
-                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
-        carInfo.settingMember(member);
-        member.updateCarInfo(carInfo);
+        CarInfo carInfo = carInfoRepository.findCarInfoByMember(member);
 
-        carInfoRepository.save(carInfo);
+        if (carInfo == null) { // 차량 정보가 없는 경우
+            CarInfo newCarInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
+                    carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
+            newCarInfo.settingMember(member);// FIXME :: newCarInfo.settingMember(member); 가 아니라 생성자를 호출할 때 Member 를 넣어줘도 될 거 같습니다.
+            carInfoRepository.save(newCarInfo);
+            return;
+        }
+        // 세차 정보가 있는 경우
+        carInfo.updateCarInfo(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
+                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
     }
 
     @Transactional(readOnly = true)
@@ -258,13 +268,13 @@ public class MemberService {
 
     @Transactional
     public void signOut(String accessToken) {
-        Member member = memberRepository.findOneById(jwt.ownerId(accessToken));
+        Member member = memberRepository.findOneById(JWT.ownerId(accessToken));
 
         withdrawMemberRepository.save(WithdrawMember.of(member.getMemberNo(),member.getId(), member.getEmail(), null));
 
         memberRepository.delete(member);
     }
-  
+
     @Transactional(readOnly = true)
     public boolean validatePassword(String password, String token) {
         String id = JWT.ownerId(token);
