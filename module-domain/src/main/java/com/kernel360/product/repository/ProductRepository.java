@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Page<Product> findByProductNameContaining(String keyword, Pageable pageable);
 
     Page<Product> findAllByOrderByViewCountDesc(Pageable pageable);
 
@@ -34,7 +33,44 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("update Product p set p.viewCount = p.viewCount + 1 where p.productNo = :id")
     void updateViewCount(@Param("id") Long id);
 
-
     Page<Product> findProductByReportNumberEquals(String reportNo, Pageable pageable);
 
+    @Query("SELECT p FROM Product p LEFT JOIN Like l ON p.productNo = l.productNo " +
+            "WHERE (LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(p.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(p.upperItem) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "GROUP BY p.productNo " +
+            "ORDER BY COUNT(l) DESC")
+    Page<Product> getProductWithKeywordAndOrderByRecommend(String keyword, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE " +
+            "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.upperItem) LIKE LOWER(CONCAT('%', :keyword, '%')) ")
+    Page<Product> getProductsByKeyword(String keyword, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE " +
+            "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.upperItem) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "ORDER BY p.viewCount DESC")
+    Page<Product> getProductWithKeywordAndOrderByViewCount(String keyword, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE " +
+            "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.upperItem) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "ORDER BY p.issuedDate DESC")
+    Page<Product> getProductWithKeywordAndRecentOrder(String keyword, Pageable pageable);
+
+
+    @Query("SELECT p FROM Product p WHERE (" +
+            "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.upperItem) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+            ") AND p.safetyStatus = :safetyStatus " +
+            "ORDER BY p.viewCount DESC")
+    Page<Product> findByProductWithKeywordAndSafetyStatus(@Param("keyword") String keyword,
+                                                          @Param("safetyStatus") SafetyStatus safetyStatus,
+                                                          Pageable pageable);
 }

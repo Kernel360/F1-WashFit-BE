@@ -86,7 +86,7 @@ class ProductServiceTest {
         }
         Page<Product> productsPage = new PageImpl<>(productList, pageable, productList.size());
 
-        when(productRepository.findByProductNameContaining(keyword, pageable)).thenReturn(productsPage);
+        when(productRepository.getProductsByKeyword(keyword, pageable)).thenReturn(productsPage);
 
         Page<ProductDto> productDtos = productService.getProductsByKeyword(keyword, pageable);
 
