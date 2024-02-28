@@ -6,7 +6,11 @@ import com.kernel360.carinfo.repository.CarInfoRepository;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
-import com.kernel360.member.dto.*;
+import com.kernel360.member.dto.CarInfoDto;
+import com.kernel360.member.dto.KakaoUserDto;
+import com.kernel360.member.dto.MemberDto;
+import com.kernel360.member.dto.MemberInfo;
+import com.kernel360.member.dto.WashInfoDto;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
@@ -15,15 +19,14 @@ import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
 import com.kernel360.washinfo.entity.WashInfo;
 import com.kernel360.washinfo.repository.WashInfoRepository;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestHeader;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 
 @Slf4j
@@ -42,9 +45,13 @@ public class MemberService {
     @Transactional
     public void joinMember(MemberDto requestDto) {
         Member entity = getNewJoinMemberEntity(requestDto);
-        if (entity == null) {   throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);  }
+        if (entity == null) {
+            throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);
+        }
         // TODO :: ControllerAdvice 추가 고민해보기
-        if(memberRepository.findOneById(entity.getId()) != null){ throw new BusinessException(MemberErrorCode.FAILED_DUPLICATED_JOIN_MEMBER_INFO);}
+        if (memberRepository.findOneById(entity.getId()) != null) {
+            throw new BusinessException(MemberErrorCode.FAILED_DUPLICATED_JOIN_MEMBER_INFO);
+        }
         memberRepository.save(entity);
     }
 
@@ -66,10 +73,14 @@ public class MemberService {
     @Transactional
     public MemberDto login(MemberDto loginDto) {
         Member loginEntity = newReqeustLoginEntity(loginDto);
-        if (Objects.isNull(loginEntity)) { throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);    }
+        if (Objects.isNull(loginEntity)) {
+            throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);
+        }
 
         Member memberEntity = memberRepository.findOneByIdAndPassword(loginEntity.getId(), loginEntity.getPassword());
-        if (Objects.isNull(memberEntity)) { throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);  }
+        if (Objects.isNull(memberEntity)) {
+            throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);
+        }
 
         String loginToken = jwt.generateToken(memberEntity.getId());
 
@@ -131,8 +142,9 @@ public class MemberService {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
 
-        if ( !member.getPassword().equals(ConvertSHA256.convertToSHA256(password)))
+        if (!member.getPassword().equals(ConvertSHA256.convertToSHA256(password))) {
             throw new BusinessException(MemberErrorCode.WRONG_PASSWORD_REQUEST);
+        }
 
         member.updatePassword(ConvertSHA256.convertToSHA256(password));
         log.info("{} 회원의 비밀번호가 변경되었습니다.", id);
@@ -142,7 +154,7 @@ public class MemberService {
     public void updateMember(MemberInfo memberInfo, String token) {
         String id = JWT.ownerId(token);
         Member existingMember = memberRepository.findOneById(id);
-        existingMember.updateFromInfo( memberInfo.gender(), memberInfo.age());
+        existingMember.updateFromInfo(memberInfo.gender(), memberInfo.age());
 
         memberRepository.save(existingMember);
     }
@@ -151,7 +163,7 @@ public class MemberService {
     public Map<String, Object> getCarInfo(String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        if(member.getCarInfo() == null){
+        if (member.getCarInfo() == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_CAR_INFO);
         }
         CarInfoDto carInfoDto = CarInfoDto.from(member.getCarInfo());
@@ -170,8 +182,9 @@ public class MemberService {
     public Optional<WashInfoDto> getWashInfo(String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        if (member == null)
+        if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
+        }
 
         return Optional.of(WashInfoDto.from(member.getWashInfo()));
     }
@@ -180,22 +193,34 @@ public class MemberService {
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
-        washInfo.settingMember(member);
-        member.updateWashInfo(washInfo);
+        WashInfo washInfo = washInfoRepository.findWashInfoByMember(member);
 
-        washInfoRepository.save(washInfo);
+        if (washInfo == null) { // 세차 정보가 없는 경우
+            WashInfo newWashInfo = WashInfo.of( washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
+            newWashInfo.settingMember(member); // FIXME :: newWashInfo.settingMember(member); 가 아니라 생성자를 호출할 때 Member 를 넣어줘도 될 거 같습니다.
+            washInfoRepository.save(newWashInfo);
+            return;
+        }
+        // 세차 정보가 있는 경우
+        washInfo.updateWashInfo( washInfoDto.washCount(), washInfoDto.monthlyExpense(), washInfoDto.interest());
     }
 
     @Transactional
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(), carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
-        carInfo.settingMember(member);
-        member.updateCarInfo(carInfo);
+        CarInfo carInfo = carInfoRepository.findCarInfoByMember(member);
 
-        carInfoRepository.save(carInfo);
+        if (carInfo == null) { // 차량 정보가 없는 경우
+            CarInfo newCarInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
+                    carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
+            newCarInfo.settingMember(member);// FIXME :: newCarInfo.settingMember(member); 가 아니라 생성자를 호출할 때 Member 를 넣어줘도 될 거 같습니다.
+            carInfoRepository.save(newCarInfo);
+            return;
+        }
+        // 세차 정보가 있는 경우
+        carInfo.updateCarInfo(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
+                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
     }
 
     @Transactional(readOnly = true)
@@ -217,7 +242,7 @@ public class MemberService {
 
         return MemberDto.from(member);
     }
-  
+
     @Transactional
     public void resetPasswordByMemberId(String memberId, String newPassword) {
         Member member = memberRepository.findOneById(memberId);
@@ -233,7 +258,9 @@ public class MemberService {
 
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
         if (Objects.isNull(memberRepository.findOneById(kakaoUser.id()))) {
-            memberRepository.save(Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(), Age.AGE_99.ordinal()));
+            memberRepository.save(
+                    Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(),
+                            Age.AGE_99.ordinal()));
         }
 
         MemberDto memberDto = MemberDto.from(memberRepository.findOneById(kakaoUser.id()));
