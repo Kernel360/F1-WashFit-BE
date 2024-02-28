@@ -6,19 +6,18 @@ import com.kernel360.carinfo.repository.CarInfoRepository;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
-import com.kernel360.member.dto.CarInfoDto;
-import com.kernel360.member.dto.KakaoUserDto;
-import com.kernel360.member.dto.MemberDto;
-import com.kernel360.member.dto.MemberInfo;
-import com.kernel360.member.dto.WashInfoDto;
+import com.kernel360.member.dto.*;
 import com.kernel360.member.entity.Member;
+import com.kernel360.member.entity.WithdrawMember;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
 import com.kernel360.member.repository.MemberRepository;
+import com.kernel360.member.repository.WithdrawMemberRepository;
 import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
 import com.kernel360.washinfo.entity.WashInfo;
 import com.kernel360.washinfo.repository.WashInfoRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,17 +40,14 @@ public class MemberService {
     private final CarInfoRepository carInfoRepository;
     private final WashInfoRepository washInfoRepository;
     private final KakaoRequest kakaoRequest;
+    private final WithdrawMemberRepository withdrawMemberRepository;
 
     @Transactional
     public void joinMember(MemberDto requestDto) {
         Member entity = getNewJoinMemberEntity(requestDto);
-        if (entity == null) {
-            throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);
-        }
+        if (entity == null) {   throw new BusinessException(MemberErrorCode.FAILED_GENERATE_JOIN_MEMBER_INFO);  }
         // TODO :: ControllerAdvice 추가 고민해보기
-        if (memberRepository.findOneById(entity.getId()) != null) {
-            throw new BusinessException(MemberErrorCode.FAILED_DUPLICATED_JOIN_MEMBER_INFO);
-        }
+        if(memberRepository.findOneById(entity.getId()) != null){ throw new BusinessException(MemberErrorCode.FAILED_DUPLICATED_JOIN_MEMBER_INFO);}
         memberRepository.save(entity);
     }
 
@@ -71,25 +67,23 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberDto login(MemberDto loginDto) {
-        Member loginEntity = newReqeustLoginEntity(loginDto);
+    public MemberDto login(MemberDto loginDto, HttpServletRequest request) {
+        Member loginEntity = newRequestLoginEntity(loginDto);
         if (Objects.isNull(loginEntity)) {
             throw new BusinessException(MemberErrorCode.FAILED_GENERATE_LOGIN_REQUEST_INFO);
         }
 
         Member memberEntity = memberRepository.findOneByIdAndPassword(loginEntity.getId(), loginEntity.getPassword());
-        if (Objects.isNull(memberEntity)) {
-            throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);
-        }
+        if (Objects.isNull(memberEntity)) { throw new BusinessException(MemberErrorCode.FAILED_REQUEST_LOGIN);  }
 
         String loginToken = jwt.generateToken(memberEntity.getId());
 
-        authService.saveAuthByMember(memberEntity.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken));
+        authService.saveAuthByMember(memberEntity.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken), request);
 
         return MemberDto.login(memberEntity, loginToken);
     }
 
-    private Member newReqeustLoginEntity(MemberDto loginDto) {
+    private Member newRequestLoginEntity(MemberDto loginDto) {
         String encodePassword = ConvertSHA256.convertToSHA256(loginDto.password());
 
         return Member.loginMember(loginDto.id(), encodePassword);
@@ -154,7 +148,7 @@ public class MemberService {
     public void updateMember(MemberInfo memberInfo, String token) {
         String id = JWT.ownerId(token);
         Member existingMember = memberRepository.findOneById(id);
-        existingMember.updateFromInfo(memberInfo.gender(), memberInfo.age());
+        existingMember.updateFromInfo( memberInfo.gender(), memberInfo.age());
 
         memberRepository.save(existingMember);
     }
@@ -163,7 +157,7 @@ public class MemberService {
     public Map<String, Object> getCarInfo(String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        if (member.getCarInfo() == null) {
+        if(member.getCarInfo() == null){
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_CAR_INFO);
         }
         CarInfoDto carInfoDto = CarInfoDto.from(member.getCarInfo());
@@ -193,6 +187,10 @@ public class MemberService {
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
+        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(),
+                washInfoDto.interest());
+        washInfo.settingMember(member);
+        member.updateWashInfo(washInfo);
         WashInfo washInfo = washInfoRepository.findWashInfoByMember(member);
 
         if (washInfo == null) { // 세차 정보가 없는 경우
@@ -209,6 +207,10 @@ public class MemberService {
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
+        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
+                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
+        carInfo.settingMember(member);
+        member.updateCarInfo(carInfo);
         CarInfo carInfo = carInfoRepository.findCarInfoByMember(member);
 
         if (carInfo == null) { // 차량 정보가 없는 경우
@@ -254,7 +256,7 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberDto loginForKakao(String accessToken) {
+    public MemberDto loginForKakao(String accessToken, HttpServletRequest request) {
 
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
         if (Objects.isNull(memberRepository.findOneById(kakaoUser.id()))) {
@@ -267,9 +269,18 @@ public class MemberService {
 
         String loginToken = jwt.generateToken(memberDto.id());
 
-        authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken));
+        authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken), request);
 
         return MemberDto.fromKakao(memberDto, loginToken);
+    }
+
+    @Transactional
+    public void signOut(String accessToken) {
+        Member member = memberRepository.findOneById(jwt.ownerId(accessToken));
+
+        withdrawMemberRepository.save(WithdrawMember.of(member.getMemberNo(),member.getId(), member.getEmail(), null));
+
+        memberRepository.delete(member);
     }
 
     @Transactional(readOnly = true)
