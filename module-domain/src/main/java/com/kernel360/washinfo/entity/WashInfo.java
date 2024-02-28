@@ -2,11 +2,19 @@ package com.kernel360.washinfo.entity;
 
 import com.kernel360.base.BaseEntity;
 import com.kernel360.member.entity.Member;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Entity
@@ -32,20 +40,24 @@ public class WashInfo extends BaseEntity {
     @Column(name = "interest")
     private Integer interest;
 
-    private WashInfo(Integer washNo, Integer washCount, Integer monthlyExpense, Integer interest) {
-        this.washNo = washNo;
+    private WashInfo(Integer washCount, Integer monthlyExpense, Integer interest) {
         this.washCount = washCount;
         this.monthlyExpense = monthlyExpense;
         this.interest = interest;
     }
 
 
-    public static WashInfo of(Integer washNo, Integer washCount, Integer monthlyExpense, Integer interest) {
-        return new WashInfo(washNo, washCount, monthlyExpense, interest);
+    public static WashInfo of(Integer washCount, Integer monthlyExpense, Integer interest) {
+        return new WashInfo(washCount, monthlyExpense, interest);
     }
-
 
     public void settingMember(Member member) {
         this.member = member;
+    }
+
+    public void updateWashInfo(Integer washCount, Integer monthlyExpense, Integer interest) {
+        this.washCount = washCount;
+        this.monthlyExpense = monthlyExpense;
+        this.interest = interest;
     }
 }
