@@ -1,5 +1,7 @@
 package com.kernel360.product.service;
 
+import com.kernel360.likes.repository.LikeRepository;
+import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.repository.ProductRepository;
@@ -8,6 +10,9 @@ import com.navercorp.fixturemonkey.api.introspector.*;
 import com.navercorp.fixturemonkey.jakarta.validation.plugin.JakartaValidationPlugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +27,9 @@ class ProductServiceTest {
     private FixtureMonkey fixtureMonkey;
     private ProductRepository productRepository;
     private ProductService productService;
+    private Pageable pageable;
+
+    private LikeRepository likeRepository;
     @BeforeEach
     void 테스트준비() {
         fixtureMonkey = FixtureMonkey.builder()
@@ -37,7 +45,8 @@ class ProductServiceTest {
                 .build();
 
         productRepository = mock(ProductRepository.class);
-        productService = new ProductService(productRepository);
+        pageable = mock(Pageable.class);
+        productService = new ProductService(productRepository, likeRepository);
     }
 
     @Test
@@ -48,7 +57,7 @@ class ProductServiceTest {
                 .sample();
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        ProductDto foundProduct = productService.getProductById(1L);
+        ProductDetailDto foundProduct = productService.getProductById(1L);
 
         //then
         then(foundProduct.productNo()).isEqualTo(product.getProductNo());
@@ -56,34 +65,33 @@ class ProductServiceTest {
 
     @Test
     void 전체_제품_목록_조회(){
-        //given
+        //given & when
         List<ProductDto> products = fixtureMonkey.giveMe(ProductDto.class, 3);
-        when(productService.getProductList()).thenReturn(products);
-
-        //when
-//        List<ProductDto> actualProducts = productService.getProductList();
+        when(productService.getProducts()).thenReturn(products);
 
         //then
         then(products).isEqualTo(products);
     }
 
     @Test
-    void 키워드로_제품_목록_조회(){
-        //given
-        List<Product> products = new ArrayList<>();
+    void 키워드로_제품_목록_조회() {
+        // given
         String keyword = "sample";
-
+        List<Product> productList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Product product = fixtureMonkey.giveMeBuilder(Product.class)
-                    .set("productName", keyword + i) // Append a unique number to each productName
+                    .set("productName", "sample" + i)
                     .sample();
-            products.add(product);
+            productList.add(product);
         }
-        //when
-        when(productRepository.findByKeyword(keyword)).thenReturn(products);
-        List<ProductDto> productListByKeyword = productService.getProductListByKeyword(keyword);
-        //then
-        then(productListByKeyword).hasSize(5);
-        then(productListByKeyword).allSatisfy(productDto -> then(productDto.productName()).contains(keyword));
+        Page<Product> productsPage = new PageImpl<>(productList, pageable, productList.size());
+
+        when(productRepository.findByProductNameContaining(keyword, pageable)).thenReturn(productsPage);
+
+        Page<ProductDto> productDtos = productService.getProductsByKeyword(keyword, pageable);
+
+        // then
+        then(productDtos.getContent()).hasSize(5);
+        then(productDtos.getContent()).allSatisfy(productDto -> then(productDto.productName()).contains(keyword));
     }
 }

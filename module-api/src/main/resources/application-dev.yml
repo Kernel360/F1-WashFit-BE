@@ -1,0 +1,77 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PW}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: validate
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    #JPA보다 flyway 우선 실행
+    autoconfigure:
+      exclude: org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+  mail:
+    host: smtp.gmail.com
+    username: ${SMTP_GOOGLE_EMAIL}
+    password: ${SMTP_PASSWORD}
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          starttls:
+            enable: true
+          timeout: 5000
+          writetimeout: 5000
+
+  data:
+    redis:
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 20
+      host: ${REDIS_DEV_HOST}
+      password: ${REDIS_DEV_PASSWORD}
+
+logging:
+  file:
+    path: ./logs/api/
+    name: dev-api-log
+  logback:
+    rollingpolicy:
+      max-history: 14
+      max-file-size: 50MB
+      total-size-cap: 5GB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+constants:
+  host-url: ${DEV_HOST_URL}
+  password-reset-token:
+    duration-minute: 5
+
+aws:
+  credentials:
+    access-key-id: ${AWS_ACCESS_KEY}
+    secret-access-key: ${AWS_SECRET_KEY}
+  s3:
+    bucket:
+      name: ${AWS_S3_BUCKET_NAME}
+      url: ${AWS_S3_BUCKET_URL}

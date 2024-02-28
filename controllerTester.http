@@ -1,0 +1,152 @@
+
+
+# Main-Controller API
+
+### 배너정보조회
+GET http://localhost:8080/banner
+
+
+### 추천제품조회
+GET http://localhost:8080/recommend-products
+
+
+### 조회순
+GET http://localhost:8080/products/rank?sortType=viewCnt-order
+
+
+
+### 위반제품목록
+GET http://localhost:8080/products/rank?sortType=violation-products
+
+<> 2024-02-23T161552-3.200.json
+
+
+### 추천순
+GET http://localhost:8080/products/rank?sortType=recommend-order
+
+<> 2024-02-23T161552-4.200.json
+
+
+### 최신순
+GET http://localhost:8080/products/rank?sortType=recent-order
+
+<> 2024-02-23T161552-5.200.json
+
+
+## Product API Test
+
+### 제품리스트 조회
+GET http://localhost:8080/products
+
+<> 2024-02-23T161552-6.200.json
+
+
+### 제품아이디로 제품조회
+GET http://localhost:8080/product/5
+
+<> 2024-02-23T161552-7.200.json
+
+### 키워드로 제품 조회
+GET http://localhost:8080/products/search?keyword=더클래스
+
+<> 2024-02-23T161553.200.json
+<> 2024-02-23T164752.201.json
+<> 2024-02-23T163943.201.json
+
+
+### 마이페이지 회원비밀번호 검증요청
+GET http://localhost:8080/mypage/member/validate
+Content-Type: application/json
+Authorization: {{ authorization }}
+
+{
+  "password": "zxcv1234"
+}
+
+<> 2024-02-23T164933.200.json
+
+
+### 마이페이지 회원정보 수정요청
+PUT http://localhost:8080/mypage/member
+Authorization: {{ authorization }}
+Content-Type: application/json
+
+{
+  "gender": 2,
+  "age": 30
+}
+
+### 회원 세차정보(부가정보) 입력
+POST http://localhost:8080/member/wash
+Authorization: {{ authorization}}
+Content-Type: application/json
+
+{
+  "washCount": 59,
+  "monthlyExpense": 63,
+  "interest": 44
+}
+
+### 회원 차량정보(부가정보) 입력
+POST http://localhost:8080/member/car
+Content-Type: application/json
+Authorization: {{ authorization }}
+
+{
+  "carType": 11,
+  "carSize": 16,
+  "carColor": 21,
+  "drivingEnv": 36,
+  "parkingEnv": 40
+}
+
+### 마이페이지 차량정보 요청
+GET http://localhost:8080/mypage/car
+Authorization: {{ authorization }}
+
+
+### 마이페이지 세차정보 요청
+GET http://localhost:8080/mypage/wash
+Authorization: {{authorization}}
+
+
+### 세차장 정보조회
+
+GET http://localhost:8080/washzones?minX=36.12&maxX= 36.88&minY=127.1&maxY=127.8&level=2
+
+<> 2024-02-23T161554.201.json
+
+
+### 세차장 키워드 검색
+GET http://localhost:8080/washzones/search?keyword=워시존
+
+<> 2024-02-23T161554-1.201.json
+
+
+### 세차장 정보 등록
+
+POST http://127.0.0.1:8080/washzones
+Content-Type: application/json
+
+{
+  "name" : "샘플 세차장",
+  "address": "서울특별시 봉은사역",
+  "latitude": 37.777,
+  "longitude": 127.0808
+}
+
+
+<> 2024-02-23T161554-2.201.json
+
+
+### OCR 검색 기능
+
+GET http://127.0.0.1:8080/products/CB19-12-1034
+
+<> 2024-02-23T161554.200.json
+
+
+#### 마이페이지 회원탈퇴 요청
+
+DELETE http://localhost:8080/mypage/member
+Authorization: {{authorization}}

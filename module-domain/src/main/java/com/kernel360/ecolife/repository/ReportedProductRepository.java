@@ -29,8 +29,9 @@ public interface ReportedProductRepository extends JpaRepository<ReportedProduct
             + "FROM reported_product WHERE comp_nm LIKE :companyName AND prdt_nm LIKE :brandName GROUP BY prdt_nm) max_dates "
             + "ON rp.prdt_nm = max_dates.prdt_nm AND rp.issu_date = max_dates.max_issu_date "
             + "ORDER BY max_dates.max_issu_date DESC", nativeQuery = true)
-    List<ReportedProduct> findByBrandNameAndCompanyName(@Param("companyName") String companyName,
-                                                        @Param("brandName") String brandName);
+    List<ReportedProduct> findByBrandNameAndCompanyName(@Param("brandName") String brandName,
+                                                        @Param("companyName") String companyName
+    );
 
     /**
      * 제조사명을 통해서 해당 브랜드의 제품 리스트를 조회

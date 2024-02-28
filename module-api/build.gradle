@@ -36,6 +36,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     //implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // jasypt
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
@@ -67,6 +69,15 @@ dependencies {
     // rest docs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+    //actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    //prometheus
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    //mybatis
+    implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '3.0.3'
 }
 
 tasks.named('test') {
@@ -75,24 +86,17 @@ tasks.named('test') {
 }
 
 asciidoctor {
-    dependsOn test
-    configurations 'asciidoctorExt'
     baseDirFollowsSourceFile()
     inputs.dir snippetsDir
-}
-
-asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
-}
-
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
+    configurations 'asciidoctorExt'
+    dependsOn test
 }
 
 bootJar {
-    dependsOn copyDocument
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }
 
 tasks.register("prepareKotlinBuildScriptModel") {}

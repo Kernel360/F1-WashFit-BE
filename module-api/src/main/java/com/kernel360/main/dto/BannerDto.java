@@ -2,17 +2,17 @@ package com.kernel360.main.dto;
 
 public record BannerDto (
         Long id,
-        String image,
+        String imageSource,
         String alt
 ) {
     public static BannerDto of(
             Long id,
-            String image,
+            String imageSource,
             String alt
     ) {
         return new BannerDto(
                 id,
-                image,
+                imageSource,
                 alt
         );
     }

@@ -2,6 +2,7 @@ package com.kernel360.member.service;
 
 import com.kernel360.auth.entity.Auth;
 import com.kernel360.auth.repository.AuthRepository;
+import com.kernel360.auth.service.AuthService;
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.repository.MemberRepository;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,6 +37,9 @@ class MemberServiceTest {
     @InjectMocks
     private MemberService memberService;
 
+    @InjectMocks
+    private AuthService authService;
+
     @Mock
     private ConvertSHA256 convertSHA256;
 
@@ -49,7 +54,7 @@ class MemberServiceTest {
     void 회원가입_로직_테스트() {
 
         /** given **/
-        MemberDto requestDto = MemberDto.of("testID", "gunsight777@naver.com", "testPassword", "man", "AGE_40");
+        MemberDto requestDto = MemberDto.of("testID", "gunsight777@naver.com", "testPassword", "MALE", "AGE_40");
         Member member = memberService.getNewJoinMemberEntity(requestDto);
 
         /** when **/
@@ -81,7 +86,8 @@ class MemberServiceTest {
         /** given **/
         MemberDto loginDto = MemberDto.of("test03", "1234qwer");
         Member mockLoginEntity = Member.loginMember(loginDto.id(), loginDto.password());
-        Member mockEntity = Member.of(502L, loginDto.id(), "test03@naver.com", "0eb9de69892882d54516e03e30098354a2e39cea36adab275b6300c737c942fd", 0, 0);
+        Member mockEntity = Member.of(502L, loginDto.id(), "test03@naver.com",
+                "0eb9de69892882d54516e03e30098354a2e39cea36adab275b6300c737c942fd", 0, 0);
         String mockToken = "dummy_token";
 
         /** stub **/
@@ -108,7 +114,7 @@ class MemberServiceTest {
         Member memberEntity = Member.of(502L, "test03", null, null, 0, 0);
         String mockToken = "mockToken";
         Auth auth = Auth.jwt(null, 502L, mockToken);
-
+        MockHttpServletRequest request = new MockHttpServletRequest();
         /** stub **/
         when(jwt.generateToken(anyString())).thenReturn(mockToken);
         when(authRepository.findOneByMemberNo(anyLong())).thenReturn(auth);
@@ -117,10 +123,11 @@ class MemberServiceTest {
         String token = jwt.generateToken(memberEntity.getId()); //mockToken return 정상 수행 확인
         String encryptToken = convertSHA256.convertToSHA256(token); //해싱부분은 정적메소드여서 그런지 stub이 안됨...(?)
         Auth authJwt = authRepository.findOneByMemberNo(memberEntity.getMemberNo());
-
+        String clientIP = AuthService.getClientIP(request);
         authJwt = Optional.ofNullable(authJwt)
-                          .map(modifyAuth -> memberService.modifyAuthJwt(modifyAuth, encryptToken))
-                          .orElseGet(() -> memberService.createAuthJwt(memberEntity.getMemberNo(), encryptToken));
+                          .map(modifyAuth -> authService.modifyAuthJwt(modifyAuth, encryptToken, clientIP))
+                          .orElseGet(
+                                  () -> authService.createAuthJwt(memberEntity.getMemberNo(), encryptToken, clientIP));
 
         authRepository.save(authJwt);
 
@@ -132,7 +139,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입시_아이디_중복_있으면_TRUE")
-    void 회원가입_아이디_중복_검사_있으면_TRUE(){
+    void 회원가입_아이디_중복_검사_있으면_TRUE() {
 
         /** given **/
         String id = "test01";
@@ -147,12 +154,12 @@ class MemberServiceTest {
 
         /** then **/
         verify(memberRepository).findOneById(id);
-        assertTrue(result,"중복있으면TRUE이다.");
+        assertTrue(result, "중복있으면TRUE이다.");
     }
 
     @Test
     @DisplayName("회원가입시_아이디_중복_없으면_FALSE")
-    void 회원가입_아이디_중복_검사_없으면_FALSE(){
+    void 회원가입_아이디_중복_검사_없으면_FALSE() {
 
         /** given **/
         String id = "test01";
@@ -166,12 +173,12 @@ class MemberServiceTest {
 
         /** then **/
         verify(memberRepository).findOneById(id);
-        assertFalse(result,"중복없으면FALSE이다.");
+        assertFalse(result, "중복없으면FALSE이다.");
     }
 
     @Test
     @DisplayName("회원가입시_이메일_중복_검사_있으면_TRUE")
-    void 회원가입_이메일_중복_있으면_TRUE(){
+    void 회원가입_이메일_중복_있으면_TRUE() {
 
         /** given **/
         String email = "kernel360@kernel360.co.kr";
@@ -187,12 +194,12 @@ class MemberServiceTest {
 
         /** then **/
         verify(memberRepository).findOneByEmail(email);
-        assertTrue(result,"중복있으면TRUE이다.");
+        assertTrue(result, "중복있으면TRUE이다.");
     }
 
     @Test
     @DisplayName("회원가입시_이메일_중복_검사_없으면_FALSE")
-    void 회원가입_이메일_중복_없으면_FALSE(){
+    void 회원가입_이메일_중복_없으면_FALSE() {
 
         /** given **/
         String email = "kernel360@kernel360.co.kr";
@@ -207,7 +214,7 @@ class MemberServiceTest {
 
         /** then **/
         verify(memberRepository).findOneByEmail(email);
-        assertFalse(result,"중복없으면FALSE이다.");
+        assertFalse(result, "중복없으면FALSE이다.");
     }
 
 }

@@ -34,6 +34,20 @@
             <appender-ref ref="FILE" />
         </root>
     </springProfile>
+    <!--  dev 환경  -->
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
+    <!--  prod 환경  -->
+    <springProfile name="prod">
+        <root level="info">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
     <!--  test 환경  -->
     <springProfile name="test">
     </springProfile>

@@ -1,9 +1,7 @@
 spring:
   profiles:
     active: local
-
-jasypt:
-  encryptor:
-    algorithm: PBEWithMD5AndTripleDES
-
-
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 500MB
