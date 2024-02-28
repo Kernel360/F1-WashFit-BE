@@ -46,11 +46,6 @@ public class Member extends BaseEntity {
         return new Member(memberNo, id, email, password, gender, age);
     }
 
-    public static Member of(String id, String email, int gender, int age) {
-
-        return new Member(id, email, gender, age);
-    }
-
     /**
      * All Binding
      **/
@@ -66,13 +61,6 @@ public class Member extends BaseEntity {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.gender = gender;
-        this.age = age;
-    }
-
-    private Member(String id, String email, int gender, int age) {
-        this.id = id;
-        this.email = email;
         this.gender = gender;
         this.age = age;
     }
@@ -129,5 +117,8 @@ public class Member extends BaseEntity {
         return new Member(id, email, password, gender, age);
     }
 
-
+    public void updateFromInfo(int gender, int age) {
+        this.gender = gender;
+        this.age = age;
+    }
 }

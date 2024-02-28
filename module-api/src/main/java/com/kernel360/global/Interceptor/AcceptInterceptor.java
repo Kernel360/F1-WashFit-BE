@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
@@ -19,11 +20,11 @@ public class AcceptInterceptor implements HandlerInterceptor {
         boolean result = true;
         String requestToken = request.getHeader("Authorization");
 
-        if (requestToken.length() == 0) { throw new BusinessException(AcceptInterceptorErrorCode.DOSE_NOT_EXIST_REQUEST_TOKEN); }
+        if (!StringUtils.hasLength(requestToken)) { throw new BusinessException(AcceptInterceptorErrorCode.DOSE_NOT_EXIST_REQUEST_TOKEN); }
 
         if (!authService.validRequestToken(requestToken)) { throw new BusinessException(AcceptInterceptorErrorCode.FAILED_VALID_REQUEST_TOKEN); }
 
-        //IP수집 후 테이블에 저장
+        // TODO:: IP 수집 후 테이블에 저장 -> 토큰 갱신 요청시 확인해서 토큰 재발급
 
         return result;
     }

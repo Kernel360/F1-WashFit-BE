@@ -22,6 +22,7 @@ public class AuthController {
     @GetMapping("/reissuanceJWT")
     public ResponseEntity<ApiResponse<AuthDto>> reissuanceJWT(HttpServletRequest request){
 
-        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_REGENERATED_JWT, AuthDto.of(authService.generateTokenAndSaveAuth(request.getHeader("Authorization"))));
+        return ApiResponse.toResponseEntity(SUCCESS_REQUEST_REGENERATED_JWT,
+                AuthDto.of(authService.generateTokenAndSaveAuth(request.getHeader("Authorization"))));
     }
 }
