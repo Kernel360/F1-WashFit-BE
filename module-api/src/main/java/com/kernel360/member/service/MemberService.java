@@ -8,11 +8,11 @@ import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.*;
 import com.kernel360.member.entity.Member;
-import com.kernel360.member.entity.WithrawMember;
+import com.kernel360.member.entity.WithdrawMember;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
 import com.kernel360.member.repository.MemberRepository;
-import com.kernel360.member.repository.WithrawMemberRepository;
+import com.kernel360.member.repository.WithdrawMemberRepository;
 import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
 import com.kernel360.washinfo.entity.WashInfo;
@@ -40,7 +40,7 @@ public class MemberService {
     private final CarInfoRepository carInfoRepository;
     private final WashInfoRepository washInfoRepository;
     private final KakaoRequest kakaoRequest;
-    private final WithrawMemberRepository withrawMemberRepository;
+    private final WithdrawMemberRepository withdrawMemberRepository;
 
     @Transactional
     public void joinMember(MemberDto requestDto) {
@@ -252,7 +252,7 @@ public class MemberService {
     public void signOut(String accessToken) {
         Member member = memberRepository.findOneById(jwt.ownerId(accessToken));
 
-        withrawMemberRepository.save(WithrawMember.of(member.getMemberNo(),member.getId(), member.getEmail(), null));
+        withdrawMemberRepository.save(WithdrawMember.of(member.getMemberNo(),member.getId(), member.getEmail(), null));
 
         memberRepository.delete(member);
     }
