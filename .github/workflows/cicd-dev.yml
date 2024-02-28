@@ -120,8 +120,11 @@ jobs:
             mkdir -p deploy
             cd deploy
             echo "${{ secrets.DB_INIT_SQL }}" > init.sql
-            echo "${{ secrets.DEV_REDIS_CONF }}" > redis/redis.conf
+            echo "${{ secrets.DEV_REDIS_CONF }}" > ./redis/redis.conf
             echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
+            
+            docker image prune -af
+            
             docker-compose pull
             docker-compose down
             docker-compose up -d
