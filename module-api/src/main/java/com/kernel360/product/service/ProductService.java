@@ -37,7 +37,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductDto> getProductsByKeyword(String keyword, Pageable pageable) {
-        Page<Product> products = productRepository.findByProductNameContaining(keyword, pageable);
+        Page<Product> products = productRepository.getProductsByKeyword(keyword, pageable);
 
         return products.map(ProductDto::from);
     }
@@ -90,6 +90,7 @@ public class ProductService {
                 .map(ProductDetailDto::from);
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductDto> getFavoriteProducts(Pageable pageable) {
         Page<Object[]> results = likeRepository.findTop20ByProductNoOrderByLikeCountDesc(pageable);
 
@@ -105,6 +106,32 @@ public class ProductService {
         return new PageImpl<>(productDtos, pageable, results.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
+    public Page<ProductDto> getProductWithKeywordAndOrderByViewCount(String keyword, Pageable pageable) {
 
+        return productRepository.getProductWithKeywordAndOrderByViewCount(keyword, pageable)
+                .map(ProductDto::from);
+    }
 
+    @Transactional(readOnly = true)
+    public Page<ProductDto> getProductWithKeywordAndViolationProducts(String keyword, Pageable pageable) {
+
+        return productRepository.findByProductWithKeywordAndSafetyStatus(keyword, SafetyStatus.DANGER, pageable)
+                .map(ProductDto::from);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductDto> getProductWithKeywordAndOrderByRecommend(String keyword, Pageable pageable) {
+
+        return productRepository.getProductWithKeywordAndOrderByRecommend(keyword, pageable)
+                .map(ProductDto::from);
+
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductDto> getProductWithKeywordAndRecentOrder(String keyword, Pageable pageable) {
+
+        return productRepository.getProductWithKeywordAndRecentOrder(keyword, pageable)
+                .map(ProductDto::from);
+    }
 }

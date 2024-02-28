@@ -1,4 +1,5 @@
 package com.kernel360.product.controller;
+import com.kernel360.main.controller.Sort;
 import com.kernel360.product.code.ProductsBusinessCode;
 import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
@@ -26,10 +27,12 @@ public class ProductController {
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, products);
     }
     @GetMapping("/products/search")
-    ResponseEntity<ApiResponse<Page<ProductDto>>> findProductByKeyword(@RequestParam("keyword") String keyword, Pageable pageable){
-        final Page<ProductDto> list = productService.getProductsByKeyword(keyword, pageable);
+    ResponseEntity<ApiResponse<Page<ProductDto>>> findProductByKeyword(
+            @RequestParam(name = "sortType", defaultValue = "viewCnt-order") Sort sortType,
+            @RequestParam("keyword") String keyword, Pageable pageable){
+        Page<ProductDto> productDto = sortType.withKeywordSort(productService, keyword, pageable);
 
-        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, list);
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productDto);
     }
     @GetMapping("/product/{productNo}")
     ResponseEntity<ApiResponse<ProductDetailDto>> findProductById(@PathVariable("productNo") Long productNo) {
@@ -40,9 +43,11 @@ public class ProductController {
     }
 
     @GetMapping("/products/{OCR_No}")
-    ResponseEntity<ApiResponse<Page<ProductDetailDto>>> findProductByOCR(@PathVariable("OCR_No") String reportNo, Pageable pageable) {
+    ResponseEntity<ApiResponse<Page<ProductDetailDto>>> findProductByOCR(
+            @PathVariable("OCR_No") String reportNo, Pageable pageable) {
 
-        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productService.getProductByOCR(reportNo, pageable));
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS,
+                productService.getProductByOCR(reportNo, pageable));
     }
 
 }
