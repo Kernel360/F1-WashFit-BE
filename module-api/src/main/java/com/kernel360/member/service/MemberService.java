@@ -187,10 +187,6 @@ public class MemberService {
     public void saveWashInfo(WashInfoDto washInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        WashInfo washInfo = WashInfo.of(washInfoDto.washNo(), washInfoDto.washCount(), washInfoDto.monthlyExpense(),
-                washInfoDto.interest());
-        washInfo.settingMember(member);
-        member.updateWashInfo(washInfo);
         WashInfo washInfo = washInfoRepository.findWashInfoByMember(member);
 
         if (washInfo == null) { // 세차 정보가 없는 경우
@@ -207,10 +203,6 @@ public class MemberService {
     public void saveCarInfo(CarInfoDto carInfoDto, String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
-        CarInfo carInfo = CarInfo.of(carInfoDto.carType(), carInfoDto.carSize(), carInfoDto.carColor(),
-                carInfoDto.drivingEnv(), carInfoDto.parkingEnv());
-        carInfo.settingMember(member);
-        member.updateCarInfo(carInfo);
         CarInfo carInfo = carInfoRepository.findCarInfoByMember(member);
 
         if (carInfo == null) { // 차량 정보가 없는 경우
@@ -276,7 +268,7 @@ public class MemberService {
 
     @Transactional
     public void signOut(String accessToken) {
-        Member member = memberRepository.findOneById(jwt.ownerId(accessToken));
+        Member member = memberRepository.findOneById(JWT.ownerId(accessToken));
 
         withdrawMemberRepository.save(WithdrawMember.of(member.getMemberNo(),member.getId(), member.getEmail(), null));
 
