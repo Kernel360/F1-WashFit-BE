@@ -17,7 +17,7 @@ public enum Age {
 
     public static String ordinalToValue(int key) {
         for (Age age : values()) {
-            if (age.ordinal() == key) {
+            if (age.ordinal() == key) { // FIXME :: age.ordinal() 이 아니라 age.value() 를 비교해야?
                 return String.valueOf(age.value);
             }
         }

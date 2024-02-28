@@ -70,7 +70,7 @@ public class MyPageController {
     }
 
 
-    @PutMapping("/member")
+    @PatchMapping("/member")
     <T> ResponseEntity<ApiResponse<T>> updateMember(@RequestBody MemberInfo memberInfo,
                                                     @RequestHeader("Authorization") String authToken) {
         memberService.updateMember(memberInfo, authToken);
