@@ -14,12 +14,26 @@ public enum Sort {
 
             return productService.getProductListOrderByViewCount(pageable);
         }
+
+        @Override
+        public Page<ProductDto> withKeywordSort(ProductService productService, String keyword, Pageable pageable) {
+
+            return productService.getProductWithKeywordAndOrderByViewCount(keyword, pageable);
+        }
+
+
     },
     VIOLATION_PRODUCT_LIST("violation-products") {
         @Override
         Page<ProductDto> sort(ProductService productService, Pageable pageable) {
 
             return productService.getViolationProducts(pageable);
+        }
+
+        @Override
+        public Page<ProductDto> withKeywordSort(ProductService productService, String keyword, Pageable pageable) {
+
+            return productService.getProductWithKeywordAndViolationProducts(keyword, pageable);
         }
     },
     RECOMMENDATION_PRODUCT_ORDER("recommend-order") {
@@ -28,12 +42,24 @@ public enum Sort {
 
             return productService.getFavoriteProducts(pageable);
         }
+
+        @Override
+        public Page<ProductDto> withKeywordSort(ProductService productService, String keyword, Pageable pageable) {
+
+            return productService.getProductWithKeywordAndOrderByRecommend(keyword, pageable);
+        }
     },
     RECENT_PRODUCT_ORDER("recent-order") {
         @Override
         Page<ProductDto> sort(ProductService productService, Pageable pageable) {
 
             return productService.getRecentProducts(pageable);
+        }
+
+        @Override
+        public Page<ProductDto> withKeywordSort(ProductService productService, String keyword, Pageable pageable) {
+
+            return productService.getProductWithKeywordAndRecentOrder(keyword, pageable);
         }
     };
 
@@ -48,4 +74,5 @@ public enum Sort {
     }
 
     abstract Page<ProductDto> sort(ProductService productService, Pageable pageable);
+    public abstract Page<ProductDto> withKeywordSort(ProductService productService, String keyword, Pageable pageable);
 }
