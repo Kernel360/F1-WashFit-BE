@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "withraw_member")
+@Table(name = "withdraw_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WithrawMember extends BaseEntity {
+public class WithdrawMember extends BaseEntity {
 
     @Id
     @Column(name = "member_no", nullable = false)
@@ -29,12 +29,12 @@ public class WithrawMember extends BaseEntity {
     private String ip;
 
 
-    public static WithrawMember of(Long memberNo, String id, String email, String ip) {
+    public static WithdrawMember of(Long memberNo, String id, String email, String ip) {
 
-        return new WithrawMember(memberNo, id, email, ip);
+        return new WithdrawMember(memberNo, id, email, ip);
     }
 
-    private WithrawMember(
+    private WithdrawMember(
             Long memberNo,
             String id,
             String email,

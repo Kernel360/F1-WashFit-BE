@@ -1,4 +1,4 @@
-CREATE TABLE if not exists withraw_member
+CREATE TABLE if not exists withdraw_member
 (
     member_no   bigserial         NOT NULL,
     id          varchar           NOT NULL,
