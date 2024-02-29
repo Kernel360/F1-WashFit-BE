@@ -2,11 +2,15 @@ package com.kernel360.handler;
 
 import com.kernel360.code.ErrorCode;
 import com.kernel360.code.common.CommonErrorCode;
+import com.kernel360.code.jwt.JwtErrorCode;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.response.ErrorResponse;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,5 +34,41 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INTERNAL_SERVER_ERROR);
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MalformedJwtException.class)
+    protected ResponseEntity<ErrorResponse> handleMalformedJwtException(final MalformedJwtException e) {
+        log.error("handleMalformedJwtException", e);
+
+        final ErrorResponse response = ErrorResponse.of(JwtErrorCode.FAILED_MALFORMED_JWT);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SignatureException.class)
+    protected ResponseEntity<ErrorResponse> handleJwtSignatureException(final SignatureException e) {
+        log.error("handleJwtSignatureException", e);
+
+        final ErrorResponse response = ErrorResponse.of(JwtErrorCode.FAILED_SIGNATURE_JWT);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    protected ResponseEntity<ErrorResponse> handleNullPointerException(final NullPointerException e) {
+        log.error("handleNullPointerException", e);
+
+        final ErrorResponse response = ErrorResponse.of(CommonErrorCode.NOT_FOUND_RESOURCE);
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    protected ResponseEntity<ErrorResponse> handleMissingHeaderException(final MissingRequestHeaderException e) {
+        log.error("handleMissingHeaderException", e);
+
+        final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_REQUEST_HEADERS);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
