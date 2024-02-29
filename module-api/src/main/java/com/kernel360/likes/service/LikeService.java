@@ -5,16 +5,17 @@ import com.kernel360.likes.code.LikeErrorCode;
 import com.kernel360.likes.entity.Like;
 import com.kernel360.likes.repository.LikeRepository;
 import com.kernel360.member.service.MemberService;
-import com.kernel360.product.code.ProductsErrorCode;
 import com.kernel360.product.dto.ProductDto;
-import com.kernel360.product.entity.Product;
 import com.kernel360.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -28,10 +29,8 @@ public class LikeService {
     @Transactional
     public void heartOn(Long productNo, String token) {
         Long memberNo = memberService.findMemberByToken(token).memberNo();
-        Product product = productRepository.findById(productNo)
-                                           .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
 
-        likeRepository.save(Like.of(memberNo, product.getProductNo()));
+        likeRepository.save(Like.of(memberNo, productNo));
     }
 
     @Transactional
@@ -46,11 +45,14 @@ public class LikeService {
     @Transactional(readOnly = true)
     public Page<ProductDto> findAllLikes(String token, Pageable pageable) {
         Long memberNo = memberService.findMemberByToken(token).memberNo();
+        Page<Like> likesPage = likeRepository.findAllByMemberNo(memberNo, pageable);
+        List<ProductDto> productDtos = likesPage.getContent().stream()
+                .map(like -> productRepository.findById(like.getProductNo()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(ProductDto::from)
+                .toList();
 
-        return likeRepository.findAllByMemberNo(memberNo, pageable)
-                .map(like -> productRepository.findById(like.getId())
-                        .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT)))
-                .map(ProductDto::from);
-
+        return new PageImpl<>(productDtos, pageable, productDtos.size());
     }
 }
