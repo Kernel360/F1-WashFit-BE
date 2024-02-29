@@ -5,6 +5,7 @@ import com.kernel360.auth.repository.AuthRepository;
 import com.kernel360.auth.service.AuthService;
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.entity.Member;
+import com.kernel360.member.enumset.AccountType;
 import com.kernel360.member.repository.MemberRepository;
 import com.kernel360.utils.ConvertSHA256;
 import com.kernel360.utils.JWT;
@@ -87,7 +88,7 @@ class MemberServiceTest {
         MemberDto loginDto = MemberDto.of("test03", "1234qwer");
         Member mockLoginEntity = Member.loginMember(loginDto.id(), loginDto.password());
         Member mockEntity = Member.of(502L, loginDto.id(), "test03@naver.com",
-                "0eb9de69892882d54516e03e30098354a2e39cea36adab275b6300c737c942fd", 0, 0);
+                "0eb9de69892882d54516e03e30098354a2e39cea36adab275b6300c737c942fd", 0, 0, AccountType.PLATFORM.name());
         String mockToken = "dummy_token";
 
         /** stub **/
@@ -111,7 +112,7 @@ class MemberServiceTest {
     void 토큰_발급_저장_테스트() {
 
         /** given **/
-        Member memberEntity = Member.of(502L, "test03", null, null, 0, 0);
+        Member memberEntity = Member.of(502L, "test03", null, null, 0, 0, AccountType.PLATFORM.name());
         String mockToken = "mockToken";
         Auth auth = Auth.jwt(null, 502L, mockToken);
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -143,7 +144,7 @@ class MemberServiceTest {
 
         /** given **/
         String id = "test01";
-        Member memberEntity = Member.of(51L, "test01", null, null, 0, 0);
+        Member memberEntity = Member.of(51L, "test01", null, null, 0, 0, AccountType.PLATFORM.name());
 
         /** stub **/
         when(memberRepository.findOneById(anyString())).thenReturn(memberEntity);
@@ -182,7 +183,7 @@ class MemberServiceTest {
 
         /** given **/
         String email = "kernel360@kernel360.co.kr";
-        Member memberEntity = Member.of(51L, "test01", "kernel360@kernel360.co.kr", null, 0, 0);
+        Member memberEntity = Member.of(51L, "test01", "kernel360@kernel360.co.kr", null, 0, 0, AccountType.PLATFORM.name());
 
         /** stub **/
         when(memberRepository.findOneByEmail(anyString())).thenReturn(memberEntity);
