@@ -2,7 +2,7 @@ name: CI and CD in WashPedia Project
 
 on:
   push:
-    branches: [ "feature/modify-cicd-dev-yml" ]
+    branches: [ "develop" ]
 
 permissions:
   contents: read
