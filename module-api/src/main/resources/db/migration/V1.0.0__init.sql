@@ -25,6 +25,7 @@ CREATE TABLE if not exists Auth
     created_by  varchar   NOT NULL,
     modified_at date      NULL,
     modified_by varchar   NULL
+
 );
 
 
@@ -39,7 +40,8 @@ CREATE TABLE if not exists Member
     created_at  DATE    NOT NULL,
     created_by  VARCHAR NOT NULL,
     modified_at DATE,
-    modified_by VARCHAR
+    modified_by VARCHAR,
+    account_type varchar
 );
 
 

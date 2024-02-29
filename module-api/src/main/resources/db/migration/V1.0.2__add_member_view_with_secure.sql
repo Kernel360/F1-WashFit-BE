@@ -39,7 +39,8 @@ SELECT member_no,
        created_at,
        created_by,
        modified_at,
-       modified_by
+       modified_by,
+       account_type
 FROM member;
 
 
@@ -51,10 +52,10 @@ CREATE
     RETURNS TRIGGER AS
 $$
 BEGIN
-    INSERT INTO member (member_no, id, "password", email, gender, age, created_at, created_by, modified_at, modified_by)
+    INSERT INTO member (member_no, id, "password", email, gender, age, created_at, created_by, modified_at, modified_by, account_type)
     VALUES (nextval('member_member_no_seq'::regclass), NEW.id, pgp_sym_encrypt(NEW.password::TEXT, 'changeRequired'),
             pgp_sym_encrypt(NEW.email::TEXT, 'changeRequired'), NEW.gender, NEW.age, NEW.created_at, NEW.created_by,
-            NEW.modified_at, NEW.modified_by);
+            NEW.modified_at, NEW.modified_by, NEW.account_type);
 
     RETURN NEW;
 
@@ -88,7 +89,8 @@ BEGIN
         created_at  = NEW.created_at,
         created_by  = NEW.created_by,
         modified_at = NEW.modified_at,
-        modified_by = NEW.modified_by
+        modified_by = NEW.modified_by,
+        account_type = NEW.account_type
     WHERE member_no = NEW.member_no;
     RETURN NEW;
 END;
@@ -132,4 +134,4 @@ EXECUTE FUNCTION member_view_delete_trigger();
 
 
 -- 테이블 member 권한 회수 설정
-REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES ON member FROM wash_admin;
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON member FROM wash_admin;
