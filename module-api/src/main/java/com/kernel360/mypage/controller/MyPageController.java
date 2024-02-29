@@ -47,14 +47,12 @@ public class MyPageController {
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_WASH_INFO_IN_MEMBER, washInfoDto);
     }
 
-
     @DeleteMapping("/member")
     ResponseEntity<ApiResponse<Void>> memberDelete(@RequestHeader("Authorization") String authToken) {
         memberService.deleteMemberByToken(authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_DELETE_MEMBER);
     }
-
 
     @PostMapping("/member")
     ResponseEntity<ApiResponse<String>> changePassword(@RequestBody String password, @RequestHeader("Authorization") String authToken) {
@@ -68,7 +66,6 @@ public class MyPageController {
 
         return memberService.validatePassword(password.password(), authToken);
     }
-
 
     @PatchMapping("/member")
     <T> ResponseEntity<ApiResponse<T>> updateMember(@RequestBody MemberInfo memberInfo,

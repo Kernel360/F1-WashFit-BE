@@ -9,6 +9,7 @@ import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.*;
 import com.kernel360.member.entity.Member;
 import com.kernel360.member.entity.WithdrawMember;
+import com.kernel360.member.enumset.AccountType;
 import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
 import com.kernel360.member.repository.MemberRepository;
@@ -63,7 +64,7 @@ public class MemberService {
             throw new BusinessException(MemberErrorCode.FAILED_NOT_MAPPING_ENUM_VALUE_OF);
         }
 
-        return Member.createJoinMember(requestDto.id(), requestDto.email(), encodePassword, genderOrdinal, ageOrdinal);
+        return Member.createJoinMember(requestDto.id(), requestDto.email(), encodePassword, genderOrdinal, ageOrdinal, AccountType.PLATFORM.name());
     }
 
     @Transactional
@@ -78,6 +79,7 @@ public class MemberService {
 
         String loginToken = jwt.generateToken(memberEntity.getId());
 
+        //TODO REFACTOR AUTH 정보를 RDB -> 래디스로 변경
         authService.saveAuthByMember(memberEntity.getMemberNo(), ConvertSHA256.convertToSHA256(loginToken), request);
 
         return MemberDto.login(memberEntity, loginToken);
@@ -123,12 +125,11 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMemberByToken(String token) {
-        final String id = JWT.ownerId(token);
-        Member member = memberRepository.findOneById(id);
-        //Fixme :: 멤버 탈퇴시, Deleted Table을 만들고, 데이터를 백업한후, 삭제하는 방식이나, MemberTable에 삭제여부를 표시하는 방식으로 리팩토링 필요
+    public void deleteMemberByToken(String accessToken) {
+        Member member = memberRepository.findOneById(JWT.ownerId(accessToken));
+        withdrawMemberRepository.save(WithdrawMember.of(member)); //of 받는식을 변경했습니다. 이 방식으로 리팩터를 하면 코드가 깔끔하네요.
         memberRepository.delete(member);
-        log.info("{} 회원 탈퇴 처리 완료", id);
+        log.info("{} 회원 탈퇴 처리 완료", accessToken);
     }
 
     @Transactional
@@ -253,26 +254,18 @@ public class MemberService {
         KakaoUserDto kakaoUser = kakaoRequest.getKakaoUserByToken(accessToken);
         if (Objects.isNull(memberRepository.findOneById(kakaoUser.id()))) {
             memberRepository.save(
-                    Member.createForKakao(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(),
-                            Age.AGE_99.ordinal()));
+                    Member.createJoinMember(kakaoUser.id(), kakaoUser.email(), "kakao", Gender.OTHERS.ordinal(),
+                            Age.AGE_99.ordinal(), AccountType.KAKAO.name()));
         }
 
         MemberDto memberDto = MemberDto.from(memberRepository.findOneById(kakaoUser.id()));
 
         String loginToken = jwt.generateToken(memberDto.id());
 
+        //TODO REFACTOR AUTH 정보를 RDB -> 래디스로 변경
         authService.saveAuthByMember(memberDto.memberNo(), ConvertSHA256.convertToSHA256(loginToken), request);
 
         return MemberDto.fromKakao(memberDto, loginToken);
-    }
-
-    @Transactional
-    public void signOut(String accessToken) {
-        Member member = memberRepository.findOneById(JWT.ownerId(accessToken));
-
-        withdrawMemberRepository.save(WithdrawMember.of(member.getMemberNo(),member.getId(), member.getEmail(), null));
-
-        memberRepository.delete(member);
     }
 
     @Transactional(readOnly = true)
