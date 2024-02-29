@@ -7,6 +7,7 @@ import com.kernel360.review.entity.Review;
 import com.kernel360.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,9 +43,15 @@ public class ReviewService {
     public Review createReview(ReviewDto reviewDto) {
         isValidStarRating(reviewDto.starRating());
 
-        Review review = reviewRepository.save(reviewDto.toEntity());
-        log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
+        Review review;
 
+        try {
+            review = reviewRepository.saveAndFlush(reviewDto.toEntity());
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
+        }
+
+        log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
         return review;
     }
 
@@ -53,7 +60,12 @@ public class ReviewService {
     public void updateReview(ReviewDto reviewDto) {
         isValidStarRating(reviewDto.starRating());
 
-        reviewRepository.save(reviewDto.toEntity());
+        try {
+            reviewRepository.saveAndFlush(reviewDto.toEntity());
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
+        }
+
         log.info("리뷰 수정 -> review_no {}", reviewDto.reviewNo());
     }
 
