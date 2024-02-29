@@ -10,6 +10,7 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -60,5 +61,14 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(CommonErrorCode.NOT_FOUND_RESOURCE);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    protected ResponseEntity<ErrorResponse> handleMissingHeaderException(final MissingRequestHeaderException e) {
+        log.error("handleMissingHeaderException", e);
+
+        final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_REQUEST_HEADERS);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
