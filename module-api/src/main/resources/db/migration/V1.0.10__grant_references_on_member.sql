@@ -1,0 +1,1 @@
+GRANT REFERENCES ON TABLE member TO wash_admin;
