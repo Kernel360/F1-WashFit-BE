@@ -2,7 +2,7 @@ name: CI and CD in WashPedia Project
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "feature/modify-cicd-dev-yml" ]
 
 permissions:
   contents: read
@@ -122,6 +122,8 @@ jobs:
             echo "${{ secrets.DB_INIT_SQL }}" > init.sql
             echo "${{ secrets.DEV_REDIS_CONF }}" > ./redis/redis.conf
             echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
+
+            echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             
             docker image prune -af
             
