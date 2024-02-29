@@ -6,9 +6,12 @@ import com.kernel360.global.code.AcceptInterceptorErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -18,6 +21,10 @@ public class AcceptInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (validateTargetUri(request)) {
+            return true;
+        }
+
         boolean result = true;
         String requestToken = request.getHeader("Authorization");
 
@@ -33,4 +40,22 @@ public class AcceptInterceptor implements HandlerInterceptor {
         return result;
     }
 
+    private boolean validateTargetUri(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String method = request.getMethod();
+
+        if (Objects.isNull(requestURI)) {
+            return false;
+        }
+
+        if (!requestURI.startsWith("/reviews")) {
+            return false;
+        }
+
+        if (HttpMethod.GET.matches(method)) {
+            return true;
+        }
+
+        return false;
+    }
 }
