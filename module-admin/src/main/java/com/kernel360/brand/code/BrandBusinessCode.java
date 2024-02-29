@@ -9,7 +9,7 @@ public enum BrandBusinessCode implements BusinessCode {
     SUCCESS_FOUND_EXACT_BRAND(HttpStatus.OK.value(),"BMB002","브랜드 상세 조회 성공"),
     SUCCESS_CREATED_BRAND(HttpStatus.CREATED.value(), "BMB003","브랜드 추가 성공" ),
     SUCCESS_DELETED_BRAND(HttpStatus.OK.value(), "BMB004","브랜드 삭제 성공"),
-    SUCCESS_UPDATED_BRAND(HttpStatus.OK.value(), "BMB005","브랜드 업데이트 성곡" );
+    SUCCESS_UPDATED_BRAND(HttpStatus.OK.value(), "BMB005","브랜드 업데이트 성공" );
 
 
     private final int status;

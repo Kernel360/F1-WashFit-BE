@@ -54,8 +54,7 @@ public class BrandController {
     }
 
     @DeleteMapping("/brand")
-    public ResponseEntity<ApiResponse<BrandDto>> deleteBrand(@RequestBody BrandDto brandDto,
-                                                             @RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<BrandDto>> deleteBrand(@RequestBody BrandDto brandDto) {
         brandService.deleteBrand(brandDto.brandNo());
 
         return ApiResponse.toResponseEntity(BrandBusinessCode.SUCCESS_DELETED_BRAND);
