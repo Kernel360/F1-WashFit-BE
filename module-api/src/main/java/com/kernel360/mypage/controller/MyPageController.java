@@ -41,8 +41,7 @@ public class MyPageController {
 
     @GetMapping("/wash")
     ResponseEntity<ApiResponse<WashInfoDto>> myWash(@RequestHeader("Authorization") String authToken) {
-        WashInfoDto washInfoDto = memberService.getWashInfo(authToken)
-                .orElseThrow(() -> new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_WASH_INFO));
+        WashInfoDto washInfoDto = memberService.getWashInfo(authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_WASH_INFO_IN_MEMBER, washInfoDto);
     }
