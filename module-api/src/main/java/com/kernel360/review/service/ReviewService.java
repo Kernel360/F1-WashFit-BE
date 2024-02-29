@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -34,9 +35,14 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public ReviewDto getReview(Long reviewNo) {
-        log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
+        Review review = reviewRepository.findByReviewNo(reviewNo);
 
-        return ReviewDto.from(reviewRepository.findByReviewNo(reviewNo));
+        if (Objects.isNull(review)) {
+            throw new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW);
+        }
+
+        log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
+        return ReviewDto.from(review);
     }
 
     @Transactional
