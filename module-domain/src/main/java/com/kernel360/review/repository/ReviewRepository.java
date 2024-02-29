@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    Page<Review> findAllByProduct_ProductNo(Long productNo, Pageable pageable);
+    Page<Review> findAllByProduct_ProductNoOrderByReviewNoDesc(Long productNo, Pageable pageable);
 
     Review findByReviewNo(Long reviewNo);
 }

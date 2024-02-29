@@ -27,7 +27,7 @@ public class ReviewService {
     public Page<ReviewDto> getReviewsByProduct(Long productNo, Pageable pageable) {
         log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
 
-        return reviewRepository.findAllByProduct_ProductNo(productNo, pageable)
+        return reviewRepository.findAllByProduct_ProductNoOrderByReviewNoDesc(productNo, pageable)
                                .map(ReviewDto::from);
     }
 
