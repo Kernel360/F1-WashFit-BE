@@ -173,14 +173,17 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<WashInfoDto> getWashInfo(String token) {
+    public WashInfoDto getWashInfo(String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
         if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
         }
-
-        return Optional.of(WashInfoDto.from(member.getWashInfo()));
+        WashInfo washInfo = member.getWashInfo();
+        if(washInfo == null){
+            throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_WASH_INFO);
+        }
+        return WashInfoDto.from(washInfo);
     }
 
     @Transactional
