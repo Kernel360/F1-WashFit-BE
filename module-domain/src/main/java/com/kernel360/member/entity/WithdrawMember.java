@@ -29,9 +29,9 @@ public class WithdrawMember extends BaseEntity {
     private String ip;
 
 
-    public static WithdrawMember of(Long memberNo, String id, String email, String ip) {
+    public static WithdrawMember of(Member member) {
 
-        return new WithdrawMember(memberNo, id, email, ip);
+        return new WithdrawMember(member.getMemberNo(), member.getId(), member.getEmail(), null); //IP정보를 저장한다면 파라메터를 추가해야
     }
 
     private WithdrawMember(

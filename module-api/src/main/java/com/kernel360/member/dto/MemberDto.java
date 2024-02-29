@@ -89,7 +89,8 @@ public record MemberDto(Long memberNo,
                 this.email(),
                 this.password(),
                 Gender.valueOf(this.gender()).ordinal(),
-                Age.valueOf(this.age()).ordinal()
+                Age.valueOf(this.age()).ordinal(),
+                null
         );
     }
 
