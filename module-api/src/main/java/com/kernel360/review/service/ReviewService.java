@@ -6,12 +6,15 @@ import com.kernel360.review.dto.ReviewDto;
 import com.kernel360.review.entity.Review;
 import com.kernel360.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -21,15 +24,16 @@ public class ReviewService {
     private static final double MAX_STAR_RATING = 5.0;
 
     @Transactional(readOnly = true)
-    public List<ReviewDto> getReviewsByProduct(Long productNo) {
+    public Page<ReviewDto> getReviewsByProduct(Long productNo, Pageable pageable) {
+        log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
 
-        return reviewRepository.findAllByProduct_ProductNo(productNo)
-                               .stream().map(ReviewDto::from)
-                               .toList();
+        return reviewRepository.findAllByProduct_ProductNo(productNo, pageable)
+                               .map(ReviewDto::from);
     }
 
     @Transactional(readOnly = true)
     public ReviewDto getReview(Long reviewNo) {
+        log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
 
         return ReviewDto.from(reviewRepository.findByReviewNo(reviewNo));
     }
@@ -38,7 +42,10 @@ public class ReviewService {
     public Review createReview(ReviewDto reviewDto) {
         isValidStarRating(reviewDto.starRating());
 
-        return reviewRepository.save(reviewDto.toEntity());
+        Review review = reviewRepository.save(reviewDto.toEntity());
+        log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
+
+        return review;
     }
 
 
@@ -47,11 +54,13 @@ public class ReviewService {
         isValidStarRating(reviewDto.starRating());
 
         reviewRepository.save(reviewDto.toEntity());
+        log.info("리뷰 수정 -> review_no {}", reviewDto.reviewNo());
     }
 
     @Transactional
     public void deleteReview(Long reviewNo) {
         reviewRepository.deleteById(reviewNo);
+        log.info("리뷰 삭제 -> review_no {}", reviewNo);
     }
 
     private static void isValidStarRating(BigDecimal starRating) {
