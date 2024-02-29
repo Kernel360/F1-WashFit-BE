@@ -66,6 +66,8 @@ constants:
   host-url: ${DEV_HOST_URL}
   password-reset-token:
     duration-minute: 5
+  jwt:
+    expiring-minute: 60
 
 aws:
   credentials:

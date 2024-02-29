@@ -72,6 +72,9 @@ constants:
   host-url: "http://localhost:8080"
   password-reset-token:
     duration-minute: 5
+  jwt:
+    expiring-minute: 60
+
 
 aws:
   credentials:
