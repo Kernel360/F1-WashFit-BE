@@ -115,13 +115,13 @@ public class FindCredentialService implements RedisUtils {
 
     public String resetPassword(MemberCredentialDto credentialDto) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        String value = valueOperations.get(credentialDto.authToken());
+        String memberId = valueOperations.get(credentialDto.authToken());
 
-        if (Objects.isNull(value)) {
+        if (Objects.isNull(memberId)) {
             throw new BusinessException(MemberErrorCode.EXPIRED_TOKEN);
         }
 
-        memberService.resetPasswordByMemberId(value, credentialDto.password());
+        memberService.resetPasswordByMemberId(memberId, credentialDto.password());
 
         return credentialDto.authToken();
     }
