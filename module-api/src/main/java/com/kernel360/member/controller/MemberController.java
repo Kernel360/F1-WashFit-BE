@@ -119,7 +119,7 @@ public class MemberController {
     }
 
     /**
-     * @param resetToken 비밀번호 재설정 토큰 (현재는 재설정 페이지 액세스 토큰과 동일-추가 발급없이 재활용 중)
+     * @param resetToken 비밀번호 재설정 토큰
      * @return 성공시 200
      */
     @GetMapping("/reset-password")
