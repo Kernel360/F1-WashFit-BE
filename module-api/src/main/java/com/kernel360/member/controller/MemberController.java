@@ -58,13 +58,13 @@ public class MemberController {
     }
 
     @GetMapping("/duplicatedCheckId/{id}")
-    public boolean duplicatedCheckId(@PathVariable String id) {
+    public boolean duplicatedCheckId(@PathVariable("id") String id) {
 
         return memberService.idDuplicationCheck(id);
     }
 
     @GetMapping("/duplicatedCheckEmail/{email}")
-    public boolean duplicatedCheckEmail(@PathVariable String email) {
+    public boolean duplicatedCheckEmail(@PathVariable("email") String email) {
 
         return memberService.emailDuplicationCheck(email);
     }
