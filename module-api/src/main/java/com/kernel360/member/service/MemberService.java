@@ -21,7 +21,6 @@ import com.kernel360.washinfo.repository.WashInfoRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -174,7 +173,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public WashInfoDto getWashInfo(String token) {
+    public Map<String, Object> getWashInfo(String token) {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneById(id);
         if (member == null) {
@@ -184,7 +183,14 @@ public class MemberService {
         if(washInfo == null){
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_WASH_INFO);
         }
-        return WashInfoDto.from(washInfo);
+
+        WashInfoDto washInfoDto = WashInfoDto.from(washInfo);
+        return Map.of(
+                "wash_info", washInfoDto,
+                "frequency_options", commonCodeService.getCodes("frequency"),
+                "cost_options", commonCodeService.getCodes("cost"),
+                "interest_options", commonCodeService.getCodes("interest")
+        );
     }
 
     @Transactional
