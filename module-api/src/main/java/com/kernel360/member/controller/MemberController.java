@@ -70,16 +70,14 @@ public class MemberController {
     }
 
     @PostMapping("/wash")
-    public ResponseEntity<ApiResponse<WashInfo>> saveWashInfo(@RequestBody WashInfoDto washInfo,
-                                                              @RequestHeader("Authorization") String authToken) {
+    public ResponseEntity<ApiResponse<WashInfo>> saveWashInfo(@RequestBody WashInfoDto washInfo, @RequestHeader("Authorization") String authToken) {
         memberService.saveWashInfo(washInfo, authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_WASH_INFO_MEMBER);
     }
 
     @PostMapping("/car")
-    public ResponseEntity<ApiResponse<CarInfo>> saveCarInfo(@RequestBody CarInfoDto carInfo,
-                                                            @RequestHeader("Authorization") String authToken) {
+    public ResponseEntity<ApiResponse<CarInfo>> saveCarInfo(@RequestBody CarInfoDto carInfo, @RequestHeader("Authorization") String authToken) {
         memberService.saveCarInfo(carInfo, authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_CAR_INFO_MEMBER);
@@ -138,8 +136,7 @@ public class MemberController {
     }
 
     @GetMapping("/login/forKakao")
-    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(@RequestHeader("Authorization") String accessToken,
-                                                                HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<MemberDto>> loginForKakao(@RequestHeader("Authorization") String accessToken, HttpServletRequest request) {
 
         MemberDto member = memberService.loginForKakao(accessToken, request);
 
