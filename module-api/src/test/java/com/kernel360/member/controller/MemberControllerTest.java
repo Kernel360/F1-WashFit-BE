@@ -131,8 +131,8 @@ class MemberControllerTest extends ControllerTest {
                        "member/find-memberId", getDocumentRequest(), getDocumentResponse(),
                        requestFields(
                                fieldWithPath("email").type(JsonFieldType.STRING).description("회원가입시 입력한 이메일"),
-                               fieldWithPath("authToken").type(JsonFieldType.NULL).description("비밀번호 재설정 UUID 토큰(사용하지 않음)"),
-                               fieldWithPath("memberId").type(JsonFieldType.NULL).description("회원 아이디(사용하지 않음)"),
+                               fieldWithPath("token").type(JsonFieldType.NULL).description("비밀번호 재설정 UUID 토큰(사용하지 않음)"),
+                               fieldWithPath("id").type(JsonFieldType.NULL).description("회원 아이디(사용하지 않음)"),
                                fieldWithPath("password").type(JsonFieldType.NULL).description("변경할 비밀번호(사용하지 않음)")
                        ),
                        responseFields(
@@ -151,7 +151,7 @@ class MemberControllerTest extends ControllerTest {
         MemberDto memberDto = MemberDto.of("testMemberId", "testPassword001");
 
         given(memberService.findByMemberId(credentialDto.memberId())).willReturn(memberDto);
-        given(findCredentialService.generatePasswordResetUri(memberDto)).willReturn("테스트 URI");
+        given(findCredentialService.generatePasswordResetPageUri(memberDto)).willReturn("테스트 URI");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String dtoAsString = objectMapper.writeValueAsString(credentialDto);
@@ -164,8 +164,8 @@ class MemberControllerTest extends ControllerTest {
                        "member/find-password", getDocumentRequest(), getDocumentResponse(),
                        requestFields(
                                fieldWithPath("email").type(JsonFieldType.NULL).description("회원가입시 입력한 이메일(사용하지 않음)"),
-                               fieldWithPath("authToken").type(JsonFieldType.NULL).description("비밀번호 재설정 UUID 토큰(사용하지 않음)"),
-                               fieldWithPath("memberId").type(JsonFieldType.STRING).description("회원 아이디"),
+                               fieldWithPath("token").type(JsonFieldType.NULL).description("비밀번호 재설정 UUID 토큰(사용하지 않음)"),
+                               fieldWithPath("id").type(JsonFieldType.STRING).description("회원 아이디"),
                                fieldWithPath("password").type(JsonFieldType.NULL).description("변경할 비밀번호(사용하지 않음)")
                        ),
                        responseFields(
@@ -182,21 +182,10 @@ class MemberControllerTest extends ControllerTest {
         String token = "testToken-1234-5678";
         given(findCredentialService.getData(token)).willReturn("kernel360-testId");
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/member/reset-password?token="+token)
+        mockMvc.perform(MockMvcRequestBuilders.get("/member/find-password?token="+token)
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(token))
-               .andExpect(MockMvcResultMatchers.status().isFound()).andDo(document(
-                       "member/get-reset-password", getDocumentRequest(), getDocumentResponse(),
-                       queryParameters(
-                               parameterWithName("token").description("비밀번호 재설정 UUID 토큰")
-                       ),
-                       responseFields(
-                               fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                               fieldWithPath("code").type(JsonFieldType.STRING).description("비즈니스 코드"),
-                               fieldWithPath("message").type(JsonFieldType.STRING).description("상세 메시지"),
-                               fieldWithPath("value").type(JsonFieldType.STRING).description("JSON BODY 데이터 - 비밀번호 재설정 토큰")
-                       )
-               ));
+               .andExpect(MockMvcResultMatchers.status().isFound());
     }
 
     @Test
@@ -215,9 +204,9 @@ class MemberControllerTest extends ControllerTest {
                .andDo(document(
                        "member/post-reset-password", getDocumentRequest(), getDocumentResponse(),
                        requestFields(
-                               fieldWithPath("authToken").type(JsonFieldType.STRING).description("비밀번호 재설정 UUID 토큰"),
+                               fieldWithPath("token").type(JsonFieldType.STRING).description("비밀번호 재설정 UUID 토큰"),
                                fieldWithPath("email").type(JsonFieldType.NULL).description("회원가입시 입력한 이메일(사용하지 않음)"),
-                               fieldWithPath("memberId").type(JsonFieldType.NULL).description("회원 아이디(사용하지 않음)"),
+                               fieldWithPath("id").type(JsonFieldType.NULL).description("회원 아이디(사용하지 않음)"),
                                fieldWithPath("password").type(JsonFieldType.STRING).description("변경할 비밀번호")
                        ),
                        responseFields(
