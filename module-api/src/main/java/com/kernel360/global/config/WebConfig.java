@@ -26,7 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowedMethods("*")
                 .allowCredentials(true)
-                .allowedOrigins("https://www.washfit.site", "https://dev.washfit.site", "http://localhost:3000", "https://f1-wash-pedia-fe-lim-byeong-wooks-projects.vercel.app/")
+                .allowedOrigins("https://www.washfit.site", "https://dev.washfit.site", "http://localhost:3000", "https://washfit.vercel.app/")
                 .maxAge(3600);
     }
 }
