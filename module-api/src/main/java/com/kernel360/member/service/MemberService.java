@@ -92,14 +92,14 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public boolean idDuplicationCheck(String id) {
-        Member member = memberRepository.findOneById(id);
+        Member member = memberRepository.findOneByIdForAccountTypeByPlatform(id);
 
         return member != null;
     }
 
     @Transactional(readOnly = true)
     public boolean emailDuplicationCheck(String email) {
-        Member member = memberRepository.findOneByEmail(email);
+        Member member = memberRepository.findOneByEmailForAccountTypeByPlatform(email);
 
         return member != null;
     }
@@ -134,7 +134,7 @@ public class MemberService {
     @Transactional
     public void changePassword(String password, String token) {
         String id = JWT.ownerId(token);
-        Member member = memberRepository.findOneById(id);
+        Member member = memberRepository.findOneByIdForAccountTypeByPlatform(id);
 
         if (!member.getPassword().equals(ConvertSHA256.convertToSHA256(password))) {
             throw new BusinessException(MemberErrorCode.WRONG_PASSWORD_REQUEST);
@@ -239,7 +239,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberDto findByMemberId(String memberId) {
-        Member member = memberRepository.findOneById(memberId);
+        Member member = memberRepository.findOneByIdForAccountTypeByPlatform(memberId);
         if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
         }
@@ -249,7 +249,7 @@ public class MemberService {
 
     @Transactional
     public void resetPasswordByMemberId(String memberId, String newPassword) {
-        Member member = memberRepository.findOneById(memberId);
+        Member member = memberRepository.findOneByIdForAccountTypeByPlatform(memberId);
         if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
         }
