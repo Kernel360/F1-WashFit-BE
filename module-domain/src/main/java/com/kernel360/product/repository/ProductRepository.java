@@ -2,6 +2,7 @@ package com.kernel360.product.repository;
 
 import com.kernel360.product.entity.Product;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.kernel360.product.entity.SafetyStatus;
@@ -19,6 +20,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByOrderByViewCountDesc(Pageable pageable);
 
     Page<Product> findTop5ByOrderByProductNameDesc(Pageable pageable);
+
+    @Query(value = "SELECT * FROM Product p ORDER BY RANDOM() LIMIT 20", nativeQuery = true)
+    List<Product> getRecommendProductsWithRandom();
 
     Page<Product> findAllBySafetyStatusEquals(SafetyStatus safetyStatus, Pageable pageable);
 
@@ -73,4 +77,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByProductWithKeywordAndSafetyStatus(@Param("keyword") String keyword,
                                                           @Param("safetyStatus") SafetyStatus safetyStatus,
                                                           Pageable pageable);
+
+
 }

@@ -134,4 +134,8 @@ public class ProductService {
         return productRepository.getProductWithKeywordAndRecentOrder(keyword, pageable)
                 .map(ProductDto::from);
     }
+
+    public List<RecommendProductsDto> getRecommendProductsWithRandom() {
+        return productRepository.getRecommendProductsWithRandom().stream().map(RecommendProductsDto::from).toList();
+    }
 }
