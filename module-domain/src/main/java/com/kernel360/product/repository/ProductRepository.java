@@ -78,5 +78,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                           @Param("safetyStatus") SafetyStatus safetyStatus,
                                                           Pageable pageable);
 
+        Page<Product> findByProductNameContaining(String keyword, Pageable pageable);
 
 }
