@@ -23,7 +23,7 @@ public class FindCredentialService implements RedisUtils {
     @Value("${constants.password-reset-token.duration-minute}")
     private int TOKEN_DURATION;
 
-    @Value("${constants.fe-host-url}")
+    @Value("${constants.host-url}")
     private String FE_HOST_HTTP_URL;
 
     private final RedisTemplate<String, String> redisTemplate;
