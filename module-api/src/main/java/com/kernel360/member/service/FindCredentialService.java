@@ -4,6 +4,7 @@ import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.MemberCredentialDto;
 import com.kernel360.member.dto.MemberDto;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -82,7 +84,7 @@ public class FindCredentialService implements RedisUtils {
                 + "    <div style=\"border-top: 1px solid lightgrey; padding: 20px; text-align:center;\">\n"
                 + "        <h2 style=\"font-weight:bold; font-size: 1.2em;\">고객센터 운영시간</h2>\n"
                 + "        <p>평일 10:00~19:00 (주말 및 공휴일 제외/ 점심시간 13:00~14:00)</p>\n"
-                + "        <a href=\"mailto:support@example.com\"\n"
+                + "        <a href=\"mailto:washfit240126@gmail.com\"\n"
                 + "           style=\"display: inline-block; padding: 6px 20px; text-decoration: none; text-align: center; font-weight: bold; color: black; background-color: lightgrey; width: 50%;\">"
                 + "고객센터 문의하기</a>\n"
                 + "    </div>\n"
@@ -98,28 +100,28 @@ public class FindCredentialService implements RedisUtils {
         emailService.sendMail(dto.email(), "[No-Reply] Wash-Fit 아이디/비밀번호 찾기", htmlContent);
     }
 
-    public String generatePasswordResetUri(MemberDto memberDto) {
-        String resetToken = generateUUID();
+    public String generatePasswordResetPageUri(MemberDto memberDto) {
+        String accessToken = generateUUID();
 
         String uriString = UriComponentsBuilder.fromHttpUrl(HOST_HTTP_URL)
-                                               .path("/member/reset-password")
-                                               .queryParam("token", resetToken)
+                                               .path("/member/find-password")
+                                               .queryParam("token", accessToken)
                                                .build()
                                                .toUriString();
-        setExpiringData(resetToken, memberDto.id(), TOKEN_DURATION); // duration 값 상수로 변경관리 필요
+        setExpiringData(accessToken, memberDto.id(), TOKEN_DURATION); // duration 값 상수로 변경관리 필요
 
         return uriString;
     }
 
     public String resetPassword(MemberCredentialDto credentialDto) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        String value = valueOperations.get(credentialDto.authToken());
+        String memberId = valueOperations.get(credentialDto.authToken());
 
-        if (Objects.isNull(value)) {
-            throw new BusinessException(MemberErrorCode.EXPIRED_PASSWORD_RESET_TOKEN);
+        if (Objects.isNull(memberId)) {
+            throw new BusinessException(MemberErrorCode.EXPIRED_TOKEN);
         }
 
-        memberService.resetPasswordByMemberId(value, credentialDto.password());
+        memberService.resetPasswordByMemberId(memberId, credentialDto.password());
 
         return credentialDto.authToken();
     }
@@ -133,7 +135,7 @@ public class FindCredentialService implements RedisUtils {
     public String getData(String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         if (Objects.isNull(valueOperations.get(key))) {
-            throw new BusinessException(MemberErrorCode.EXPIRED_PASSWORD_RESET_TOKEN);
+            throw new BusinessException(MemberErrorCode.EXPIRED_TOKEN);
         }
 
         return valueOperations.get(key);
@@ -156,9 +158,31 @@ public class FindCredentialService implements RedisUtils {
     public void getAndExpireData(String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         if (Objects.isNull(valueOperations.get(key))) {
-            throw new BusinessException(MemberErrorCode.EXPIRED_PASSWORD_RESET_TOKEN);
+            throw new BusinessException(MemberErrorCode.EXPIRED_TOKEN);
         }
 
         valueOperations.getAndDelete(key);
+    }
+
+    public HttpHeaders setRedirectLocation(String accessToken) {
+        //** 액세스 토큰에서 아이디를 추출하고
+        String memberId = getData(accessToken);
+        //** 액세스 토큰 만료처리 -> 할지 말지 고민해봐야
+        getAndExpireData(accessToken);
+        //** 비밀번호 재설정용 토큰을 발급
+        String resetToken = generateUUID();
+        //** 재설정 토큰 만료기간 설정
+        setExpiringData(resetToken, memberId, TOKEN_DURATION);
+
+
+        String uriString = UriComponentsBuilder.fromHttpUrl(HOST_HTTP_URL)
+                                               .path("/member/reset-password")
+                                               .queryParam("token", resetToken)
+                                               .build()
+                                               .toUriString();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(uriString));
+
+        return headers;
     }
 }

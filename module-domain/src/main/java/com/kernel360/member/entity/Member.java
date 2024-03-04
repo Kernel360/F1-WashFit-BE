@@ -41,9 +41,12 @@ public class Member extends BaseEntity {
     @Column(name = "age")
     private int age;
 
-    public static Member of(Long memberNo, String id, String email, String password, int gender, int age) {
+    @Column(name = "account_type")
+    private String accountType;
 
-        return new Member(memberNo, id, email, password, gender, age);
+    public static Member of(Long memberNo, String id, String email, String password, int gender, int age, String accountType) {
+
+        return new Member(memberNo, id, email, password, gender, age, accountType);
     }
 
     /**
@@ -55,7 +58,8 @@ public class Member extends BaseEntity {
             String email,
             String password,
             int gender,
-            int age
+            int age,
+            String accountType
     ) {
         this.memberNo = memberNo;
         this.id = id;
@@ -63,25 +67,27 @@ public class Member extends BaseEntity {
         this.password = password;
         this.gender = gender;
         this.age = age;
+        this.accountType = accountType;
     }
 
     /**
      * joinMember
      **/
-    public static Member createJoinMember(String id, String email, String password, int gender, int age) {
+    public static Member createJoinMember(String id, String email, String password, int gender, int age, String accountType) {
 
-        return new Member(id, email, password, gender, age);
+        return new Member(id, email, password, gender, age, accountType);
     }
 
     /**
      * joinMember Binding
      **/
-    private Member(String id, String email, String password, int gender, int age) {
+    private Member(String id, String email, String password, int gender, int age, String accountType) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.gender = gender;
         this.age = age;
+        this.accountType = accountType;
     }
 
     /**
@@ -110,11 +116,6 @@ public class Member extends BaseEntity {
 
     public void updateCarInfo(CarInfo carInfo) {
         this.carInfo = carInfo;
-    }
-
-    public static Member createForKakao(String id, String email, String password, int gender, int age) {
-
-        return new Member(id, email, password, gender, age);
     }
 
     public void updateFromInfo(int gender, int age) {

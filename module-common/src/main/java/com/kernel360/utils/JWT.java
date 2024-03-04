@@ -3,6 +3,7 @@ package com.kernel360.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -14,16 +15,16 @@ import java.util.Date;
 @Component
 public class JWT {
     private static final Key SECRET_KEY = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
-    //private static final long EXPIRATION_TIME = (long) 1000 * 60 * 15; //15분
 
-    private static final long EXPIRATION_TIME = (long) 1000 * 60 * 3; //테스트를 위해 3분으로 조정
+    @Value("${constants.jwt.expiring-minute}")
+    private long EXPIRATION_TIME;
     
     public String generateToken(String entityId) {
         return Jwts.builder()
                 .setIssuer("washpedia")
                 .setId(entityId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME * 60 * 1000))
                 .signWith(SECRET_KEY)
                 .compact();
     }

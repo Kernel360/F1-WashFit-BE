@@ -66,6 +66,8 @@ constants:
   host-url: ${PROD_HOST_URL}
   password-reset-token:
     duration-minute: 5
+  jwt:
+    expiring-minute: 3 # ${PROD_JWT_EXPIRATION}
 
 aws:
   credentials:

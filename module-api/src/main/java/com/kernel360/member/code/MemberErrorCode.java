@@ -4,8 +4,6 @@ import com.kernel360.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-import java.util.EnumSet;
-
 @RequiredArgsConstructor
 public enum MemberErrorCode implements ErrorCode {
 
@@ -16,7 +14,7 @@ public enum MemberErrorCode implements ErrorCode {
     FAILED_GENERATE_LOGIN_REQUEST_INFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "EMC005", "정보 불일치로 인한 로그인 정보 생성 실패"),
     FAILED_REQUEST_LOGIN(HttpStatus.BAD_REQUEST.value(), "EMC006", "정보 불일치로 인한 로그인 실패"),
     FAILED_FIND_MEMBER_INFO(HttpStatus.BAD_REQUEST.value(), "EMC007", "요청 회원정보가 존재하지 않습니다."),
-    EXPIRED_PASSWORD_RESET_TOKEN(HttpStatus.NOT_FOUND.value(), "EMC008", "유효하지 않은 비밀번호 초기화 토큰입니다"),
+    EXPIRED_TOKEN(HttpStatus.NOT_FOUND.value(), "EMC008", "유효하지 않은 토큰입니다"),
     FAILED_REQUEST_LOGIN_FOR_KAKAO(HttpStatus.BAD_REQUEST.value(), "EMC009", "카카오 로그인 정보를 찾을 수 없습니다."),
     FAILED_FIND_MEMBER_CAR_INFO(HttpStatus.BAD_REQUEST.value(), "EMC010", "요청 회원의 차량정보가 존재하지 않습니다."),
     FAILED_FIND_MEMBER_WASH_INFO(HttpStatus.BAD_REQUEST.value(), "EMC011", "요청 회원의 세차정보가 존재하지 않습니다."),

@@ -1,5 +1,6 @@
 package com.kernel360.member.entity;
 
+import com.kernel360.member.enumset.AccountType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class MemberTest {
         gender = 0;
         age = 3;
 
-        member = Member.of(memberNo, id, email, password, gender, age);
+        member = Member.of(memberNo, id, email, password, gender, age, AccountType.PLATFORM.name());
     }
 
     @Test
