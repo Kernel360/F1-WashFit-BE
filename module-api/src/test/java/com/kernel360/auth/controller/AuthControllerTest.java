@@ -5,6 +5,7 @@ import static com.kernel360.common.utils.RestDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,7 +37,7 @@ class AuthControllerTest extends ControllerTest {
         try (MockedStatic<AuthDto> mocked = Mockito.mockStatic(AuthDto.class)) {
             mocked.when(() -> AuthDto.of(resultToken)).thenReturn(dto);
 
-            MvcResult actions = mockMvc.perform(get("/auth/reissuanceJWT")
+            MvcResult actions = mockMvc.perform(post("/auth/reissuanceJWT")
                                                .header("Authorization", requestToken))
                                        .andExpect(status().isCreated())
                                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
