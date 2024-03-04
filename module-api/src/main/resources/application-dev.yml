@@ -63,7 +63,7 @@ management:
       show-details: always
 
 constants:
-  host-url: ${DEV_HOST_URL}
+  fe-host-url: ${DEV_HOST_URL}
   password-reset-token:
     duration-minute: 5
   jwt:
