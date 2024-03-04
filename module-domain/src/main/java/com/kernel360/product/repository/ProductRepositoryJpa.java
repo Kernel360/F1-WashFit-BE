@@ -15,7 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepositoryJpa extends JpaRepository<Product, Long>  {
 
     Page<Product> findAllByOrderByViewCountDesc(Pageable pageable);
 

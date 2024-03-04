@@ -7,11 +7,13 @@ import com.kernel360.ecolife.repository.ConcernedProductRepository;
 import com.kernel360.modulebatch.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
-import com.kernel360.product.repository.ProductRepository;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.kernel360.product.repository.ProductRepositoryJpa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -26,7 +28,7 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
 
     private final ConcernedProductRepository concernedProductRepository;
 
-    private final ProductRepository productRepository;
+    private final ProductRepositoryJpa productRepositoryJpa;
 
     private final BrandRepository brandRepository;
 
@@ -69,7 +71,7 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
         List<Product> productList = new ArrayList<>();
 
         for (ProductDto productDto : productDtoList) {
-            Optional<Product> foundProduct = productRepository.findProductByProductNameAndCompanyName(
+            Optional<Product> foundProduct = productRepositoryJpa.findProductByProductNameAndCompanyName(
                     productDto.productName(), "%" + getCompanyNameWithoutSlash(productDto.companyName()) + "%");
 
             boolean foundInList = productList.stream().anyMatch(
