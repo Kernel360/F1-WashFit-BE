@@ -23,8 +23,8 @@ public class FindCredentialService implements RedisUtils {
     @Value("${constants.password-reset-token.duration-minute}")
     private int TOKEN_DURATION;
 
-    @Value("${constants.host-url}")
-    private String HOST_HTTP_URL;
+    @Value("${constants.fe-host-url}")
+    private String FE_HOST_HTTP_URL;
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -103,12 +103,12 @@ public class FindCredentialService implements RedisUtils {
     public String generatePasswordResetPageUri(MemberDto memberDto) {
         String accessToken = generateUUID();
 
-        String uriString = UriComponentsBuilder.fromHttpUrl(HOST_HTTP_URL)
-                                               .path("/member/find-password")
+        String uriString = UriComponentsBuilder.fromHttpUrl(FE_HOST_HTTP_URL)
+                                               .path("/change-password")
                                                .queryParam("token", accessToken)
                                                .build()
                                                .toUriString();
-        setExpiringData(accessToken, memberDto.id(), TOKEN_DURATION); // duration 값 상수로 변경관리 필요
+        setExpiringData(accessToken, memberDto.id(), TOKEN_DURATION);
 
         return uriString;
     }
@@ -120,7 +120,6 @@ public class FindCredentialService implements RedisUtils {
         if (Objects.isNull(memberId)) {
             throw new BusinessException(MemberErrorCode.EXPIRED_TOKEN);
         }
-
         memberService.resetPasswordByMemberId(memberId, credentialDto.password());
 
         return credentialDto.authToken();
@@ -164,25 +163,4 @@ public class FindCredentialService implements RedisUtils {
         valueOperations.getAndDelete(key);
     }
 
-    public HttpHeaders setRedirectLocation(String accessToken) {
-        //** 액세스 토큰에서 아이디를 추출하고
-        String memberId = getData(accessToken);
-        //** 액세스 토큰 만료처리 -> 할지 말지 고민해봐야
-        getAndExpireData(accessToken);
-        //** 비밀번호 재설정용 토큰을 발급
-        String resetToken = generateUUID();
-        //** 재설정 토큰 만료기간 설정
-        setExpiringData(resetToken, memberId, TOKEN_DURATION);
-
-
-        String uriString = UriComponentsBuilder.fromHttpUrl(HOST_HTTP_URL)
-                                               .path("/member/reset-password")
-                                               .queryParam("token", resetToken)
-                                               .build()
-                                               .toUriString();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(uriString));
-
-        return headers;
-    }
 }
