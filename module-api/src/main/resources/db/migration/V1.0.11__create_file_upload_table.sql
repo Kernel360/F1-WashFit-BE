@@ -1,7 +1,0 @@
--- file_no
--- file_name
--- file_url
--- created_at
--- created_by
--- modified_at
--- modified_by
