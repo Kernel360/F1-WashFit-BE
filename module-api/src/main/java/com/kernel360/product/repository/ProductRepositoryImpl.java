@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ import static com.kernel360.likes.entity.QLike.*;
 import static com.kernel360.product.entity.QProduct.*;
 import static org.springframework.util.StringUtils.*;
 
-@Repository
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductRepositoryDsl {
 

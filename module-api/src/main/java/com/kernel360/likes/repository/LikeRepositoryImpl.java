@@ -27,7 +27,7 @@ import static com.kernel360.likes.entity.QLike.*;
 import static com.kernel360.product.entity.QProduct.product;
 import static org.springframework.util.StringUtils.hasText;
 
-@Repository
+
 @RequiredArgsConstructor
 public class LikeRepositoryImpl implements LikeRepositoryDsl{
 

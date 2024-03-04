@@ -10,11 +10,7 @@ import com.kernel360.product.dto.ProductResponse;
 import com.kernel360.product.dto.ProductSearchDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
-
-import java.util.List;
-
-import com.kernel360.product.repository.ProductRepositoryDsl;
-import com.kernel360.product.repository.ProductRepositoryJpa;
+import com.kernel360.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,18 +18,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepositoryJpa productRepositoryJpa;
-    private final ProductRepositoryDsl productRepositoryDsl;
+    private final ProductRepository productRepository;
     private final LikeRepositoryJpa likeRepositoryJpa;
 
     @Transactional(readOnly = true)
     public List<ProductDto> getProducts() {
 
-        return productRepositoryJpa.findAll()
+        return productRepository.findAll()
                 .stream()
                 .map(ProductDto::from)
                 .toList();
@@ -41,7 +38,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductDto> getProductsByKeyword(String keyword, Pageable pageable) {
-        Page<Product> products = productRepositoryJpa.getProductsByKeyword(keyword, pageable);
+        Page<Product> products = productRepository.getProductsByKeyword(keyword, pageable);
 
         return products.map(ProductDto::from);
     }
@@ -49,12 +46,12 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductResponse> getProductListOrderByViewCount(Pageable pageable) {
 
-        return productRepositoryJpa.findAllByOrderByViewCountDesc(pageable).map(ProductResponse::from);
+        return productRepository.findAllByOrderByViewCountDesc(pageable).map(ProductResponse::from);
     }
 
     @Transactional(readOnly = true)
     public Page<RecommendProductsDto> getRecommendProducts(Pageable pageable) {
-        Page<Product> productList = productRepositoryJpa.findTop5ByOrderByProductNameDesc(pageable);
+        Page<Product> productList = productRepository.findTop5ByOrderByProductNameDesc(pageable);
 
         return productList.map(RecommendProductsDto::from);
     }
@@ -62,14 +59,14 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductResponse> getViolationProducts(Pageable pageable) {
 
-        return productRepositoryJpa.findAllBySafetyStatusEquals(SafetyStatus.DANGER, pageable)
+        return productRepository.findAllBySafetyStatusEquals(SafetyStatus.DANGER, pageable)
                 .map(ProductResponse::from);
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getRecentProducts(Pageable pageable) {
 
-        return productRepositoryJpa.findAllByOrderByCreatedAtDesc(pageable)
+        return productRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(ProductResponse::from);
 
     }
@@ -77,20 +74,20 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDetailDto getProductById(Long id) {
 
-        return productRepositoryJpa.findById(id)
+        return productRepository.findById(id)
                 .map(ProductDetailDto::from)
                 .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
     }
 
     @Transactional
     public void updateViewCount(Long id) {
-        productRepositoryJpa.updateViewCount(id);
+        productRepository.updateViewCount(id);
     }
 
     @Transactional(readOnly = true)
     public Page<ProductDetailDto> getProductByOCR(String reportNo, Pageable pageable) {
 
-        return productRepositoryJpa.findProductByReportNumberEquals(reportNo, pageable)
+        return productRepository.findProductByReportNumberEquals(reportNo, pageable)
                 .map(ProductDetailDto::from);
     }
 
@@ -101,7 +98,7 @@ public class ProductService {
         List<ProductResponse> productDtos = results.getContent().stream()
                 .map(result -> {
                     Long productNo = (Long) result[0];
-                    Product product = productRepositoryJpa.findById(productNo)
+                    Product product = productRepository.findById(productNo)
                             .orElseThrow(() -> new BusinessException(ProductsErrorCode.NOT_FOUND_PRODUCT));
                     return ProductResponse.from(product);
                 })
@@ -113,21 +110,21 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductResponse> getProductWithKeywordAndOrderByViewCount(String keyword, Pageable pageable) {
 
-        return productRepositoryJpa.getProductWithKeywordAndOrderByViewCount(keyword, pageable)
+        return productRepository.getProductWithKeywordAndOrderByViewCount(keyword, pageable)
                 .map(ProductResponse::from);
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getProductWithKeywordAndViolationProducts(String keyword, Pageable pageable) {
 
-        return productRepositoryJpa.findByProductWithKeywordAndSafetyStatus(keyword, SafetyStatus.DANGER, pageable)
+        return productRepository.findByProductWithKeywordAndSafetyStatus(keyword, SafetyStatus.DANGER, pageable)
                 .map(ProductResponse::from);
     }
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getProductWithKeywordAndOrderByRecommend(String keyword, Pageable pageable) {
 
-        return productRepositoryJpa.getProductWithKeywordAndOrderByRecommend(keyword, pageable)
+        return productRepository.getProductWithKeywordAndOrderByRecommend(keyword, pageable)
                 .map(ProductResponse::from);
 
     }
@@ -135,17 +132,17 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductResponse> getProductWithKeywordAndRecentOrder(String keyword, Pageable pageable) {
 
-        return productRepositoryJpa.getProductWithKeywordAndRecentOrder(keyword, pageable)
+        return productRepository.getProductWithKeywordAndRecentOrder(keyword, pageable)
                 .map(ProductResponse::from);
     }
 
     public List<RecommendProductsDto> getRecommendProductsWithRandom() {
 
-        return productRepositoryJpa.getRecommendProductsWithRandom().stream().map(RecommendProductsDto::from).toList();
+        return productRepository.getRecommendProductsWithRandom().stream().map(RecommendProductsDto::from).toList();
     }
 
     public Page<ProductResponse> searchWithCondition(ProductSearchDto productSearchDto, Pageable pageable) {
 
-        return productRepositoryDsl.findAllByCondition(productSearchDto, pageable);
+        return productRepository.findAllByCondition(productSearchDto, pageable);
     }
 }
