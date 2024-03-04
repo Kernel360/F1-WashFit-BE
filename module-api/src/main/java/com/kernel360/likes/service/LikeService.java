@@ -2,10 +2,11 @@ package com.kernel360.likes.service;
 
 import com.kernel360.exception.BusinessException;
 import com.kernel360.likes.code.LikeErrorCode;
+import com.kernel360.likes.dto.LikeSearchDto;
 import com.kernel360.likes.entity.Like;
 import com.kernel360.likes.repository.LikeRepository;
 import com.kernel360.member.service.MemberService;
-import com.kernel360.product.dto.ProductDto;
+import com.kernel360.product.dto.ProductResponse;
 import com.kernel360.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -43,14 +44,14 @@ public class LikeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDto> findAllLikes(String token, Pageable pageable) {
+    public Page<ProductResponse> findAllLikes(String token, LikeSearchDto likeSearchDto, Pageable pageable) {
         Long memberNo = memberService.findMemberByToken(token).memberNo();
         Page<Like> likesPage = likeRepository.findAllByMemberNo(memberNo, pageable);
-        List<ProductDto> productDtos = likesPage.getContent().stream()
+        List<ProductResponse> productDtos = likesPage.getContent().stream()
                 .map(like -> productRepository.findById(like.getProductNo()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(ProductDto::from)
+                .map(ProductResponse::from)
                 .toList();
 
         return new PageImpl<>(productDtos, pageable, productDtos.size());

@@ -21,6 +21,10 @@ public class AcceptInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+            return true;
+        }
+
         if (validateTargetUri(request)) {
             return true;
         }
