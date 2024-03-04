@@ -136,7 +136,7 @@ public class MemberService {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneByIdForAccountTypeByPlatform(id);
 
-        if (!member.getPassword().equals(ConvertSHA256.convertToSHA256(password))) {
+        if (member.getPassword().equals(ConvertSHA256.convertToSHA256(password))) {
             throw new BusinessException(MemberErrorCode.WRONG_PASSWORD_REQUEST);
         }
 
