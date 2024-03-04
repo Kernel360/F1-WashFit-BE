@@ -64,9 +64,9 @@ public class MyPageController {
     }
 
     @PatchMapping("/member")
-    <T> ResponseEntity<ApiResponse<T>> updateMember(@RequestBody MemberInfo memberInfo,
+    <T> ResponseEntity<ApiResponse<T>> updateMember(@RequestBody MemberDto updateMember,
                                                     @RequestHeader("Authorization") String authToken) {
-        memberService.updateMember(memberInfo, authToken);
+        memberService.updateMember(updateMember, authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_UPDATE_MEMBER);
     }
