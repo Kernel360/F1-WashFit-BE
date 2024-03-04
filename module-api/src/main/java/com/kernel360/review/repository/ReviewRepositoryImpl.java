@@ -15,7 +15,7 @@ import java.util.List;
 import static com.kernel360.review.entity.QReview.review;
 
 @RequiredArgsConstructor
-public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
+public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
 
     private final JPAQueryFactory queryFactory;
 
