@@ -1,10 +1,11 @@
 package com.kernel360.product.service;
 
-import com.kernel360.likes.repository.LikeRepository;
+import com.kernel360.likes.repository.LikeRepositoryJpa;
 import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
-import com.kernel360.product.repository.ProductRepository;
+import com.kernel360.product.repository.ProductRepositoryDsl;
+import com.kernel360.product.repository.ProductRepositoryJpa;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.*;
 import com.navercorp.fixturemonkey.jakarta.validation.plugin.JakartaValidationPlugin;
@@ -25,11 +26,12 @@ import static org.mockito.Mockito.when;
 
 class ProductServiceTest {
     private FixtureMonkey fixtureMonkey;
-    private ProductRepository productRepository;
+    private ProductRepositoryJpa productRepositoryJpa;
+    private ProductRepositoryDsl productRepositoryDsl;
     private ProductService productService;
     private Pageable pageable;
 
-    private LikeRepository likeRepository;
+    private LikeRepositoryJpa likeRepositoryJpa;
     @BeforeEach
     void 테스트준비() {
         fixtureMonkey = FixtureMonkey.builder()
@@ -44,9 +46,9 @@ class ProductServiceTest {
                 .plugin(new JakartaValidationPlugin())
                 .build();
 
-        productRepository = mock(ProductRepository.class);
+        productRepositoryJpa = mock(ProductRepositoryJpa.class);
         pageable = mock(Pageable.class);
-        productService = new ProductService(productRepository, likeRepository);
+        productService = new ProductService(productRepositoryJpa, productRepositoryDsl, likeRepositoryJpa);
     }
 
     @Test
@@ -56,7 +58,7 @@ class ProductServiceTest {
                 .set("productNo", 1L)
                 .sample();
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepositoryJpa.findById(1L)).thenReturn(Optional.of(product));
         ProductDetailDto foundProduct = productService.getProductById(1L);
 
         //then
@@ -86,7 +88,7 @@ class ProductServiceTest {
         }
         Page<Product> productsPage = new PageImpl<>(productList, pageable, productList.size());
 
-        when(productRepository.getProductsByKeyword(keyword, pageable)).thenReturn(productsPage);
+        when(productRepositoryJpa.getProductsByKeyword(keyword, pageable)).thenReturn(productsPage);
 
         Page<ProductDto> productDtos = productService.getProductsByKeyword(keyword, pageable);
 

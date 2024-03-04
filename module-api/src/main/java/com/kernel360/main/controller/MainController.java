@@ -5,7 +5,7 @@ import com.kernel360.main.dto.BannerDto;
 import com.kernel360.main.dto.RecommendProductsDto;
 import com.kernel360.main.service.MainService;
 import com.kernel360.product.code.ProductsBusinessCode;
-import com.kernel360.product.dto.ProductDto;
+import com.kernel360.product.dto.ProductResponse;
 import com.kernel360.product.service.ProductService;
 import com.kernel360.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +49,9 @@ public class MainController {
     }
 
     @GetMapping("/products/rank")
-    ResponseEntity<ApiResponse<Page<ProductDto>>> getProducts(
+    ResponseEntity<ApiResponse<Page<ProductResponse>>> getProducts(
             @RequestParam(name = "sortType", defaultValue = "viewCnt-order") Sort sortType, Pageable pageable) {
-        Page<ProductDto> productDtos = sortType.sort(productService, pageable);
+        Page<ProductResponse> productDtos = sortType.sort(productService, pageable);
 
         return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_PRODUCT_DATA_SUCCESS, productDtos);
     }

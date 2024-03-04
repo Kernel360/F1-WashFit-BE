@@ -6,10 +6,12 @@ import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.modulebatch.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.entity.SafetyStatus;
-import com.kernel360.product.repository.ProductRepository;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import com.kernel360.product.repository.ProductRepositoryJpa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Component;
 @ComponentScan("com.kernel360.brand")
 @RequiredArgsConstructor
 public class ReportedProductToProductItemProcessor implements ItemProcessor<ReportedProduct, Product> {
-    private final ProductRepository productRepository;
+    private final ProductRepositoryJpa productRepositoryJpa;
 
     private final BrandRepository brandRepository;
 
@@ -56,7 +58,7 @@ public class ReportedProductToProductItemProcessor implements ItemProcessor<Repo
                 rp.getManufacture(), rp.getManufactureMethod(),
                 rp.getManufactureNation(), null);
 
-        Optional<Product> foundProduct = productRepository
+        Optional<Product> foundProduct = productRepositoryJpa
                 .findProductByProductNameAndCompanyName(productDto.productName(),
                         addWildCardToCompanyName(getCompanyNameWithoutSlash(productDto.companyName())));
 
