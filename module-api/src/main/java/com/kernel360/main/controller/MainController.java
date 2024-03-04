@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping
@@ -31,11 +33,18 @@ public class MainController {
         return ApiResponse.toResponseEntity(BannerBusinessCode.GET_BANNER_DATA_SUCCESS, mainService.getBanner());
     }
 
-    @GetMapping("/recommend-products")
-    ResponseEntity<ApiResponse<Page<RecommendProductsDto>>> getRecommendProducts(Pageable pageable) {
-        Page<RecommendProductsDto> recommendProducts = productService.getRecommendProducts(pageable);
+//    @GetMapping("/recommend-products")
+//    ResponseEntity<ApiResponse<Page<RecommendProductsDto>>> getRecommendProducts(Pageable pageable) {
+//        Page<RecommendProductsDto> recommendProducts = productService.getRecommendProducts(pageable);
+//
+//        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProducts);
+//
+//    }
 
-        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, recommendProducts);
+    @GetMapping("/recommend-products")
+    ResponseEntity<ApiResponse<List<RecommendProductsDto>>> getRecommendProducts() {
+
+        return ApiResponse.toResponseEntity(ProductsBusinessCode.GET_RECOMMEND_PRODUCT_DATA_SUCCESS, productService.getRecommendProductsWithRandom());
 
     }
 

@@ -10,7 +10,9 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -68,6 +70,33 @@ public class GlobalExceptionHandler {
         log.error("handleMissingHeaderException", e);
 
         final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_REQUEST_HEADERS);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException e){
+        log.error("handleIllegalArgumentException",e);
+
+        final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_ARGUMENT);
+
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e){
+        log.error("handleHttpRequestMethodNotSupportedException",e);
+
+        final ErrorResponse response =ErrorResponse.of(CommonErrorCode.INVALID_HTTP_REQUEST_METHOD);
+
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity<ErrorResponse> handleMissingParameterException(final MissingServletRequestParameterException e) {
+        log.error("handleMissingParameterException", e);
+
+        final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_REQUEST_PARAMETER);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

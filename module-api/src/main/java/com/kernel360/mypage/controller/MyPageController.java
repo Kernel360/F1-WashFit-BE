@@ -1,12 +1,9 @@
 package com.kernel360.mypage.controller;
 
-import com.kernel360.exception.BusinessException;
 import com.kernel360.member.code.MemberBusinessCode;
-import com.kernel360.member.code.MemberErrorCode;
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.dto.MemberInfo;
 import com.kernel360.member.dto.PasswordDto;
-import com.kernel360.member.dto.WashInfoDto;
 import com.kernel360.member.service.MemberService;
 import com.kernel360.product.service.ProductService;
 import com.kernel360.response.ApiResponse;
@@ -40,10 +37,10 @@ public class MyPageController {
     }
 
     @GetMapping("/wash")
-    ResponseEntity<ApiResponse<WashInfoDto>> myWash(@RequestHeader("Authorization") String authToken) {
-        WashInfoDto washInfoDto = memberService.getWashInfo(authToken);
+    ResponseEntity<ApiResponse<Map<String, Object>>> myWash(@RequestHeader("Authorization") String authToken) {
+        Map<String,Object> washInfo = memberService.getWashInfo(authToken);
 
-        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_WASH_INFO_IN_MEMBER, washInfoDto);
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_FIND_WASH_INFO_IN_MEMBER, washInfo);
     }
 
     @DeleteMapping("/member")
