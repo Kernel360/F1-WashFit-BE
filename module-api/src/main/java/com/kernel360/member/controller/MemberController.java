@@ -17,6 +17,8 @@ import com.kernel360.washinfo.entity.WashInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -99,6 +102,29 @@ public class MemberController {
         findCredentialService.sendPasswordResetUri(resetUri, memberDto);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_SEND_RESET_PASSWORD_EMAIL);
+    }
+
+    /**
+     * @param accessToken 재설정 페이지로의 액세스 토큰
+     * @return 비밀번호 재설정 페이지로 재설정 토큰을 URL 쿼리에 담아 리다이렉트
+     */
+    @GetMapping("/find-password")
+    public ResponseEntity<ApiResponse<Object>> redirectToPasswordResetPage(@RequestParam("token") String accessToken) {
+        findCredentialService.getData(accessToken);
+        HttpHeaders headers = findCredentialService.setRedirectLocation(accessToken);
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+    }
+
+    /**
+     * @param resetToken 비밀번호 재설정 토큰
+     * @return 성공시 200
+     */
+    @GetMapping("/reset-password")
+    public ResponseEntity<ApiResponse<Object>> getPasswordResetPage(@RequestParam("token") String resetToken) {
+        findCredentialService.getData(resetToken);
+
+        return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_RESET_PASSWORD_PAGE);
     }
 
     @PostMapping("/reset-password")

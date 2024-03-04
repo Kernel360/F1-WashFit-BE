@@ -50,7 +50,7 @@ public class MyPageController {
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_REQUEST_DELETE_MEMBER);
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/member")
     ResponseEntity<ApiResponse<String>> changePassword(@RequestBody String password, @RequestHeader("Authorization") String authToken) {
         memberService.changePassword(password, authToken);
 
