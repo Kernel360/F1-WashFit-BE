@@ -18,7 +18,7 @@ public enum Age {
     public static String ordinalToValue(int key) {
         for (Age age : values()) {
             if (age.ordinal() == key) {
-                return String.valueOf(age.value);
+                return age.name();
             }
         }
         throw new BusinessException(MemberErrorCode.FAILED_NOT_MAPPING_ORDINAL_TO_VALUE);
