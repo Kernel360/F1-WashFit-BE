@@ -51,8 +51,8 @@ public class MyPageController {
     }
 
     @PostMapping("/change-password")
-    ResponseEntity<ApiResponse<String>> changePassword(@RequestBody String password, @RequestHeader("Authorization") String authToken) {
-        memberService.changePassword(password, authToken);
+    ResponseEntity<ApiResponse<String>> changePassword(@RequestBody PasswordDto passwordDto, @RequestHeader("Authorization") String authToken) {
+        memberService.changePassword(passwordDto.password(), authToken);
 
         return ApiResponse.toResponseEntity(MemberBusinessCode.SUCCESS_VALIDATE_PASSWORD_MEMBER);
     }

@@ -104,7 +104,7 @@ public class FindCredentialService implements RedisUtils {
         String accessToken = generateUUID();
 
         String uriString = UriComponentsBuilder.fromHttpUrl(FE_HOST_HTTP_URL)
-                                               .path("/change-password")
+                                               .path("/reset-password")
                                                .queryParam("token", accessToken)
                                                .build()
                                                .toUriString();
