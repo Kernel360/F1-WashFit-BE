@@ -17,10 +17,13 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/product/{productNo}")
-    public ResponseEntity<ApiResponse<Page<ReviewDto>>> getReviewsByProduct(@PathVariable Long productNo, Pageable pageable) {
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<Page<ReviewDto>>> getReviewsByProduct(
+            @RequestParam(name = "productNo") Long productNo,
+            @RequestParam(name = "sortBy", defaultValue = "reviewNo", required = false) String sortBy,
+            Pageable pageable) {
 
-        return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_GET_REVIEWS, reviewService.getReviewsByProduct(productNo, pageable));
+        return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_GET_REVIEWS, reviewService.getReviewsByProduct(productNo, sortBy, pageable));
     }
 
     @GetMapping("/{reviewNo}")

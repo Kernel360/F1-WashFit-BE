@@ -3,6 +3,7 @@ package com.kernel360.review.service;
 import com.kernel360.exception.BusinessException;
 import com.kernel360.review.code.ReviewErrorCode;
 import com.kernel360.review.dto.ReviewDto;
+import com.kernel360.review.dto.ReviewSearchDto;
 import com.kernel360.review.entity.Review;
 import com.kernel360.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,11 @@ public class ReviewService {
     private static final double MAX_STAR_RATING = 5.0;
 
     @Transactional(readOnly = true)
-    public Page<ReviewDto> getReviewsByProduct(Long productNo, Pageable pageable) {
+    public Page<ReviewDto> getReviewsByProduct(Long productNo, String sortBy, Pageable pageable) {
         log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
+        // TODO: 유효하지 않은 productNo 인 경우, custom error 보내기
 
-        return reviewRepository.findAllByProduct_ProductNoOrderByReviewNoDesc(productNo, pageable)
+        return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
                                .map(ReviewDto::from);
     }
 

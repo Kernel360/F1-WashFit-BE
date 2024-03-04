@@ -80,19 +80,18 @@ class MainControllerTest extends ControllerTest {
         verify(mainService, times(1)).getBanner();
     }
 
-    @Test
-    void 메인페이지_추천상품을_호출할때_200응답과_데이터가_잘보내지는지() throws Exception {
+
+    void 메인페이지_추천상품을_호출할때_200응답과_데이터가_잘보내지는지_랜덤20개() throws Exception {
         // given
         List<RecommendProductsDto> recommendProductsDtos = fixtureMonkey.giveMeBuilder(RecommendProductsDto.class)
-                .setNotNull("id")
+                .setNotNull("productNo")
                 .setNotNull("imageSource")
                 .setNotNull("alt")
                 .setNotNull("productName")
+                .setNotNull("item")
                 .sampleList(5);
 
-        Pageable pageable = PageRequest.of(0, 5);
-        Page<RecommendProductsDto> page = new PageImpl<>(recommendProductsDtos, pageable, recommendProductsDtos.size());
-        when(productService.getRecommendProducts(any(Pageable.class))).thenReturn(page);
+        when(productService.getRecommendProductsWithRandom()).thenReturn(recommendProductsDtos);
 
 //         when & then
         mockMvc.perform(get("/recommend-products"))
@@ -101,10 +100,11 @@ class MainControllerTest extends ControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.code").value("PMB001"))
                 .andExpect(jsonPath("$.message").value("추천제품정보 조회 성공"))
-                .andExpect(jsonPath("$.value.content[*].id").exists())
+                .andExpect(jsonPath("$.value.content[*].productNo").exists())
                 .andExpect(jsonPath("$.value.content[*].imageSource").exists())
                 .andExpect(jsonPath("$.value.content[*].alt").exists())
                 .andExpect(jsonPath("$.value.content[*].productName").exists())
+               .andExpect(jsonPath("$.value.content[*].item").exists())
                 .andDo(document("recommend-products/get-recommend-products",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -113,34 +113,76 @@ class MainControllerTest extends ControllerTest {
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답메세지"),
                                 fieldWithPath("value").type(JsonFieldType.OBJECT).description("응답 본문의 루트 객체"),
-                                fieldWithPath("value.content[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                fieldWithPath("value.content[].productNo").type(JsonFieldType.NUMBER).description("제품 고유번호"),
                                 fieldWithPath("value.content[].imageSource").type(JsonFieldType.STRING).description("이미지 URL"),
                                 fieldWithPath("value.content[].alt").type(JsonFieldType.STRING).description("이미지 대체 텍스트"),
                                 fieldWithPath("value.content[].productName").type(JsonFieldType.STRING).description("제품명"),
-                                fieldWithPath("value.pageable").type(JsonFieldType.OBJECT).description("페이지 정보"),
-                                fieldWithPath("value.pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 번호"),
-                                fieldWithPath("value.pageable.pageSize").type(JsonFieldType.NUMBER).description("페이지 크기"),
-                                fieldWithPath("value.pageable.sort").type(JsonFieldType.OBJECT).description("정렬 정보"),
-                                fieldWithPath("value.pageable.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬이 비어 있는지 여부"),
-                                fieldWithPath("value.pageable.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬이 되었는지 여부"),
-                                fieldWithPath("value.pageable.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬이 되지 않았는지 여부"),
-                                fieldWithPath("value.pageable.offset").type(JsonFieldType.NUMBER).description("페이지 오프셋"),
-                                fieldWithPath("value.pageable.paged").type(JsonFieldType.BOOLEAN).description("페이징 여부"),
-                                fieldWithPath("value.pageable.unpaged").type(JsonFieldType.BOOLEAN).description("비페이징 여부"),
-                                fieldWithPath("value.sort").type(JsonFieldType.OBJECT).description("정렬 정보"),
-                                fieldWithPath("value.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬이 비어 있는지 여부"),
-                                fieldWithPath("value.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬이 되었는지 여부"),
-                                fieldWithPath("value.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬이 되지 않았는지 여부"),
-                                fieldWithPath("value.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
-                                fieldWithPath("value.totalElements").type(JsonFieldType.NUMBER).description("총 요소 수"),
-                                fieldWithPath("value.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
-                                fieldWithPath("value.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("value.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
-                                fieldWithPath("value.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 요소 수"),
-                                fieldWithPath("value.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
-                                fieldWithPath("value.empty").type(JsonFieldType.BOOLEAN).description("비어 있는 페이지 여부")
+                                fieldWithPath("value.content[].item").type(JsonFieldType.STRING).description("제품 분류")
                         )
                 ));
+
+    }
+
+    void 메인페이지_추천상품을_호출할때_200응답과_데이터가_잘보내지는지_페이저블() throws Exception {
+        // given
+        List<RecommendProductsDto> recommendProductsDtos = fixtureMonkey.giveMeBuilder(RecommendProductsDto.class)
+                                                                        .setNotNull("productNo")
+                                                                        .setNotNull("imageSource")
+                                                                        .setNotNull("alt")
+                                                                        .setNotNull("productName")
+                                                                        .sampleList(5);
+
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<RecommendProductsDto> page = new PageImpl<>(recommendProductsDtos, pageable, recommendProductsDtos.size());
+        when(productService.getRecommendProducts(any(Pageable.class))).thenReturn(page);
+
+//         when & then
+        mockMvc.perform(get("/recommend-products"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.status").value(200))
+               .andExpect(jsonPath("$.code").value("PMB001"))
+               .andExpect(jsonPath("$.message").value("추천제품정보 조회 성공"))
+               .andExpect(jsonPath("$.value.content[*].productNo").exists())
+               .andExpect(jsonPath("$.value.content[*].imageSource").exists())
+               .andExpect(jsonPath("$.value.content[*].alt").exists())
+               .andExpect(jsonPath("$.value.content[*].productName").exists())
+               .andDo(document("recommend-products/get-recommend-products",
+                       getDocumentRequest(),
+                       getDocumentResponse(),
+                       responseFields(
+                               fieldWithPath("status").type(JsonFieldType.NUMBER).description("상태 코드"),
+                               fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
+                               fieldWithPath("message").type(JsonFieldType.STRING).description("응답메세지"),
+                               fieldWithPath("value").type(JsonFieldType.OBJECT).description("응답 본문의 루트 객체"),
+                               fieldWithPath("value.content[].productNo").type(JsonFieldType.NUMBER).description("제품 고유번호"),
+                               fieldWithPath("value.content[].imageSource").type(JsonFieldType.STRING).description("이미지 URL"),
+                               fieldWithPath("value.content[].alt").type(JsonFieldType.STRING).description("이미지 대체 텍스트"),
+                               fieldWithPath("value.content[].productName").type(JsonFieldType.STRING).description("제품명"),
+                               fieldWithPath("value.pageable").type(JsonFieldType.OBJECT).description("페이지 정보"),
+                               fieldWithPath("value.pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 번호"),
+                               fieldWithPath("value.pageable.pageSize").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                               fieldWithPath("value.pageable.sort").type(JsonFieldType.OBJECT).description("정렬 정보"),
+                               fieldWithPath("value.pageable.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬이 비어 있는지 여부"),
+                               fieldWithPath("value.pageable.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬이 되었는지 여부"),
+                               fieldWithPath("value.pageable.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬이 되지 않았는지 여부"),
+                               fieldWithPath("value.pageable.offset").type(JsonFieldType.NUMBER).description("페이지 오프셋"),
+                               fieldWithPath("value.pageable.paged").type(JsonFieldType.BOOLEAN).description("페이징 여부"),
+                               fieldWithPath("value.pageable.unpaged").type(JsonFieldType.BOOLEAN).description("비페이징 여부"),
+                               fieldWithPath("value.sort").type(JsonFieldType.OBJECT).description("정렬 정보"),
+                               fieldWithPath("value.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬이 비어 있는지 여부"),
+                               fieldWithPath("value.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬이 되었는지 여부"),
+                               fieldWithPath("value.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬이 되지 않았는지 여부"),
+                               fieldWithPath("value.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                               fieldWithPath("value.totalElements").type(JsonFieldType.NUMBER).description("총 요소 수"),
+                               fieldWithPath("value.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                               fieldWithPath("value.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                               fieldWithPath("value.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                               fieldWithPath("value.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 요소 수"),
+                               fieldWithPath("value.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
+                               fieldWithPath("value.empty").type(JsonFieldType.BOOLEAN).description("비어 있는 페이지 여부")
+                       )
+               ));
 
     }
 

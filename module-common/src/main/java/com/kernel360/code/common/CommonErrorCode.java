@@ -10,7 +10,8 @@ public enum CommonErrorCode implements ErrorCode {
     NOT_FOUND_RESOURCE(HttpStatus.NOT_FOUND.value(), "E004", "요청한 자원이 존재하지 않음"),
     INVALID_REQUEST_HEADERS(HttpStatus.BAD_REQUEST.value(),  "E005", "요청한 헤더가 존재하지 않음"),
     INVALID_ARGUMENT(HttpStatus.BAD_REQUEST.value(),  "E006", "요청 파라미터가 없거나 비어있거나, 요청 파라미터의 이름이 메서드 인수의 이름과 일치하지 않습니다"),
-    INVALID_HTTP_REQUEST_METHOD(HttpStatus.BAD_REQUEST.value(),  "E007", "요청 URL 에서 지원하지 않는 HTTP Method 입니다.");
+    INVALID_HTTP_REQUEST_METHOD(HttpStatus.BAD_REQUEST.value(),  "E007", "요청 URL 에서 지원하지 않는 HTTP Method 입니다."),
+    INVALID_REQUEST_PARAMETER(HttpStatus.BAD_REQUEST.value(),  "E008", "요청한 파라미터가 존재하지 않음");
 
     private final int status;
     private final String code;
