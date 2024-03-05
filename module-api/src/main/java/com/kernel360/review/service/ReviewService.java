@@ -108,6 +108,14 @@ public class ReviewService {
     public void deleteReview(Long reviewNo) {
         reviewRepository.deleteById(reviewNo);
         log.info("리뷰 삭제 -> review_no {}", reviewNo);
+
+        fileRepository.findByReferenceNo(reviewNo)
+                      .stream()
+                      .forEach(file -> {
+                          fileUtils.delete(file.getFileKey());
+                          log.info("파일 삭제 -> file_no {}", file.getFileNo());
+                      });
+        fileRepository.deleteByReferenceNo(reviewNo);
     }
 
     private static void isValidStarRating(BigDecimal starRating) {
