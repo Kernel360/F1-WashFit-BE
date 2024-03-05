@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+// FIXME :: 기능에 멤버 정보가 담겨있지 않으므로 논의하여 추가하여야 함!! 누가 작성하였는지에 대한 정보는 꼭 필요하다!!
 @Slf4j
 @RestController
 @RequiredArgsConstructor
