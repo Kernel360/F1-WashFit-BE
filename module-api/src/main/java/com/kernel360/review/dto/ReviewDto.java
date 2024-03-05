@@ -1,11 +1,13 @@
 package com.kernel360.review.dto;
 
+import com.kernel360.file.entity.File;
 import com.kernel360.member.dto.MemberDto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.review.entity.Review;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO for {@link com.kernel360.review.dto.ReviewDto}
@@ -19,7 +21,8 @@ public record ReviewDto(Long reviewNo,
                         LocalDate createdAt,
                         String createdBy,
                         LocalDate modifiedAt,
-                        String modifiedBy) {
+                        String modifiedBy,
+                        List<File> files) {
 
     public static ReviewDto of(
             Long reviewNo,
@@ -31,7 +34,8 @@ public record ReviewDto(Long reviewNo,
             LocalDate createdAt,
             String createdBy,
             LocalDate modifiedAt,
-            String modifiedBy
+            String modifiedBy,
+            List<File> files
     ) {
         return new ReviewDto(
                 reviewNo,
@@ -43,11 +47,12 @@ public record ReviewDto(Long reviewNo,
                 createdAt,
                 createdBy,
                 modifiedAt,
-                modifiedBy
+                modifiedBy,
+                files
         );
     }
 
-    public static ReviewDto from(Review entity) {
+    public static ReviewDto from(Review entity, List<File> files) {
         return ReviewDto.of(
                 entity.getReviewNo(),
                 ProductDto.from(entity.getProduct()),
@@ -58,7 +63,8 @@ public record ReviewDto(Long reviewNo,
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
-                entity.getModifiedBy()
+                entity.getModifiedBy(),
+                files
         );
     }
 

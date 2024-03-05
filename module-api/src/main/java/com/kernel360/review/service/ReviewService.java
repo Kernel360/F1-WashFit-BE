@@ -45,19 +45,20 @@ public class ReviewService {
         log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
-                               .map(ReviewDto::from);
+                               .map(review -> ReviewDto.from(review, fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, review.getReviewNo())));
     }
 
     @Transactional(readOnly = true)
     public ReviewDto getReview(Long reviewNo) {
         Review review = reviewRepository.findByReviewNo(reviewNo);
+        List<File> files = fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo);
 
         if (Objects.isNull(review)) {
             throw new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW);
         }
 
         log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
-        return ReviewDto.from(review);
+        return ReviewDto.from(review, files);
     }
 
     @Transactional
