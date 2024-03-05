@@ -1,9 +1,13 @@
 package com.kernel360.review.repository;
 
+import com.kernel360.file.entity.FileReferType;
+import com.kernel360.review.dto.ReviewResponse;
 import com.kernel360.review.dto.ReviewSearchDto;
 import com.kernel360.review.entity.Review;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +17,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
+import static com.kernel360.file.entity.QFile.file;
 import static com.kernel360.review.entity.QReview.review;
 
 @RequiredArgsConstructor
@@ -25,12 +30,18 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
         List<Review> reviews = queryFactory
                 .select(review)
                 .from(review)
+                .leftJoin(file)
+                .on(
+                        file.referenceType.eq(FileReferType.REVIEW.getCode()),
+                        file.referenceNo.eq(review.reviewNo)
+                )
                 .where(
                         productNoEq(condition.productNo()),
                         memberNoEq(condition.memberNo()))
+                .groupBy(review.reviewNo)
+                .orderBy(sort(condition.sortBy()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(sort(condition.sortBy()))
                 .fetch();
 
         JPAQuery<Long> totalCountQuery = queryFactory
@@ -42,6 +53,33 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                 );
 
         return PageableExecutionUtils.getPage(reviews, pageable, totalCountQuery::fetchOne);
+    }
+
+    @Override
+    public ReviewResponse findByReviewNo(Long reviewNo) {
+        return queryFactory
+                .select(Projections.fields(ReviewResponse.class,
+                        review.reviewNo,
+                        review.product.productNo,
+                        review.member.memberNo,
+                        review.starRating,
+                        review.title,
+                        review.contents,
+                        review.createdAt,
+                        review.createdBy,
+                        review.modifiedAt,
+                        review.modifiedBy,
+                        Expressions.stringTemplate("STRING_AGG({0}, '|')", file.fileUrl).as("fileUrls")
+                ))
+                .from(review)
+                .leftJoin(file)
+                .on(
+                        file.referenceType.eq(FileReferType.REVIEW.getCode()),
+                        file.referenceNo.eq(review.reviewNo)
+                )
+                .where(review.reviewNo.eq(reviewNo))
+                .groupBy(review.reviewNo)
+                .fetchOne();
     }
 
     private BooleanExpression productNoEq(Long productNo) {
