@@ -14,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class WashZoneService {
 
     private final WashZoneRepository washZoneRepository;
+
 
     @Transactional(readOnly = true)
     public List<WashZoneDto> getWashZones(KakaoMapDto kakaoMapDto) {
@@ -38,15 +40,35 @@ public class WashZoneService {
 
     @Transactional
     public WashZone save(WashZoneDto washZoneDto) {
-        if (IsDuplicated(washZoneDto))
+        if (isDuplicated(washZoneDto))
             throw new BusinessException(WashZoneErrorCode.DUPLICATED_WAHSZONE_INFO);
 
         return washZoneRepository.save(washZoneDto.toEntity());
     }
 
-    private boolean IsDuplicated(WashZoneDto washZoneDto) {
+    private boolean isDuplicated(WashZoneDto washZoneDto) {
 
         return washZoneRepository.existsByAddress(washZoneDto.address());
+    }
+
+
+    @Transactional
+    public int saveBulk(List<WashZoneDto> washZoneDtoList) {
+        List<WashZone> list = washZoneDtoList.stream().map(WashZoneDto::toEntity).toList();
+        List<WashZone> validatedList = validateDuplicated(list);
+        if (validatedList.isEmpty()){
+            throw new BusinessException(WashZoneErrorCode.DUPLICATED_WAHSZONE_INFO);
+        }
+        washZoneRepository.saveAll(validatedList);
+
+        return validatedList.size();
+    }
+
+    private List<WashZone> validateDuplicated(List<WashZone> washZoneList) {
+
+        return washZoneList.stream()
+                .filter(w -> !washZoneRepository.existsByAddress(w.getAddress()))
+                .toList();
     }
 }
 

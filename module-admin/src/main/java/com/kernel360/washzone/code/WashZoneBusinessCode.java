@@ -1,16 +1,17 @@
 package com.kernel360.washzone.code;
 
 
-import com.kernel360.code.ErrorCode;
+import com.kernel360.code.BusinessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-
 @RequiredArgsConstructor
-public enum WashZoneErrorCode implements ErrorCode {
+public enum WashZoneBusinessCode implements BusinessCode {
 
-    FAILED_NOT_MAPPING_ORDINAL_TO_NAME(HttpStatus.INTERNAL_SERVER_ERROR.value(), "EWZC001", "요청 데이터가 존재하지 않습니다."),
-    DUPLICATED_WAHSZONE_INFO(HttpStatus.BAD_REQUEST.value(), "EWZC002", "중복된 데이터 입니다.");
+    SUCCESS_REQUEST_WASH_ZONE_INFO(HttpStatus.CREATED.value(), "BWZC001", "Wash Zone 정보조회 성공"),
+    SUCCESS_SAVED_WASH_ZONE_INFO(HttpStatus.CREATED.value(), "BWZC002", "Wash Zone 정보등록 성공"),
+    SUCCESS_SAVED_BULK_WASH_ZONE_INFO(HttpStatus.CREATED.value(), "BWZC003", "Wash Zone 대량정보등록 성공");
+
 
     private final int status;
     private final String code;
