@@ -26,25 +26,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
 
     @Override
     public Page<ReviewResponse> findAllByCondition(ReviewSearchDto condition, Pageable pageable) {
-        List<ReviewResponse> reviews = queryFactory
-                .select(Projections.fields(ReviewResponse.class,
-                        review.reviewNo,
-                        review.product.productNo,
-                        review.member.memberNo,
-                        review.starRating,
-                        review.title,
-                        review.contents,
-                        review.createdAt,
-                        review.createdBy,
-                        review.modifiedAt,
-                        review.modifiedBy,
-                        Expressions.stringTemplate("STRING_AGG({0}, '|')", file.fileUrl).as("fileUrls")
-                ))
-                .from(review)
-                .leftJoin(file)
-                .on(
-                        file.referenceType.eq(FileReferType.REVIEW.getCode()),
-                        file.referenceNo.eq(review.reviewNo))
+        List<ReviewResponse> reviews =
+                getJoinedWithFile()
                 .where(
                         productNoEq(condition.productNo()),
                         memberNoEq(condition.memberNo())
@@ -68,6 +51,13 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
 
     @Override
     public ReviewResponse findByReviewNo(Long reviewNo) {
+        return getJoinedWithFile()
+                .where(review.reviewNo.eq(reviewNo))
+                .groupBy(review.reviewNo)
+                .fetchOne();
+    }
+
+    private JPAQuery<ReviewResponse> getJoinedWithFile() {
         return queryFactory
                 .select(Projections.fields(ReviewResponse.class,
                         review.reviewNo,
@@ -87,10 +77,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                 .on(
                         file.referenceType.eq(FileReferType.REVIEW.getCode()),
                         file.referenceNo.eq(review.reviewNo)
-                )
-                .where(review.reviewNo.eq(reviewNo))
-                .groupBy(review.reviewNo)
-                .fetchOne();
+                );
     }
 
     private BooleanExpression productNoEq(Long productNo) {
