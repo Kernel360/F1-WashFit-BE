@@ -44,8 +44,8 @@ public class ProductRepositoryImpl implements ProductRepositoryDsl {
                                 getIsLiked(like, product, member),
                                 like.count()
                         ))
-                        .from(like)
-                        .join(product).on(product.productNo.eq(like.productNo))
+                        .from(product)
+                        .leftJoin(like).on(product.productNo.eq(like.productNo))
                         .where(keywordMatching(condition.keyword()))
                         .groupBy(product.productNo)
                         .offset(pageable.getOffset())
