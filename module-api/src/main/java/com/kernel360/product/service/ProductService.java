@@ -1,7 +1,7 @@
 package com.kernel360.product.service;
 
 import com.kernel360.exception.BusinessException;
-import com.kernel360.likes.repository.LikeRepositoryJpa;
+import com.kernel360.likes.repository.LikeRepository;
 import com.kernel360.main.dto.RecommendProductsDto;
 import com.kernel360.product.code.ProductsErrorCode;
 import com.kernel360.product.dto.ProductDetailDto;
@@ -25,7 +25,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final LikeRepositoryJpa likeRepositoryJpa;
+    private final LikeRepository likeRepository;
 
     @Transactional(readOnly = true)
     public List<ProductDto> getProducts() {
@@ -93,7 +93,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> getFavoriteProducts(Pageable pageable) {
-        Page<Object[]> results = likeRepositoryJpa.findTop20ByProductNoOrderByLikeCountDesc(pageable);
+        Page<Object[]> results = likeRepository.findTop20ByProductNoOrderByLikeCountDesc(pageable);
 
         List<ProductResponse> productDtos = results.getContent().stream()
                 .map(result -> {
