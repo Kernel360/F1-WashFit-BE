@@ -2,8 +2,10 @@ package com.kernel360.modulebatch.product.job.infra;
 
 import com.kernel360.modulebatch.product.dto.ProductJoinDto;
 import com.kernel360.product.entity.Product;
-import com.kernel360.product.repository.ProductRepository;
+
 import java.util.Optional;
+
+import com.kernel360.product.repository.ProductRepositoryJpa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -14,14 +16,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UpdateProductFromViolatedProductItemProcessor implements ItemProcessor<ProductJoinDto, Product> {
 
-    private final ProductRepository productRepository;
+    private final ProductRepositoryJpa productRepositoryJpa;
 
     @Override
     public Product process(ProductJoinDto item) throws Exception {
         String productName = item.productName();
         String companyName = item.companyName();
 
-        Optional<Product> foundProduct = productRepository.findProductByProductNameAndCompanyName(productName,
+        Optional<Product> foundProduct = productRepositoryJpa.findProductByProductNameAndCompanyName(productName,
                 companyName);
 
         if (foundProduct.isPresent()) {

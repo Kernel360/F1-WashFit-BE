@@ -69,7 +69,7 @@ management:
       show-details: always
 
 constants:
-  host-url: "http://localhost:8080"
+  host-url: "http://localhost:3000"
   password-reset-token:
     duration-minute: 5
   jwt:

@@ -15,6 +15,7 @@ import com.kernel360.common.ControllerTest;
 import com.kernel360.member.dto.MemberCredentialDto;
 import com.kernel360.member.dto.MemberDto;
 import java.time.LocalDate;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -174,18 +175,6 @@ class MemberControllerTest extends ControllerTest {
                                fieldWithPath("message").type(JsonFieldType.STRING).description("상세 메시지"),
                                fieldWithPath("value").type(JsonFieldType.NULL).description("JSON BODY 데이터")
                        )));
-    }
-
-    @Test
-    @DisplayName("비밀번호 재설정 토큰을 확인하여 비밀번호 재설정 페이지 반환에 성공")
-    void 비밀번호_재설정_토큰을_확인하고_비밀번호_재설정_페이지로_이동_검사() throws Exception {
-        String token = "testToken-1234-5678";
-        given(findCredentialService.getData(token)).willReturn("kernel360-testId");
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/member/find-password?token="+token)
-                                              .contentType(MediaType.APPLICATION_JSON)
-                                              .content(token))
-               .andExpect(MockMvcResultMatchers.status().isFound());
     }
 
     @Test

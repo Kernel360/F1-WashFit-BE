@@ -136,7 +136,7 @@ public class MemberService {
         String id = JWT.ownerId(token);
         Member member = memberRepository.findOneByIdForAccountTypeByPlatform(id);
 
-        if (!member.getPassword().equals(ConvertSHA256.convertToSHA256(password))) {
+        if (member.getPassword().equals(ConvertSHA256.convertToSHA256(password))) {
             throw new BusinessException(MemberErrorCode.WRONG_PASSWORD_REQUEST);
         }
 
@@ -145,10 +145,10 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMember(MemberInfo memberInfo, String token) {
+    public void updateMember(MemberDto updateMember, String token) {
         String id = JWT.ownerId(token);
         Member existingMember = memberRepository.findOneById(id);
-        existingMember.updateFromInfo( memberInfo.gender(), memberInfo.age());
+        existingMember.updateFromInfo( Gender.valueOf(updateMember.gender()).ordinal(), Age.valueOf(updateMember.age()).ordinal());
 
         memberRepository.save(existingMember);
     }
