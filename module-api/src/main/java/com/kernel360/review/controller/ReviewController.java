@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,8 +36,10 @@ public class ReviewController {
     }
 
     @PostMapping("")
-    public <T> ResponseEntity<ApiResponse<T>> createReview(@RequestBody ReviewDto reviewDto) {
-        reviewService.createReview(reviewDto);
+    public <T> ResponseEntity<ApiResponse<T>> createReview(
+            @RequestPart ReviewDto reviewDto,
+            @RequestPart(required = false) List<MultipartFile> files) {
+        reviewService.createReview(reviewDto, files);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_CREATE_REVIEW);
     }
