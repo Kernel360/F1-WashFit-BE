@@ -4,11 +4,12 @@ import com.kernel360.review.dto.ReviewSearchDto;
 import com.kernel360.review.entity.Review;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -32,15 +33,15 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                 .orderBy(sort(condition.sortBy()))
                 .fetch();
 
-        Long totalCount = queryFactory
+        JPAQuery<Long> totalCountQuery = queryFactory
                 .select(review.count())
                 .from(review)
                 .where(
                         productNoEq(condition.productNo()),
-                        memberNoEq(condition.memberNo()))
-                .fetchOne();
+                        memberNoEq(condition.memberNo())
+                );
 
-        return new PageImpl<>(reviews, pageable, totalCount);
+        return PageableExecutionUtils.getPage(reviews, pageable, totalCountQuery::fetchOne);
     }
 
     private BooleanExpression productNoEq(Long productNo) {
