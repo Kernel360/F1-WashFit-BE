@@ -1,5 +1,7 @@
 package com.kernel360.review.dto;
 
+import com.kernel360.member.entity.Member;
+import com.kernel360.product.entity.Product;
 import com.kernel360.review.entity.Review;
 
 import java.math.BigDecimal;
@@ -65,14 +67,14 @@ public record ReviewDto(Long reviewNo,
         );
     }
 
-//    public Review toEntity() {
-//        return Review.of(
-//                reviewNo,
-//                productDto.toEntity(),
-//                memberDto.toEntity(),
-//                starRating,
-//                title,
-//                contents
-//        );
-//    }
+    public Review toEntity() {
+        return Review.of(
+                reviewNo,
+                Product.of(productNo),
+                Member.of(memberNo),
+                starRating,
+                title,
+                contents
+        );
+    }
 }

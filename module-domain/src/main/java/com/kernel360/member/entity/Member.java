@@ -122,4 +122,12 @@ public class Member extends BaseEntity {
         this.gender = gender;
         this.age = age;
     }
+
+    private Member (Long memberNo) {
+        this.memberNo = memberNo;
+    }
+
+    public static Member of(Long memberNo) {
+        return new Member(memberNo);
+    }
 }

@@ -68,18 +68,17 @@ public class ReviewService {
         Review review;
 
         try {
-//            review = reviewRepository.saveAndFlush(reviewDto.toEntity());
+            review = reviewRepository.saveAndFlush(reviewDto.toEntity());
 
             if (Objects.nonNull(files)) {
-//                uploadFiles(files, reviewDto.productDto().productNo(), review.getReviewNo());
+                uploadFiles(files, reviewDto.productNo(), review.getReviewNo());
             }
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
         }
 
-//        log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
-//        return review;
-        return null;
+        log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
+        return review;
     }
 
     private void uploadFiles(List<MultipartFile> files, Long productNo, Long reviewNo) {
