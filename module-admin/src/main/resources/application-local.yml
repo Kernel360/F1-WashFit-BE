@@ -44,3 +44,7 @@ aws:
     bucket:
       name: ENC(JQIi11b8LB+99FnX02wCGwdXTOEax3VkuzgNqAVshK4=)
       url: ENC(9P2gRaZoGkR4SCgoTS/6sEQP0kVWwVWFaDckr1/FUoRV1MPnGXQL6OJKsGlHegk8h1d69uFDKTuZpLntfyn3nVMXLz18t8ls)
+# 의존성 때문에 추가한 설정
+constants:
+  jwt:
+    expiring-minute: 60
