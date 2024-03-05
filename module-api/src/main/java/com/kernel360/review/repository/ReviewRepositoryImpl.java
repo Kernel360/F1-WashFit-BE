@@ -3,7 +3,6 @@ package com.kernel360.review.repository;
 import com.kernel360.file.entity.FileReferType;
 import com.kernel360.review.dto.ReviewResponse;
 import com.kernel360.review.dto.ReviewSearchDto;
-import com.kernel360.review.entity.Review;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -26,18 +25,30 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Review> findAllByCondition(ReviewSearchDto condition, Pageable pageable) {
-        List<Review> reviews = queryFactory
-                .select(review)
+    public Page<ReviewResponse> findAllByCondition(ReviewSearchDto condition, Pageable pageable) {
+        List<ReviewResponse> reviews = queryFactory
+                .select(Projections.fields(ReviewResponse.class,
+                        review.reviewNo,
+                        review.product.productNo,
+                        review.member.memberNo,
+                        review.starRating,
+                        review.title,
+                        review.contents,
+                        review.createdAt,
+                        review.createdBy,
+                        review.modifiedAt,
+                        review.modifiedBy,
+                        Expressions.stringTemplate("STRING_AGG({0}, '|')", file.fileUrl).as("fileUrls")
+                ))
                 .from(review)
                 .leftJoin(file)
                 .on(
                         file.referenceType.eq(FileReferType.REVIEW.getCode()),
-                        file.referenceNo.eq(review.reviewNo)
-                )
+                        file.referenceNo.eq(review.reviewNo))
                 .where(
                         productNoEq(condition.productNo()),
-                        memberNoEq(condition.memberNo()))
+                        memberNoEq(condition.memberNo())
+                )
                 .groupBy(review.reviewNo)
                 .orderBy(sort(condition.sortBy()))
                 .offset(pageable.getOffset())

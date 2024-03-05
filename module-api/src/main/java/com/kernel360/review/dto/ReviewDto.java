@@ -1,8 +1,5 @@
 package com.kernel360.review.dto;
 
-import com.kernel360.file.entity.File;
-import com.kernel360.member.dto.MemberDto;
-import com.kernel360.product.dto.ProductDto;
 import com.kernel360.review.entity.Review;
 
 import java.math.BigDecimal;
@@ -13,8 +10,8 @@ import java.util.List;
  * DTO for {@link com.kernel360.review.dto.ReviewDto}
  */
 public record ReviewDto(Long reviewNo,
-                        ProductDto productDto,
-                        MemberDto memberDto,
+                        Long productNo,
+                        Long memberNo,
                         BigDecimal starRating,
                         String title,
                         String contents,
@@ -22,12 +19,12 @@ public record ReviewDto(Long reviewNo,
                         String createdBy,
                         LocalDate modifiedAt,
                         String modifiedBy,
-                        List<File> files) {
+                        List<String> files) {
 
     public static ReviewDto of(
             Long reviewNo,
-            ProductDto productDto,
-            MemberDto memberDto,
+            Long productNo,
+            Long memberNo,
             BigDecimal starRating,
             String title,
             String contents,
@@ -35,12 +32,12 @@ public record ReviewDto(Long reviewNo,
             String createdBy,
             LocalDate modifiedAt,
             String modifiedBy,
-            List<File> files
+            List<String> files
     ) {
         return new ReviewDto(
                 reviewNo,
-                productDto,
-                memberDto,
+                productNo,
+                memberNo,
                 starRating,
                 title,
                 contents,
@@ -52,11 +49,11 @@ public record ReviewDto(Long reviewNo,
         );
     }
 
-    public static ReviewDto from(Review entity, List<File> files) {
+    public static ReviewDto from(Review entity, List<String> files) {
         return ReviewDto.of(
                 entity.getReviewNo(),
-                ProductDto.from(entity.getProduct()),
-                MemberDto.from(entity.getMember()),
+                entity.getProduct().getProductNo(),
+                entity.getMember().getMemberNo(),
                 entity.getStarRating(),
                 entity.getTitle(),
                 entity.getContents(),
@@ -68,14 +65,14 @@ public record ReviewDto(Long reviewNo,
         );
     }
 
-    public Review toEntity() {
-        return Review.of(
-                reviewNo,
-                productDto.toEntity(),
-                memberDto.toEntity(),
-                starRating,
-                title,
-                contents
-        );
-    }
+//    public Review toEntity() {
+//        return Review.of(
+//                reviewNo,
+//                productDto.toEntity(),
+//                memberDto.toEntity(),
+//                starRating,
+//                title,
+//                contents
+//        );
+//    }
 }

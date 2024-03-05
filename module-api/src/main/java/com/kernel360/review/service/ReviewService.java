@@ -6,6 +6,7 @@ import com.kernel360.file.entity.FileReferType;
 import com.kernel360.file.repository.FileRepository;
 import com.kernel360.review.code.ReviewErrorCode;
 import com.kernel360.review.dto.ReviewDto;
+import com.kernel360.review.dto.ReviewResponse;
 import com.kernel360.review.dto.ReviewSearchDto;
 import com.kernel360.review.entity.Review;
 import com.kernel360.review.repository.ReviewRepository;
@@ -45,20 +46,19 @@ public class ReviewService {
         log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
-                               .map(review -> ReviewDto.from(review, fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, review.getReviewNo())));
+                               .map(ReviewResponse::toDto);
     }
 
     @Transactional(readOnly = true)
     public ReviewDto getReview(Long reviewNo) {
-        Review review = reviewRepository.findByReviewNo(reviewNo);
-        List<File> files = fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo);
+        ReviewResponse review = reviewRepository.findByReviewNo(reviewNo);
 
         if (Objects.isNull(review)) {
             throw new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW);
         }
 
         log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
-        return ReviewDto.from(review, files);
+        return ReviewResponse.toDto(review);
     }
 
     @Transactional
@@ -68,17 +68,18 @@ public class ReviewService {
         Review review;
 
         try {
-            review = reviewRepository.saveAndFlush(reviewDto.toEntity());
+//            review = reviewRepository.saveAndFlush(reviewDto.toEntity());
 
             if (Objects.nonNull(files)) {
-                uploadFiles(files, reviewDto.productDto().productNo(), review.getReviewNo());
+//                uploadFiles(files, reviewDto.productDto().productNo(), review.getReviewNo());
             }
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
         }
 
-        log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
-        return review;
+//        log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
+//        return review;
+        return null;
     }
 
     private void uploadFiles(List<MultipartFile> files, Long productNo, Long reviewNo) {
@@ -96,7 +97,7 @@ public class ReviewService {
         isValidStarRating(reviewDto.starRating());
 
         try {
-            reviewRepository.saveAndFlush(reviewDto.toEntity());
+//            reviewRepository.saveAndFlush(reviewDto.toEntity());
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
         }
