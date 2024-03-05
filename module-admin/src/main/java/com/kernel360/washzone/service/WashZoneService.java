@@ -40,13 +40,13 @@ public class WashZoneService {
 
     @Transactional
     public WashZone save(WashZoneDto washZoneDto) {
-        if (IsDuplicated(washZoneDto))
+        if (isDuplicated(washZoneDto))
             throw new BusinessException(WashZoneErrorCode.DUPLICATED_WAHSZONE_INFO);
 
         return washZoneRepository.save(washZoneDto.toEntity());
     }
 
-    private boolean IsDuplicated(WashZoneDto washZoneDto) {
+    private boolean isDuplicated(WashZoneDto washZoneDto) {
 
         return washZoneRepository.existsByAddress(washZoneDto.address());
     }
