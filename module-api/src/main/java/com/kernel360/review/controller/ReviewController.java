@@ -2,7 +2,7 @@ package com.kernel360.review.controller;
 
 import com.kernel360.response.ApiResponse;
 import com.kernel360.review.code.ReviewBusinessCode;
-import com.kernel360.review.dto.ReviewDto;
+import com.kernel360.review.dto.ReviewResponseDto;
 import com.kernel360.review.dto.ReviewRequestDto;
 import com.kernel360.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<Page<ReviewDto>>> getReviewsByProduct(
+    public ResponseEntity<ApiResponse<Page<ReviewResponseDto>>> getReviewsByProduct(
             @RequestParam(name = "productNo") Long productNo,
             @RequestParam(name = "sortBy", defaultValue = "reviewNo", required = false) String sortBy,
             Pageable pageable) {
@@ -31,7 +31,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{reviewNo}")
-    public ResponseEntity<ApiResponse<ReviewDto>> getReview(@PathVariable Long reviewNo) {
+    public ResponseEntity<ApiResponse<ReviewResponseDto>> getReview(@PathVariable Long reviewNo) {
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_GET_REVIEW, reviewService.getReview(reviewNo));
     }

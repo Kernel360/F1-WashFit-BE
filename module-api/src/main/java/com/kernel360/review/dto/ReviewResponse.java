@@ -28,14 +28,14 @@ public class ReviewResponse {
     String modifiedBy;
     String fileUrls;
 
-    public static ReviewDto toDto(ReviewResponse response) {
+    public static ReviewResponseDto toDto(ReviewResponse response) {
         List<String> fileUrls = new ArrayList<>();
 
         if (Objects.nonNull(response.getFileUrls())) {
             fileUrls = Arrays.stream(response.getFileUrls().split("\\|")).toList();
         }
 
-        return ReviewDto.of(
+        return ReviewResponseDto.of(
                 response.getReviewNo(),
                 response.getProductNo(),
                 response.getMemberNo(),

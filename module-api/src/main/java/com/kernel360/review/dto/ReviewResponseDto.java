@@ -9,21 +9,21 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * DTO for {@link com.kernel360.review.dto.ReviewDto}
+ * DTO for {@link com.kernel360.review.dto.ReviewResponseDto}
  */
-public record ReviewDto(Long reviewNo,
-                        Long productNo,
-                        Long memberNo,
-                        BigDecimal starRating,
-                        String title,
-                        String contents,
-                        LocalDate createdAt,
-                        String createdBy,
-                        LocalDate modifiedAt,
-                        String modifiedBy,
-                        List<String> files) {
+public record ReviewResponseDto(Long reviewNo,
+                                Long productNo,
+                                Long memberNo,
+                                BigDecimal starRating,
+                                String title,
+                                String contents,
+                                LocalDate createdAt,
+                                String createdBy,
+                                LocalDate modifiedAt,
+                                String modifiedBy,
+                                List<String> files) {
 
-    public static ReviewDto of(
+    public static ReviewResponseDto of(
             Long reviewNo,
             Long productNo,
             Long memberNo,
@@ -36,7 +36,7 @@ public record ReviewDto(Long reviewNo,
             String modifiedBy,
             List<String> files
     ) {
-        return new ReviewDto(
+        return new ReviewResponseDto(
                 reviewNo,
                 productNo,
                 memberNo,
@@ -51,8 +51,8 @@ public record ReviewDto(Long reviewNo,
         );
     }
 
-    public static ReviewDto from(Review entity, List<String> files) {
-        return ReviewDto.of(
+    public static ReviewResponseDto from(Review entity, List<String> files) {
+        return ReviewResponseDto.of(
                 entity.getReviewNo(),
                 entity.getProduct().getProductNo(),
                 entity.getMember().getMemberNo(),

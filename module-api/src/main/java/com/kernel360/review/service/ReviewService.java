@@ -5,7 +5,7 @@ import com.kernel360.file.entity.File;
 import com.kernel360.file.entity.FileReferType;
 import com.kernel360.file.repository.FileRepository;
 import com.kernel360.review.code.ReviewErrorCode;
-import com.kernel360.review.dto.ReviewDto;
+import com.kernel360.review.dto.ReviewResponseDto;
 import com.kernel360.review.dto.ReviewRequestDto;
 import com.kernel360.review.dto.ReviewResponse;
 import com.kernel360.review.dto.ReviewSearchDto;
@@ -43,7 +43,7 @@ public class ReviewService {
     private static final String REVIEW_CODE = FileReferType.REVIEW.getCode();
 
     @Transactional(readOnly = true)
-    public Page<ReviewDto> getReviewsByProduct(Long productNo, String sortBy, Pageable pageable) {
+    public Page<ReviewResponseDto> getReviewsByProduct(Long productNo, String sortBy, Pageable pageable) {
         log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
@@ -51,7 +51,7 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewDto getReview(Long reviewNo) {
+    public ReviewResponseDto getReview(Long reviewNo) {
         log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
         ReviewResponse review = reviewRepository.findByReviewNo(reviewNo);
 
