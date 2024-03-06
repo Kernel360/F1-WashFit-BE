@@ -27,7 +27,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
     @Override
     public Page<ReviewResponse> findAllByCondition(ReviewSearchDto condition, Pageable pageable) {
         List<ReviewResponse> reviews =
-                getJoinedWithFile()
+                getJoinedResults()
                 .where(
                         productNoEq(condition.productNo()),
                         memberNoEq(condition.memberNo())
@@ -51,13 +51,13 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
 
     @Override
     public ReviewResponse findByReviewNo(Long reviewNo) {
-        return getJoinedWithFile()
+        return getJoinedResults()
                 .where(review.reviewNo.eq(reviewNo))
                 .groupBy(review.reviewNo)
                 .fetchOne();
     }
 
-    private JPAQuery<ReviewResponse> getJoinedWithFile() {
+    private JPAQuery<ReviewResponse> getJoinedResults() {
         return queryFactory
                 .select(Projections.fields(ReviewResponse.class,
                         review.reviewNo,

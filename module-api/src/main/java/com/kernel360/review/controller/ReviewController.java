@@ -45,8 +45,10 @@ public class ReviewController {
     }
 
     @PatchMapping("")
-    public <T> ResponseEntity<ApiResponse<T>> updateReview(@RequestBody ReviewDto reviewDto) {
-        reviewService.updateReview(reviewDto);
+    public <T> ResponseEntity<ApiResponse<T>> updateReview(
+            @RequestPart ReviewDto reviewDto,
+            @RequestPart(required = false) List<MultipartFile> files) {
+        reviewService.updateReview(reviewDto, files);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_UPDATE_REVIEW);
     }
