@@ -1,8 +1,8 @@
 package com.kernel360.review.repository;
 
 import com.kernel360.file.entity.FileReferType;
-import com.kernel360.review.dto.ReviewResponse;
 import com.kernel360.review.dto.ReviewSearchDto;
+import com.kernel360.review.dto.ReviewSearchResult;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,6 +17,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.List;
 
 import static com.kernel360.file.entity.QFile.file;
+import static com.kernel360.member.entity.QMember.member;
+import static com.kernel360.product.entity.QProduct.product;
 import static com.kernel360.review.entity.QReview.review;
 
 @RequiredArgsConstructor
@@ -25,18 +27,18 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<ReviewResponse> findAllByCondition(ReviewSearchDto condition, Pageable pageable) {
-        List<ReviewResponse> reviews =
+    public Page<ReviewSearchResult> findAllByCondition(ReviewSearchDto condition, Pageable pageable) {
+        List<ReviewSearchResult> reviews =
                 getJoinedResults()
-                .where(
-                        productNoEq(condition.productNo()),
-                        memberNoEq(condition.memberNo())
-                )
-                .groupBy(review.reviewNo)
-                .orderBy(sort(condition.sortBy()))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                        .where(
+                                productNoEq(condition.productNo()),
+                                memberNoEq(condition.memberNo())
+                        )
+                        .groupBy(review.reviewNo, member.memberNo, member.id, member.age, member.gender, product.productNo)
+                        .orderBy(sort(condition.sortBy()))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
         JPAQuery<Long> totalCountQuery = queryFactory
                 .select(review.count())
@@ -50,19 +52,17 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
     }
 
     @Override
-    public ReviewResponse findByReviewNo(Long reviewNo) {
+    public ReviewSearchResult findByReviewNo(Long reviewNo) {
         return getJoinedResults()
                 .where(review.reviewNo.eq(reviewNo))
-                .groupBy(review.reviewNo)
+                .groupBy(review.reviewNo, member.memberNo, member.id, member.age, member.gender, product.productNo)
                 .fetchOne();
     }
 
-    private JPAQuery<ReviewResponse> getJoinedResults() {
+    private JPAQuery<ReviewSearchResult> getJoinedResults() {
         return queryFactory
-                .select(Projections.fields(ReviewResponse.class,
+                .select(Projections.fields(ReviewSearchResult.class,
                         review.reviewNo,
-                        review.product.productNo,
-                        review.member.memberNo,
                         review.starRating,
                         review.title,
                         review.contents,
@@ -70,6 +70,16 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                         review.createdBy,
                         review.modifiedAt,
                         review.modifiedBy,
+                        member.memberNo,
+                        member.id,
+                        member.age,
+                        member.gender,
+                        product.productNo,
+                        product.productName,
+                        product.companyName,
+                        product.imageSource,
+                        product.upperItem,
+                        product.item,
                         Expressions.stringTemplate("STRING_AGG({0}, '|')", file.fileUrl).as("fileUrls")
                 ))
                 .from(review)
@@ -77,7 +87,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                 .on(
                         file.referenceType.eq(FileReferType.REVIEW.getCode()),
                         file.referenceNo.eq(review.reviewNo)
-                );
+                )
+                .join(member)
+                .on(review.member.memberNo.eq(member.memberNo))
+                .join(product)
+                .on(review.product.productNo.eq(product.productNo));
     }
 
     private BooleanExpression productNoEq(Long productNo) {

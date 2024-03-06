@@ -1,5 +1,7 @@
 package com.kernel360.review.dto;
 
+import com.kernel360.member.dto.MemberDto;
+import com.kernel360.product.dto.ProductDetailDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,14 +13,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * DTO for {@link ReviewResponse}
+ * DTO for {@link ReviewSearchResult}
  */
 @Getter
 @NoArgsConstructor
-public class ReviewResponse {
+public class ReviewSearchResult {
+    // review
     Long reviewNo;
-    Long productNo;
-    Long memberNo;
     BigDecimal starRating;
     String title;
     String contents;
@@ -26,9 +27,25 @@ public class ReviewResponse {
     String createdBy;
     LocalDate modifiedAt;
     String modifiedBy;
+
+    // member
+    Long memberNo;
+    String id;
+    int age;
+    int gender;
+
+    // product
+    Long productNo;
+    String productName;
+    String companyName;
+    String imageSource;
+    String upperItem;
+    String item;
+
+    // file
     String fileUrls;
 
-    public static ReviewResponseDto toDto(ReviewResponse response) {
+    public static ReviewResponseDto toDto(ReviewSearchResult response) {
         List<String> fileUrls = new ArrayList<>();
 
         if (Objects.nonNull(response.getFileUrls())) {
@@ -37,8 +54,20 @@ public class ReviewResponse {
 
         return ReviewResponseDto.of(
                 response.getReviewNo(),
-                response.getProductNo(),
-                response.getMemberNo(),
+                ProductDetailDto.of(
+                        response.getProductNo(),
+                        response.getProductName(),
+                        response.getImageSource(),
+                        response.getCompanyName(),
+                        response.getUpperItem(),
+                        response.getItem()
+                ),
+                MemberDto.of(
+                        response.getMemberNo(),
+                        response.getId(),
+                        response.getAge(),
+                        response.getGender()
+                ),
                 response.getStarRating(),
                 response.getTitle(),
                 response.getContents(),

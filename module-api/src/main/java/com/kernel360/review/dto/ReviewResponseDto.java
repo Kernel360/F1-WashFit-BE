@@ -1,8 +1,7 @@
 package com.kernel360.review.dto;
 
-import com.kernel360.member.entity.Member;
-import com.kernel360.product.entity.Product;
-import com.kernel360.review.entity.Review;
+import com.kernel360.member.dto.MemberDto;
+import com.kernel360.product.dto.ProductDetailDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,8 +11,8 @@ import java.util.List;
  * DTO for {@link com.kernel360.review.dto.ReviewResponseDto}
  */
 public record ReviewResponseDto(Long reviewNo,
-                                Long productNo,
-                                Long memberNo,
+                                ProductDetailDto productDto,
+                                MemberDto memberDto,
                                 BigDecimal starRating,
                                 String title,
                                 String contents,
@@ -25,8 +24,8 @@ public record ReviewResponseDto(Long reviewNo,
 
     public static ReviewResponseDto of(
             Long reviewNo,
-            Long productNo,
-            Long memberNo,
+            ProductDetailDto productDto,
+            MemberDto memberDto,
             BigDecimal starRating,
             String title,
             String contents,
@@ -38,8 +37,8 @@ public record ReviewResponseDto(Long reviewNo,
     ) {
         return new ReviewResponseDto(
                 reviewNo,
-                productNo,
-                memberNo,
+                productDto,
+                memberDto,
                 starRating,
                 title,
                 contents,
@@ -48,33 +47,6 @@ public record ReviewResponseDto(Long reviewNo,
                 modifiedAt,
                 modifiedBy,
                 files
-        );
-    }
-
-    public static ReviewResponseDto from(Review entity, List<String> files) {
-        return ReviewResponseDto.of(
-                entity.getReviewNo(),
-                entity.getProduct().getProductNo(),
-                entity.getMember().getMemberNo(),
-                entity.getStarRating(),
-                entity.getTitle(),
-                entity.getContents(),
-                entity.getCreatedAt(),
-                entity.getCreatedBy(),
-                entity.getModifiedAt(),
-                entity.getModifiedBy(),
-                files
-        );
-    }
-
-    public Review toEntity() {
-        return Review.of(
-                reviewNo,
-                Product.of(productNo),
-                Member.of(memberNo),
-                starRating,
-                title,
-                contents
         );
     }
 }

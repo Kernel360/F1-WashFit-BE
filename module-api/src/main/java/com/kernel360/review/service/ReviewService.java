@@ -5,10 +5,10 @@ import com.kernel360.file.entity.File;
 import com.kernel360.file.entity.FileReferType;
 import com.kernel360.file.repository.FileRepository;
 import com.kernel360.review.code.ReviewErrorCode;
-import com.kernel360.review.dto.ReviewResponseDto;
 import com.kernel360.review.dto.ReviewRequestDto;
-import com.kernel360.review.dto.ReviewResponse;
+import com.kernel360.review.dto.ReviewResponseDto;
 import com.kernel360.review.dto.ReviewSearchDto;
+import com.kernel360.review.dto.ReviewSearchResult;
 import com.kernel360.review.entity.Review;
 import com.kernel360.review.repository.ReviewRepository;
 import com.kernel360.utils.file.FileUtils;
@@ -47,19 +47,19 @@ public class ReviewService {
         log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
-                               .map(ReviewResponse::toDto);
+                               .map(ReviewSearchResult::toDto);
     }
 
     @Transactional(readOnly = true)
     public ReviewResponseDto getReview(Long reviewNo) {
         log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
-        ReviewResponse review = reviewRepository.findByReviewNo(reviewNo);
+        ReviewSearchResult review = reviewRepository.findByReviewNo(reviewNo);
 
         if (Objects.isNull(review)) {
             throw new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW);
         }
 
-        return ReviewResponse.toDto(review);
+        return ReviewSearchResult.toDto(review);
     }
 
     @Transactional
