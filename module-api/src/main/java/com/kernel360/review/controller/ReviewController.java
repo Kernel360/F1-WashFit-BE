@@ -3,6 +3,7 @@ package com.kernel360.review.controller;
 import com.kernel360.response.ApiResponse;
 import com.kernel360.review.code.ReviewBusinessCode;
 import com.kernel360.review.dto.ReviewDto;
+import com.kernel360.review.dto.ReviewRequestDto;
 import com.kernel360.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,18 +38,18 @@ public class ReviewController {
 
     @PostMapping("")
     public <T> ResponseEntity<ApiResponse<T>> createReview(
-            @RequestPart ReviewDto reviewDto,
+            @RequestPart ReviewRequestDto reviewRequestDto,
             @RequestPart(required = false) List<MultipartFile> files) {
-        reviewService.createReview(reviewDto, files);
+        reviewService.createReview(reviewRequestDto, files);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_CREATE_REVIEW);
     }
 
     @PatchMapping("")
     public <T> ResponseEntity<ApiResponse<T>> updateReview(
-            @RequestPart ReviewDto reviewDto,
+            @RequestPart ReviewRequestDto reviewRequestDto,
             @RequestPart(required = false) List<MultipartFile> files) {
-        reviewService.updateReview(reviewDto, files);
+        reviewService.updateReview(reviewRequestDto, files);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_UPDATE_REVIEW);
     }

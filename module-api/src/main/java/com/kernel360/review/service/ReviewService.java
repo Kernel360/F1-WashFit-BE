@@ -6,6 +6,7 @@ import com.kernel360.file.entity.FileReferType;
 import com.kernel360.file.repository.FileRepository;
 import com.kernel360.review.code.ReviewErrorCode;
 import com.kernel360.review.dto.ReviewDto;
+import com.kernel360.review.dto.ReviewRequestDto;
 import com.kernel360.review.dto.ReviewResponse;
 import com.kernel360.review.dto.ReviewSearchDto;
 import com.kernel360.review.entity.Review;
@@ -62,17 +63,17 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review createReview(ReviewDto reviewDto, List<MultipartFile> files) {
-        isValidStarRating(reviewDto.starRating());
+    public Review createReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
+        isValidStarRating(reviewRequestDto.starRating());
 
         Review review;
 
         try {
-            review = reviewRepository.saveAndFlush(reviewDto.toEntity());
+            review = reviewRepository.saveAndFlush(reviewRequestDto.toEntity());
             log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
 
             if (Objects.nonNull(files)) {
-                uploadFiles(files, reviewDto.productNo(), review.getReviewNo());
+                uploadFiles(files, reviewRequestDto.productNo(), review.getReviewNo());
             }
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
@@ -93,17 +94,17 @@ public class ReviewService {
     }
 
     @Transactional
-    public void updateReview(ReviewDto reviewDto, List<MultipartFile> files) {
-        isValidStarRating(reviewDto.starRating());
+    public void updateReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
+        isValidStarRating(reviewRequestDto.starRating());
 
         try {
-            reviewRepository.saveAndFlush(reviewDto.toEntity());
-            log.info("리뷰 수정 -> review_no {}", reviewDto.reviewNo());
+            reviewRepository.saveAndFlush(reviewRequestDto.toEntity());
+            log.info("리뷰 수정 -> review_no {}", reviewRequestDto.reviewNo());
 
-            fileRepository.findByReferenceNo(reviewDto.reviewNo())
+            fileRepository.findByReferenceNo(reviewRequestDto.reviewNo())
                           .stream()
                           .forEach(file -> {
-                              if (!reviewDto.files().contains(file.getFileUrl())) {
+                              if (!reviewRequestDto.files().contains(file.getFileUrl())) {
                                   fileUtils.delete(file.getFileKey());
                                   fileRepository.deleteById(file.getFileNo());
                                   log.info("리뷰 파일 삭제 -> file_no {}", file.getFileNo());
@@ -111,7 +112,7 @@ public class ReviewService {
                           });
 
             if (Objects.nonNull(files)) {
-                uploadFiles(files, reviewDto.productNo(), reviewDto.reviewNo());
+                uploadFiles(files, reviewRequestDto.productNo(), reviewRequestDto.reviewNo());
             }
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
