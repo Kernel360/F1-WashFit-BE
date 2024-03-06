@@ -44,6 +44,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                 .select(review.count())
                 .from(review)
                 .where(
+                        review.isVisible.eq(true),
                         productNoEq(condition.productNo()),
                         memberNoEq(condition.memberNo())
                 );
@@ -54,7 +55,10 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
     @Override
     public ReviewSearchResult findByReviewNo(Long reviewNo) {
         return getJoinedResults()
-                .where(review.reviewNo.eq(reviewNo))
+                .where(
+                        review.isVisible.eq(true),
+                        review.reviewNo.eq(reviewNo)
+                )
                 .groupBy(review.reviewNo, member.memberNo, member.id, member.age, member.gender, product.productNo)
                 .fetchOne();
     }

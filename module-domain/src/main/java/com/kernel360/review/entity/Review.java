@@ -32,22 +32,26 @@ public class Review extends BaseEntity {
     @Column(name = "star_rating", nullable = false, precision = 3, scale = 1)
     private BigDecimal starRating;
 
-    @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "contents", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "contents", nullable = false, length = 4000)
     private String contents;
 
-    private Review(Long reviewNo, Product product, Member member, BigDecimal starRating, String title, String contents) {
+    @Column(name = "is_visible", nullable = false)
+    private Boolean isVisible;
+
+    private Review(Long reviewNo, Product product, Member member, BigDecimal starRating, String title, String contents, Boolean isVisible) {
         this.reviewNo = reviewNo;
         this.product = product;
         this.member = member;
         this.starRating = starRating;
         this.title = title;
         this.contents = contents;
+        this.isVisible = isVisible;
     }
 
-    public static Review of(Long reviewNo, Product product, Member member, BigDecimal starRating, String title, String contents) {
-        return new Review(reviewNo, product, member, starRating, title, contents);
+    public static Review of(Long reviewNo, Product product, Member member, BigDecimal starRating, String title, String contents, Boolean isVisible) {
+        return new Review(reviewNo, product, member, starRating, title, contents, isVisible);
     }
 }

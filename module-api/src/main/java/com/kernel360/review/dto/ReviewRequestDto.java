@@ -74,7 +74,8 @@ public record ReviewRequestDto(Long reviewNo,
                 Member.of(memberNo),
                 starRating,
                 title,
-                contents
+                contents,
+                true
         );
     }
 }

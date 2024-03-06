@@ -95,6 +95,7 @@ public class ReviewService {
 
     @Transactional
     public void updateReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
+        isVisibleReview(reviewRequestDto.reviewNo());
         isValidStarRating(reviewRequestDto.starRating());
 
         try {
@@ -121,6 +122,8 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(Long reviewNo) {
+        isVisibleReview(reviewNo);
+
         reviewRepository.deleteById(reviewNo);
         log.info("리뷰 삭제 -> review_no {}", reviewNo);
 
@@ -133,7 +136,13 @@ public class ReviewService {
         fileRepository.deleteByReferenceNo(reviewNo);
     }
 
-    private static void isValidStarRating(BigDecimal starRating) {
+    private void isVisibleReview(Long reviewNo) {
+        if (reviewRepository.findByIdAndIsVisibleTrue(reviewNo).isEmpty()) {
+            throw new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW);
+        }
+    }
+
+    private void isValidStarRating(BigDecimal starRating) {
         if (BigDecimal.ZERO.compareTo(starRating) > 0) {
             throw new BusinessException(ReviewErrorCode.INVALID_STAR_RATING_VALUE);
         }

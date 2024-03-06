@@ -5,4 +5,4 @@ alter table review
     alter column contents type varchar(4000) using contents::varchar(4000);
 
 alter table review
-    add is_visible boolean;
+    add is_visible bool default true not null;
