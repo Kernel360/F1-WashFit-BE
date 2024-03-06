@@ -5,7 +5,7 @@ import com.kernel360.brand.repository.BrandRepository;
 import com.kernel360.ecolife.entity.ReportedProduct;
 import com.kernel360.modulebatch.product.dto.ProductDto;
 import com.kernel360.product.entity.Product;
-import com.kernel360.product.entity.SafetyStatus;
+import com.kernel360.product.enumset.SafetyStatus;
 
 import java.time.LocalDate;
 import java.util.List;

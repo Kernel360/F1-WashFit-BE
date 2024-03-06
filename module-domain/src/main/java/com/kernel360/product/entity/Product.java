@@ -1,6 +1,7 @@
 package com.kernel360.product.entity;
 
 import com.kernel360.base.BaseEntity;
+import com.kernel360.product.enumset.SafetyStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

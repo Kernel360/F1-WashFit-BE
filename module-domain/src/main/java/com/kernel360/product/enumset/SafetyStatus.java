@@ -1,4 +1,4 @@
-package com.kernel360.product.entity;
+package com.kernel360.product.enumset;
 
 import lombok.Getter;
 
