@@ -4,7 +4,7 @@ import com.kernel360.exception.BusinessException;
 import com.kernel360.review.code.ReviewErrorCode;
 import com.kernel360.review.dto.AdminReviewDto;
 import com.kernel360.review.dto.ReviewSearchDto;
-import com.kernel360.review.respository.ReviewRepository;
+import com.kernel360.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

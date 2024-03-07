@@ -1,4 +1,4 @@
-package com.kernel360.product.entity;
+package com.kernel360.product.converter;
 
 import com.kernel360.product.enumset.SafetyStatus;
 import jakarta.persistence.AttributeConverter;

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-public interface MemberRepository extends JpaRepository<Member, Id> {
+public interface MemberRepositoryJpa extends JpaRepository<Member, Id> {
 
     Member findOneByIdAndPassword(String id, String password);
 

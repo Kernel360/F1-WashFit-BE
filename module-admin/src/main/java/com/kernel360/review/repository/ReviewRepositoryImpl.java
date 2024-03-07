@@ -1,4 +1,4 @@
-package com.kernel360.review.respository;
+package com.kernel360.review.repository;
 
 import static com.kernel360.review.entity.QReview.review;
 
@@ -9,7 +9,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import java.util.function.LongSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
