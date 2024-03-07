@@ -24,8 +24,8 @@ public class WashInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wash_info_id_gen")
     @SequenceGenerator(name = "wash_info_id_gen", sequenceName = "wash_info_wash_no_seq", allocationSize = 50)
-    @Column(nullable = false)
-    private Integer washNo;
+    @Column(name = "wash_no", nullable = false)
+    private Long washNo;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_no", nullable = false)

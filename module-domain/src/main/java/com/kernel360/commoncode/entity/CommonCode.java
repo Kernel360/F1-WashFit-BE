@@ -23,7 +23,7 @@ public class CommonCode extends BaseEntity {
     private String codeName;
 
     @Column(name = "upper_no")
-    private Integer upperNo;
+    private Long upperNo;
 
     @Column(name = "upper_name", length = Integer.MAX_VALUE)
     private String upperName;
