@@ -101,7 +101,7 @@ public class MemberService {
     public boolean emailDuplicationCheck(String email) {
         Member member = memberRepository.findOneByEmailForAccountTypeByPlatform(email);
 
-        return member != null;
+        return Objects.nonNull(member);
     }
 
     public MemberDto findMemberByToken(String token) {

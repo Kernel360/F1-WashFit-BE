@@ -4,7 +4,7 @@
 //import com.kernel360.main.dto.BannerDto;
 //import com.kernel360.main.dto.RecommendProductsDto;
 //import com.kernel360.product.dto.ProductDto;
-//import com.kernel360.product.entity.SafetyStatus;
+//import com.kernel360.product.enumset.SafetyStatus;
 //import com.navercorp.fixturemonkey.FixtureMonkey;
 //import com.navercorp.fixturemonkey.api.introspector.*;
 //import org.junit.jupiter.api.BeforeEach;

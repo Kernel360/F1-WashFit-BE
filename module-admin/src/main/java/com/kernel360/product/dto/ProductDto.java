@@ -1,7 +1,7 @@
 package com.kernel360.product.dto;
 
 import com.kernel360.product.entity.Product;
-import com.kernel360.product.entity.SafetyStatus;
+import com.kernel360.product.enumset.SafetyStatus;
 
 import java.time.LocalDate;
 

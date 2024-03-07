@@ -5,7 +5,7 @@ import com.kernel360.likes.code.LikeBusinessCode;
 import com.kernel360.likes.dto.LikeSearchDto;
 import com.kernel360.likes.entity.Like;
 import com.kernel360.likes.service.LikeService;
-import com.kernel360.main.controller.Sort;
+import com.kernel360.main.enumset.Sort;
 import com.kernel360.product.dto.ProductResponse;
 import com.kernel360.product.service.ProductService;
 import com.kernel360.response.ApiResponse;

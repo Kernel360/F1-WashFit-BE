@@ -23,26 +23,17 @@ public class CarInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_info_id_gen")
     @SequenceGenerator(name = "car_info_id_gen", sequenceName = "car_info_car_no_seq")
-    @Column(name = "car_no", nullable = false)
+    @Column(nullable = false)
     private Long carNo;
 
     @OneToOne
     @JoinColumn(name = "member_no")
     private Member member;
 
-    @Column(name = "car_type")
     private Integer carType;
-
-    @Column(name = "car_size")
     private Integer carSize;
-
-    @Column(name = "car_color")
     private Integer carColor;
-
-    @Column(name = "driving_env")
     private Integer drivingEnv;
-
-    @Column(name = "parking_env")
     private Integer parkingEnv;
 
     public CarInfo(Integer carType, Integer carSize, Integer carColor, Integer drivingEnv, Integer parkingEnv) {
