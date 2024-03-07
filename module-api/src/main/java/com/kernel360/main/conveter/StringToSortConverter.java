@@ -2,7 +2,7 @@ package com.kernel360.main.conveter;
 
 import com.kernel360.exception.BusinessException;
 import com.kernel360.main.code.ConverterErrorCode;
-import com.kernel360.main.controller.Sort;
+import com.kernel360.main.enumset.Sort;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

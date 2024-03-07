@@ -1,5 +1,6 @@
 package com.kernel360.product.entity;
 
+import com.kernel360.product.enumset.SafetyStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.util.stream.Stream;

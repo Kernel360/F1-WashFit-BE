@@ -1,7 +1,7 @@
 package com.kernel360.product.repository;
 
 import com.kernel360.product.entity.Product;
-import com.kernel360.product.entity.SafetyStatus;
+import com.kernel360.product.enumset.SafetyStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductRepositoryJpa extends JpaRepository<Product, Long>  {
+public interface ProductRepositoryJpa extends JpaRepository<Product, Long> {
 
     Page<Product> findAllByOrderByViewCountDesc(Pageable pageable);
 
@@ -75,6 +75,6 @@ public interface ProductRepositoryJpa extends JpaRepository<Product, Long>  {
                                                           @Param("safetyStatus") SafetyStatus safetyStatus,
                                                           Pageable pageable);
 
-        Page<Product> findByProductNameContaining(String keyword, Pageable pageable);
+    Page<Product> findByProductNameContaining(String keyword, Pageable pageable);
 
 }

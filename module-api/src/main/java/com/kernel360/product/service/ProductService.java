@@ -9,7 +9,7 @@ import com.kernel360.product.dto.ProductDto;
 import com.kernel360.product.dto.ProductResponse;
 import com.kernel360.product.dto.ProductSearchDto;
 import com.kernel360.product.entity.Product;
-import com.kernel360.product.entity.SafetyStatus;
+import com.kernel360.product.enumset.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

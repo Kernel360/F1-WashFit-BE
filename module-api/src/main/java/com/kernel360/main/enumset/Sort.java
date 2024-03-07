@@ -1,4 +1,4 @@
-package com.kernel360.main.controller;
+package com.kernel360.main.enumset;
 
 import com.kernel360.product.dto.ProductResponse;
 import com.kernel360.product.dto.ProductSearchDto;
@@ -10,7 +10,7 @@ public enum Sort {
 
     VIEW_COUNT_PRODUCT_ORDER("viewCnt-order") {
         @Override
-        Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
+        public Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
 
             return productService.getProductListOrderByViewCount(pageable);
         }
@@ -25,7 +25,7 @@ public enum Sort {
 
     VIOLATION_PRODUCT_LIST("violation-products") {
         @Override
-        Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
+        public Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
 
             return productService.getViolationProducts(pageable);
         }
@@ -39,7 +39,7 @@ public enum Sort {
 
     RECOMMENDATION_PRODUCT_ORDER("recommend-order") {
         @Override
-        Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
+        public Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
 
             return productService.getFavoriteProducts(pageable);
         }
@@ -53,7 +53,7 @@ public enum Sort {
 
     RECENT_PRODUCT_ORDER("recent-order") {
         @Override
-        Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
+        public Page<ProductResponse> sort(ProductService productService, Pageable pageable) {
 
             return productService.getRecentProducts(pageable);
         }
@@ -75,7 +75,7 @@ public enum Sort {
         return orderType;
     }
 
-    abstract Page<ProductResponse> sort(ProductService productService, Pageable pageable);
+    public abstract Page<ProductResponse> sort(ProductService productService, Pageable pageable);
 
     public abstract Page<ProductResponse> withKeywordSort(ProductService productService, String keyword, Pageable pageable);
 
