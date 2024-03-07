@@ -15,9 +15,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaAuditing
 @EnableBatchProcessing
 @SpringBootApplication
-@EnableJpaRepositories({"com.kernel360.ecolife.repository", "com.kernel360.product.repository",
-        "com.kernel360.brand.repository"})
-@EntityScan({"com.kernel360.ecolife.entity", "com.kernel360.product.entity", "com.kernel360.brand.entity"})
+@EnableJpaRepositories({"com.kernel360"})
+@EntityScan({"com.kernel360"})
 public class ModuleBatchApplication {
 
     public static void main(String[] args) {
