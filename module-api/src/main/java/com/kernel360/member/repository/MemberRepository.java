@@ -1,2 +1,3 @@
-package com.kernel360.member.repository;public class MemberRepository {
+package com.kernel360.member.repository;
+public interface MemberRepository extends MemberRepositoryJpa {
 }
