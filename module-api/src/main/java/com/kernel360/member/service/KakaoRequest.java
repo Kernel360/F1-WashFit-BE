@@ -22,7 +22,8 @@ public class KakaoRequest {
 
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer "+accessToken);
-        headers.set("charset", "utf-8");
+        headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
