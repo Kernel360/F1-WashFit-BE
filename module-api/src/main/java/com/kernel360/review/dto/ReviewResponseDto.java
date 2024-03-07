@@ -11,8 +11,8 @@ import java.util.List;
  * DTO for {@link com.kernel360.review.dto.ReviewResponseDto}
  */
 public record ReviewResponseDto(Long reviewNo,
-                                ProductDetailDto productDto,
-                                MemberDto memberDto,
+                                ProductDetailDto product,
+                                MemberDto member,
                                 BigDecimal starRating,
                                 String title,
                                 String contents,

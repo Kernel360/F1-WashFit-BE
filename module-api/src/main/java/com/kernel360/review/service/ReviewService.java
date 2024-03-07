@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -47,6 +48,14 @@ public class ReviewService {
         log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
+                               .map(ReviewSearchResult::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ReviewResponseDto> getReviewsByMember(Long memberNo, String sortBy, Pageable pageable) {
+        log.info("멤버 리뷰 목록 조회 -> memberNo {}", memberNo);
+
+        return reviewRepository.findAllByCondition(ReviewSearchDto.byMemberNo(memberNo, sortBy), pageable)
                                .map(ReviewSearchResult::toDto);
     }
 
@@ -95,11 +104,13 @@ public class ReviewService {
 
     @Transactional
     public void updateReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
-        isVisibleReview(reviewRequestDto.reviewNo());
+        Review review = isVisibleReview(reviewRequestDto.reviewNo());
+        long productNo = review.getProduct().getProductNo();
+
         isValidStarRating(reviewRequestDto.starRating());
 
         try {
-            reviewRepository.saveAndFlush(reviewRequestDto.toEntity());
+            reviewRepository.saveAndFlush(reviewRequestDto.toEntityForUpdate());
             log.info("리뷰 수정 -> review_no {}", reviewRequestDto.reviewNo());
 
             fileRepository.findByReferenceNo(reviewRequestDto.reviewNo())
@@ -113,7 +124,7 @@ public class ReviewService {
                           });
 
             if (Objects.nonNull(files)) {
-                uploadFiles(files, reviewRequestDto.productNo(), reviewRequestDto.reviewNo());
+                uploadFiles(files, productNo, reviewRequestDto.reviewNo());
             }
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
@@ -136,10 +147,14 @@ public class ReviewService {
         fileRepository.deleteByReferenceNo(reviewNo);
     }
 
-    private void isVisibleReview(Long reviewNo) {
-        if (reviewRepository.findByIdAndIsVisibleTrue(reviewNo).isEmpty()) {
+    private Review isVisibleReview(Long reviewNo) {
+        Optional<Review> review = reviewRepository.findByReviewNoAndIsVisibleTrue(reviewNo);
+
+        if (review.isEmpty()) {
             throw new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW);
         }
+
+        return review.get();
     }
 
     private void isValidStarRating(BigDecimal starRating) {

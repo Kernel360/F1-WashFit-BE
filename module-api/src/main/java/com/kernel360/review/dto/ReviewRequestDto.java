@@ -51,27 +51,21 @@ public record ReviewRequestDto(Long reviewNo,
         );
     }
 
-    public static ReviewRequestDto from(Review entity, List<String> files) {
-        return ReviewRequestDto.of(
-                entity.getReviewNo(),
-                entity.getProduct().getProductNo(),
-                entity.getMember().getMemberNo(),
-                entity.getStarRating(),
-                entity.getTitle(),
-                entity.getContents(),
-                entity.getCreatedAt(),
-                entity.getCreatedBy(),
-                entity.getModifiedAt(),
-                entity.getModifiedBy(),
-                files
-        );
-    }
-
     public Review toEntity() {
         return Review.of(
                 reviewNo,
                 Product.of(productNo),
                 Member.of(memberNo),
+                starRating,
+                title,
+                contents,
+                true
+        );
+    }
+
+    public Review toEntityForUpdate() {
+        return Review.of(
+                reviewNo,
                 starRating,
                 title,
                 contents,

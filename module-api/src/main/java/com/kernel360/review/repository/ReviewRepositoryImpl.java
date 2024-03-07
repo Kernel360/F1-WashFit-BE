@@ -6,7 +6,6 @@ import com.kernel360.review.dto.ReviewSearchResult;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import static com.kernel360.file.entity.QFile.file;
 import static com.kernel360.member.entity.QMember.member;
 import static com.kernel360.product.entity.QProduct.product;
 import static com.kernel360.review.entity.QReview.review;
+import static com.querydsl.core.types.dsl.Expressions.stringTemplate;
 
 @RequiredArgsConstructor
 public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
@@ -75,7 +75,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                         review.modifiedAt,
                         review.modifiedBy,
                         member.memberNo,
-                        member.id,
+                        stringTemplate("SUBSTRING({0}, 1, 2) || REPEAT('*', LENGTH({0}) - 2)", member.id).as("id"),
                         member.age,
                         member.gender,
                         product.productNo,
@@ -84,7 +84,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryDsl {
                         product.imageSource,
                         product.upperItem,
                         product.item,
-                        Expressions.stringTemplate("STRING_AGG({0}, '|')", file.fileUrl).as("fileUrls")
+                        stringTemplate("STRING_AGG({0}, '|')", file.fileUrl).as("fileUrls")
                 ))
                 .from(review)
                 .leftJoin(file)

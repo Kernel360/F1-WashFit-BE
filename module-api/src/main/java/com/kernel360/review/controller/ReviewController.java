@@ -21,13 +21,22 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("")
+    @GetMapping("/product/{productNo}")
     public ResponseEntity<ApiResponse<Page<ReviewResponseDto>>> getReviewsByProduct(
-            @RequestParam(name = "productNo") Long productNo,
+            @PathVariable Long productNo,
             @RequestParam(name = "sortBy", defaultValue = "reviewNo", required = false) String sortBy,
             Pageable pageable) {
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_GET_REVIEWS, reviewService.getReviewsByProduct(productNo, sortBy, pageable));
+    }
+
+    @GetMapping("/member/{memberNo}")
+    public ResponseEntity<ApiResponse<Page<ReviewResponseDto>>> getReviewsByMember(
+            @PathVariable Long memberNo,
+            @RequestParam(name = "sortBy", defaultValue = "reviewNo", required = false) String sortBy,
+            Pageable pageable) {
+
+        return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_GET_REVIEWS, reviewService.getReviewsByMember(memberNo, sortBy, pageable));
     }
 
     @GetMapping("/{reviewNo}")
@@ -38,18 +47,18 @@ public class ReviewController {
 
     @PostMapping("")
     public <T> ResponseEntity<ApiResponse<T>> createReview(
-            @RequestPart ReviewRequestDto reviewRequestDto,
+            @RequestPart ReviewRequestDto review,
             @RequestPart(required = false) List<MultipartFile> files) {
-        reviewService.createReview(reviewRequestDto, files);
+        reviewService.createReview(review, files);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_CREATE_REVIEW);
     }
 
     @PatchMapping("")
     public <T> ResponseEntity<ApiResponse<T>> updateReview(
-            @RequestPart ReviewRequestDto reviewRequestDto,
+            @RequestPart ReviewRequestDto review,
             @RequestPart(required = false) List<MultipartFile> files) {
-        reviewService.updateReview(reviewRequestDto, files);
+        reviewService.updateReview(review, files);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_UPDATE_REVIEW);
     }

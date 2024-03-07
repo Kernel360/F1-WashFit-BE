@@ -51,7 +51,19 @@ public class Review extends BaseEntity {
         this.isVisible = isVisible;
     }
 
+    public Review(Long reviewNo, BigDecimal starRating, String title, String contents, Boolean isVisible) {
+        this.reviewNo = reviewNo;
+        this.starRating = starRating;
+        this.title = title;
+        this.contents = contents;
+        this.isVisible = isVisible;
+    }
+
     public static Review of(Long reviewNo, Product product, Member member, BigDecimal starRating, String title, String contents, Boolean isVisible) {
         return new Review(reviewNo, product, member, starRating, title, contents, isVisible);
+    }
+
+    public static Review of(Long reviewNo, BigDecimal starRating, String title, String contents, Boolean isVisible) {
+        return new Review(reviewNo, starRating, title, contents, isVisible);
     }
 }
