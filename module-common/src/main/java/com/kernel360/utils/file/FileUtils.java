@@ -25,14 +25,14 @@ public class FileUtils {
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
-    @Value("${aws.s3.bucket.url}")
-    private String bucketUrl;
-
     @Value("${spring.profiles.active}")
     private String profile;
 
-    public String upload(S3BucketPath s3BucketPath, MultipartFile multipartFile) {
-        String filePath = makeFilePath(s3BucketPath);
+    @Value("${module.name}")
+    private String moduleName;
+
+    public String upload(String path, MultipartFile multipartFile) {
+        String filePath = makeFilePath(path);
         String filename = makeFileName();
         String fileExtension = getFileExtension(multipartFile.getOriginalFilename());
         String fileKey = String.join("", filePath, filename, fileExtension);
@@ -54,17 +54,15 @@ public class FileUtils {
             throw new BusinessException(CommonErrorCode.FAIL_FILE_UPLOAD);
         }
 
-        return amazonS3.getUrl(bucketName, fileKey).toString();
+        return fileKey;
     }
 
-    private String makeFilePath(S3BucketPath s3BucketPath) {
+    private String makeFilePath(String path) {
+        if (!path.endsWith("/")) {
+            path += "/";
+        }
 
-        return String.join(
-                "/",
-                profile,
-                s3BucketPath.getModulePath(),
-                s3BucketPath.getDomainPath(),
-                s3BucketPath.getCustomPath());
+        return String.join("/", profile, moduleName, path);
     }
 
     private String makeFileName() {
@@ -76,6 +74,7 @@ public class FileUtils {
     }
 
     private String getFileExtension(String originalFilename) {
+        // TODO: 확장자에 대한 검사 로직 추가할 수 있을지 체크
         try {
             return originalFilename.substring(originalFilename.lastIndexOf("."));
         } catch (StringIndexOutOfBoundsException e) {
@@ -83,7 +82,7 @@ public class FileUtils {
         }
     }
 
-    public void delete(String fileUrl) {
-        amazonS3.deleteObject(bucketName, fileUrl.split(bucketUrl)[1]);
+    public void delete(String fileKey) {
+        amazonS3.deleteObject(bucketName, fileKey);
     }
 }
