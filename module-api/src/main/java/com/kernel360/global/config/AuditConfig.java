@@ -1,4 +1,4 @@
-package com.kernel360.member.config;
+package com.kernel360.global.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ public class AuditConfig implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String createId = Optional.ofNullable(request.getParameter("id")).orElse("admin");
+        String createId = Optional.ofNullable(request.getParameter("Id")).orElse("admin");
 
         return Optional.of(createId);
     }
