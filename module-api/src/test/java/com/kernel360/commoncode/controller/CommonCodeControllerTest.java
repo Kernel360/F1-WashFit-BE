@@ -21,7 +21,7 @@ class CommonCodeControllerTest extends ControllerTest {
         String pathVariable = "color";
         Long codeNo = 1L;
         String codeName = "테스트용 코드";
-        Integer upperNo = null;
+        Long upperNo = null;
         String upperName = null;
         Integer sortOrder = 1;
         Boolean isUsed = true;

@@ -29,7 +29,7 @@ class CommonCodeControllerRestDocsTest extends ControllerTest {
                 CommonCodeDto.of(
                         11L,
                         "Sedan",
-                        10,
+                        10L,
                         "cartype",
                         1,
                         true,
@@ -41,7 +41,7 @@ class CommonCodeControllerRestDocsTest extends ControllerTest {
                 CommonCodeDto.of(
                         12L,
                         "Hatchback",
-                        10,
+                        10L,
                         "cartype",
                         2,
                         true,
