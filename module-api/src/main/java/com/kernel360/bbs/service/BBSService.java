@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public class BBSService {
     private final BBSRepository bbsRepository;
 
-    public Page<BBSDto> getBBSWithCondition(String sortType, String keyword, Pageable pageable) {
+    public Page<BBSDto> getBBSWithCondition(String bbsType, String keyword, Pageable pageable) {
 
-        return bbsRepository.getBBSWithCondition(sortType, keyword, pageable);
+        return bbsRepository.getBBSWithCondition(bbsType, keyword, pageable).map(BBSDto::from);
     }
 }

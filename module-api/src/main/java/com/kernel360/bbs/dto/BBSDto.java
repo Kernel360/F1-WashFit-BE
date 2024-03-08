@@ -1,6 +1,7 @@
 package com.kernel360.bbs.dto;
 
 import com.kernel360.bbs.entity.BBS;
+import com.kernel360.member.dto.MemberDto;
 import com.kernel360.member.entity.Member;
 import org.springframework.cglib.core.Local;
 
@@ -22,8 +23,9 @@ public record BBSDto(
         LocalDate modifiedAt,
         String modifiedBy,
         Long viewCount,
-        Member member
+        MemberDto memberDto
     ) {
+
     public static BBSDto of(
             Long bbsNo,
             Long upperNo,
@@ -35,8 +37,8 @@ public record BBSDto(
             String createdBy,
             LocalDate modifiedAt,
             String modifiedBy,
-            Long viewConut,
-            Member member
+            Long viewCount,
+            MemberDto memberDto
     ){
         return new BBSDto(
             bbsNo,
@@ -49,8 +51,8 @@ public record BBSDto(
             createdBy,
             modifiedAt,
             modifiedBy,
-            viewConut,
-            member
+            viewCount,
+            memberDto
         );
     }
 
@@ -66,8 +68,9 @@ public record BBSDto(
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
                 entity.getModifiedBy(),
-                entity.getViewConut(),
-                entity.getMember()
+                entity.getViewCount(),
+                MemberDto.from(entity.getMember())
         );
     }
+
 }

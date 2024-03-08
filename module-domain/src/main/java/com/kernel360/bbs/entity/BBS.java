@@ -27,7 +27,7 @@ public class BBS extends BaseEntity {
 
     private Boolean isVisible;
 
-    private Long viewConut;
+    private Long viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_no", nullable = false, updatable = false)
@@ -41,7 +41,7 @@ public class BBS extends BaseEntity {
         this.contents = contents;
         this.isVisible = isVisible;
         this.member = member;
-        this.viewConut = viewConut;
+        this.viewCount = viewConut;
     }
 
     public BBS of (Long bbsNo, Long upperNo, String type, String title, String contents, Boolean isVisible, Long viewConut, Member member){

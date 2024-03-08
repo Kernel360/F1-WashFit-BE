@@ -2,24 +2,23 @@ package com.kernel360.bbs.repository;
 
 import com.kernel360.bbs.dto.BBSDto;
 import com.kernel360.bbs.entity.BBS;
-import com.kernel360.file.entity.FileReferType;
-import com.kernel360.review.dto.ReviewSearchDto;
-import com.kernel360.review.dto.ReviewSearchResult;
+import com.kernel360.bbs.enumset.BBSType;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
+import static com.kernel360.bbs.entity.QBBS.bBS;
 import static com.kernel360.member.entity.QMember.member;
-import static com.kernel360.product.entity.QProduct.product;
-import static com.kernel360.review.entity.QReview.review;
-import static com.querydsl.core.types.ExpressionUtils.orderBy;
-import static com.querydsl.core.types.dsl.Expressions.stringTemplate;
+import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
 public class BBSRepositoryDSLImpl implements BBSRepositoryDSL {
@@ -27,69 +26,45 @@ public class BBSRepositoryDSLImpl implements BBSRepositoryDSL {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<BBSDto> getBBSWithCondition(String sortType, String keyword, Pageable pageable) {
+    public Page<BBS> getBBSWithCondition(String bbsType, String keyword, Pageable pageable) {
 
-        List<BBSDto> bbs = getBBSWithMember().
-                where(
-                        titleLike
-                ).
-                .orderBy(sort(sortType))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        Predicate finalPredicate = bBS.isVisible.eq(true)
+                                                .and(bBS.type.eq(BBSType.valueOf(bbsType).name()))
+                                                .and(keywordContains(keyword));
 
-        JPAQuery<Long> totalCountQuery = queryFactory
-                .select(bbs.count())
-                .from(bbs)
+        List<BBS> bbs = getBBSWithMember().
+                                            where(finalPredicate)
+                                            .orderBy(bBS.createdAt.desc())
+                                            .offset(pageable.getOffset())
+                                            .limit(pageable.getPageSize())
+                                            .fetch();
+
+        Long totalCount = queryFactory
+                .select(bBS.count())
+                .from(bBS)
                 .where(
-                        bbs.isVisible.eq(true)
-                );
+                        keywordContains(keyword),
+                        bBS.isVisible.eq(true)
+                )
+                .fetchOne();
 
-        return PageableExecutionUtils.getPage(bbs, pageable, totalCountQuery::fetchOne);
+        return new PageImpl<>(bbs, pageable, totalCount);
+        //return PageableExecutionUtils.getPage(bbs, pageable, totalCount);
     }
 
-    @Override
-    public Page<ReviewSearchResult> findAllByCondition(ReviewSearchDto condition, Pageable pageable) {
-        List<ReviewSearchResult> reviews =
-                getJoinedResults()
-                        .where(
-                                productNoEq(condition.productNo()), // 조건절 메서드 별도 생성
-                                memberNoEq(condition.memberNo())
-                        )
-                        .groupBy(review.reviewNo, member.memberNo, member.id, member.age, member.gender, product.productNo)
-                        .orderBy(sort(condition.sortBy()))
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .fetch();
-
-        JPAQuery<Long> totalCountQuery = queryFactory
-                .select(review.count())
-                .from(review)
-                .where(
-                        review.isVisible.eq(true),
-                        productNoEq(condition.productNo()),
-                        memberNoEq(condition.memberNo())
-                );
-
-        return PageableExecutionUtils.getPage(reviews, pageable, totalCountQuery::fetchOne);
-    }
-
-    private JPAQuery<BBSDto> getBBSWithMember() {
+    private JPAQuery<BBS> getBBSWithMember() {
         return queryFactory
-                .select(Projections.fields(BBSDto.class,
-                        bbs.bbsNo,
-                        bbs.title,
-                        bbs.contents,
-                        bbs.createdAt,
-                        bbs.createdBy,
-                        bbs.modifiedAt,
-                        bbs.modifiedBy,
-                        member.memberNo,
-                        member.id,
-                        member.age,
-                        member.gender
-                ))
-                .from(bbs)
-                .join(member);
+                .select(bBS)
+                .from(bBS)
+                .join(member).on(bBS.member.memberNo.eq(member.memberNo));
     }
+
+    private BooleanExpression keywordContains(String keyword) {
+        return hasText(keyword) ?
+                bBS.title.contains(keyword)
+               .or(bBS.contents.contains(keyword))
+               .or(bBS.member.id.eq(keyword))
+                : null;
+    }
+
 }

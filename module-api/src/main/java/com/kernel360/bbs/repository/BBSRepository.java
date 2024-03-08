@@ -1,11 +1,9 @@
 package com.kernel360.bbs.repository;
 
-import com.kernel360.bbs.dto.BBSDto;
+import com.kernel360.bbs.entity.BBS;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface BBSRepository {
-    Page<BBSDto> getBBSWithCondition(String sortType, String keyword, Pageable pageable);
+public interface BBSRepository extends BBSRepositoryJPA, BBSRepositoryDSL {
+    Page<BBS> getBBSWithCondition(String bbsType, String keyword, Pageable pageable);
 }
