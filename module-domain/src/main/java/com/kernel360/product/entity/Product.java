@@ -171,6 +171,9 @@ public class Product extends BaseEntity {
         this.violationInfo = violationInfo;
     }
 
+    /**
+     * review request
+     **/
     private Product(Long productNo) {
         this.productNo = productNo;
     }
@@ -210,6 +213,9 @@ public class Product extends BaseEntity {
                 fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, violation_info);
     }
 
+    /**
+     * review request
+     **/
     public static Product of(Long productNo) {
         return new Product(productNo);
     }
