@@ -1,7 +1,6 @@
-package com.kernel360.washzonereview;
+package com.kernel360.washzonereview.repository;
 
 import com.kernel360.washzonereview.entity.WashzoneReview;
-import com.kernel360.washzonereview.repository.WashzoneReviewRepositoryJpa;
 
 import java.util.Optional;
 

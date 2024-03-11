@@ -1,4 +1,4 @@
-package com.kernel360.washzonereview;
+package com.kernel360.washzonereview.repository;
 
 import com.kernel360.file.entity.FileReferType;
 import com.kernel360.washzonereview.dto.WashzoneReviewSearchDto;
