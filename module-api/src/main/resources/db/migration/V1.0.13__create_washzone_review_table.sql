@@ -12,7 +12,8 @@ CREATE TABLE if not exists Washzone_Review
     modified_at        DATE          NULL,
     modified_by        VARCHAR       NULL,
     FOREIGN KEY (washzone_no) REFERENCES Wash_zone (washzone_no),
-    FOREIGN KEY (member_no) REFERENCES Member (member_no)
+    FOREIGN KEY (member_no) REFERENCES Member (member_no),
+    CONSTRAINT washzone_review_ukey UNIQUE (member_no, washzone_no)
 );
 
 AlTER SEQUENCE washzone_review_washzone_review_no_seq increment by 50;

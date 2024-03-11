@@ -53,11 +53,11 @@ public class WashzoneReviewRepositoryImpl implements WashzoneReviewRepositoryDsl
     }
 
     @Override
-    public WashzoneReviewSearchResult findByReviewNo(Long reviewNo) {
+    public WashzoneReviewSearchResult findByWashzoneReviewNo(Long washzoneReviewNo) {
         return getJoinedResults()
                 .where(
                         washzoneReview.isVisible.eq(true),
-                        washzoneReview.washzoneReviewNo.eq(reviewNo)
+                        washzoneReview.washzoneReviewNo.eq(washzoneReviewNo)
                 )
                 .groupBy(washzoneReview.washzoneReviewNo, member.memberNo, member.id, member.age, member.gender, washZone.washZoneNo)
                 .fetchOne();
