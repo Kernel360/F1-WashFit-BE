@@ -1,6 +1,8 @@
 package com.kernel360.modulebatch.reportedproduct.job.core;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
+import com.kernel360.modulebatch.global.BaseJobExecutionListener;
+import com.kernel360.modulebatch.global.BaseStepExecutionListener;
 import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductDetailItemProcessor;
 import jakarta.persistence.EntityManagerFactory;
 import java.net.ConnectException;
@@ -8,8 +10,6 @@ import java.nio.channels.ClosedChannelException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -19,6 +19,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,20 +29,23 @@ import org.springframework.web.client.ResourceAccessException;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "job.name", havingValue = FetchReportedProductDetailJobConfig.JOB_NAME)
 public class FetchReportedProductDetailJobConfig {
 
+    public static final String JOB_NAME = "FetchReportedProductDetailJob";
     private final ReportedProductDetailItemProcessor reportedProductDetailItemProcessor;
-
+    private final BaseJobExecutionListener baseJobExecutionListener;
+    private final BaseStepExecutionListener baseStepExecutionListener;
     private final EntityManagerFactory emf;
 
     @Bean
-    public Job fetchReportedProductDetailJob(JobRepository jobRepository,
+    public Job FetchReportedProductDetailJob(JobRepository jobRepository,
                                              @Qualifier("fetchReportedProductDetailStep") Step fetchReportedProductDetailStep) {
         log.info("Fetch ReportedProduct detail Job Build Configuration");
-        return new JobBuilder("fetchReportedProductDetailJob", jobRepository)
+        return new JobBuilder(JOB_NAME, jobRepository)
                 .start(fetchReportedProductDetailStep)
                 .incrementer(new RunIdIncrementer())
-                .listener(new FetchReportedProductDetailExecutionListener())
+                .listener(baseJobExecutionListener)
                 .build();
     }
 
@@ -50,6 +54,7 @@ public class FetchReportedProductDetailJobConfig {
                                                PlatformTransactionManager transactionManager) {
         log.info("Fetch ReportedProduct detail Step Build Configuration");
         return new StepBuilder("fetchReportedProductDetailStep", jobRepository)
+                .listener(baseStepExecutionListener)
                 .<ReportedProduct, ReportedProduct>chunk(10, transactionManager)
                 .reader(productDetailItemReader()) // reported_product 테이블 읽어서 엔티티를 전달
                 .processor(reportedProductDetailItemProcessor) // 전달받은 엔티티로 detail 조회, 엔티티로 변환
@@ -83,19 +88,4 @@ public class FetchReportedProductDetailJobConfig {
 
         return jpaItemWriter;
     }
-
-    //-- Execution Listener --//
-
-    public static class FetchReportedProductDetailExecutionListener implements JobExecutionListener {
-        @Override
-        public void beforeJob(JobExecution jobExecution) {
-            log.info("{} starts", jobExecution.getJobInstance().getJobName());
-        }
-
-        @Override
-        public void afterJob(JobExecution jobExecution) {
-            log.info("{} ends", jobExecution.getJobInstance().getJobName());
-        }
-    }
-
 }
