@@ -33,11 +33,11 @@ public class ConcernedProductToProductListItemProcessor implements ItemProcessor
     private final BrandRepository brandRepository;
 
     @Override
-    public List<Product> process(Brand brand) throws Exception {
+    public List<Product> process(Brand brand) {
         List<ConcernedProduct> concernedProductList = concernedProductRepository
                 .findByBrandNameAndCompanyName(
-                        "%" + brand.getBrandName().replaceAll(" ", "%") + "%",
-                        "%" + brand.getCompanyName().replaceAll(" ", "%") + "%");
+                        "%" + brand.getBrandName().replace(" ", "%") + "%",
+                        "%" + brand.getCompanyName().replace(" ", "%") + "%");
 
         List<ProductDto> productDtoList = concernedProductList.stream()
                                                               .filter(cp -> cp.getInspectedOrganization() != null)
