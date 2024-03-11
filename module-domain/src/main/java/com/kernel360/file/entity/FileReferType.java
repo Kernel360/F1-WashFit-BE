@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum FileReferType {
-    REVIEW("review", "RV");
+    REVIEW("review", "RV"),
+    WASHZONE_REVIEW("washzone-review", "WZRV");
 
     private final String domain;
     private final String code;
