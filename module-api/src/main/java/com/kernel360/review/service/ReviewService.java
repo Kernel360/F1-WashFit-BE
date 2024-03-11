@@ -45,7 +45,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewResponseDto> getReviewsByProduct(Long productNo, String sortBy, Pageable pageable) {
-        log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
+        log.info("제품별 리뷰 목록 조회 -> product_no {}", productNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
                                .map(ReviewSearchResult::toDto);
@@ -53,7 +53,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewResponseDto> getReviewsByMember(Long memberNo, String sortBy, Pageable pageable) {
-        log.info("멤버 리뷰 목록 조회 -> memberNo {}", memberNo);
+        log.info("멤버별 제품 리뷰 목록 조회 -> member_no {}", memberNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byMemberNo(memberNo, sortBy), pageable)
                                .map(ReviewSearchResult::toDto);
@@ -61,7 +61,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public ReviewResponseDto getReview(Long reviewNo) {
-        log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
+        log.info("제품 리뷰 단건 조회 -> review_no {}", reviewNo);
         ReviewSearchResult review = reviewRepository.findByReviewNo(reviewNo);
 
         if (Objects.isNull(review)) {
@@ -79,7 +79,7 @@ public class ReviewService {
 
         try {
             review = reviewRepository.saveAndFlush(reviewRequestDto.toEntity());
-            log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
+            log.info("제품 리뷰 등록 -> review_no {}", review.getReviewNo());
 
             if (Objects.nonNull(files)) {
                 uploadFiles(files, reviewRequestDto.productNo(), review.getReviewNo());
@@ -98,7 +98,7 @@ public class ReviewService {
             String fileUrl = String.join("/", bucketUrl, fileKey);
 
             File fileInfo = fileRepository.save(File.of(null, file.getOriginalFilename(), fileKey, fileUrl, REVIEW_CODE, reviewNo));
-            log.info("리뷰 파일 등록 -> file_no {}", fileInfo.getFileNo());
+            log.info("제품 리뷰 파일 등록 -> file_no {}", fileInfo.getFileNo());
         });
     }
 
@@ -111,7 +111,7 @@ public class ReviewService {
 
         try {
             reviewRepository.saveAndFlush(reviewRequestDto.toEntityForUpdate());
-            log.info("리뷰 수정 -> review_no {}", reviewRequestDto.reviewNo());
+            log.info("제품 리뷰 수정 -> review_no {}", reviewRequestDto.reviewNo());
 
             fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewRequestDto.reviewNo())
                           .stream()
@@ -119,7 +119,7 @@ public class ReviewService {
                               if (!reviewRequestDto.files().contains(file.getFileUrl())) {
                                   fileUtils.delete(file.getFileKey());
                                   fileRepository.deleteById(file.getFileNo());
-                                  log.info("리뷰 파일 삭제 -> file_no {}", file.getFileNo());
+                                  log.info("제품 리뷰 파일 삭제 -> file_no {}", file.getFileNo());
                               }
                           });
 
@@ -136,13 +136,13 @@ public class ReviewService {
         isVisibleReview(reviewNo);
 
         reviewRepository.deleteById(reviewNo);
-        log.info("리뷰 삭제 -> review_no {}", reviewNo);
+        log.info("제품 리뷰 삭제 -> review_no {}", reviewNo);
 
         fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo)
                       .stream()
                       .forEach(file -> {
                           fileUtils.delete(file.getFileKey());
-                          log.info("리뷰 파일 삭제 -> file_no {}", file.getFileNo());
+                          log.info("제품 리뷰 파일 삭제 -> file_no {}", file.getFileNo());
                       });
         fileRepository.deleteByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo);
     }
