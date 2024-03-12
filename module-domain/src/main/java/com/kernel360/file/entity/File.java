@@ -32,7 +32,7 @@ public class File extends BaseEntity {
     @Column(name = "reference_no", nullable = false)
     private Long referenceNo;
 
-    public File(Long fileNo, String fileName, String fileKey, String fileUrl, String referenceType, Long referenceNo) {
+    private File(Long fileNo, String fileName, String fileKey, String fileUrl, String referenceType, Long referenceNo) {
         this.fileNo = fileNo;
         this.fileName = fileName;
         this.fileKey = fileKey;
