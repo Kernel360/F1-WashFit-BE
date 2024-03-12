@@ -13,7 +13,7 @@ public class AuditConfig implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String createId = Optional.ofNullable(request.getParameter("Id")).orElse("admin");
+        String createId = Optional.ofNullable(request.getHeader("Id")).orElse("admin");
 
         return Optional.of(createId);
     }
