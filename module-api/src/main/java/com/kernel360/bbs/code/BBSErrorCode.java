@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum BBSErrorCode implements ErrorCode {
 
     FAILED_GET_BBS_LIST(HttpStatus.NO_CONTENT.value(), "BMC001", "게시판 목록을 찾을 수 없음."),
-    FAILED_GET_BBS_ONE(HttpStatus.NO_CONTENT.value(), "BMC002", "게시글을 찾을 수 없음.");
+    FAILED_GET_BBS_VIEW(HttpStatus.NO_CONTENT.value(), "BMC002", "게시글을 찾을 수 없음.");
 
     private final int status;
     private final String code;
@@ -16,16 +16,16 @@ public enum BBSErrorCode implements ErrorCode {
 
     @Override
     public int getStatus() {
-        return 0;
+        return status;
     }
 
     @Override
     public String getCode() {
-        return null;
+        return code;
     }
 
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 }
