@@ -151,7 +151,7 @@ class MemberControllerTest extends ControllerTest {
         MemberCredentialDto credentialDto = MemberCredentialDto.of(null, null, "kernel360", null);
         MemberDto memberDto = MemberDto.of("testMemberId", "testPassword001");
 
-        given(memberService.findByMemberId(credentialDto.memberId())).willReturn(memberDto);
+        given(memberService.findOneByIdForAccountTypeByPlatform(credentialDto.memberId())).willReturn(memberDto);
         given(findCredentialService.generatePasswordResetPageUri(memberDto)).willReturn("테스트 URI");
 
         ObjectMapper objectMapper = new ObjectMapper();
