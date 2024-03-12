@@ -2,10 +2,7 @@ package com.kernel360.bbs.dto;
 
 import com.kernel360.bbs.entity.BBS;
 import com.kernel360.member.dto.MemberDto;
-import com.kernel360.member.entity.Member;
-import org.springframework.cglib.core.Local;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -72,5 +69,18 @@ public record BBSDto(
                 MemberDto.from(entity.getMember())
         );
     }
+
+
+//    public BBS toEntity() {
+//        return BBS.create(
+//                this.bbsNo(),
+//                this.upperNo(),
+//                this.title(),
+//                this.contents()
+//
+//        );
+//    }
+
+
 
 }
