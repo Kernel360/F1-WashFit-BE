@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FileRepositoryJpa extends JpaRepository<File, Long> {
-    List<File> findByReferenceNo(Long referenceNo);
+    List<File> findByReferenceTypeAndReferenceNo(String referenceType, Long referenceNo);
 
-    void deleteByReferenceNo(Long referenceNo);
+    void deleteByReferenceTypeAndReferenceNo(String referenceType, Long referenceNo);
 }

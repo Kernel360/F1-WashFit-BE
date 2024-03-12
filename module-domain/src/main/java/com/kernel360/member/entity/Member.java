@@ -123,10 +123,16 @@ public class Member extends BaseEntity {
         this.age = age;
     }
 
+    /**
+     * review request
+     **/
     private Member (Long memberNo) {
         this.memberNo = memberNo;
     }
 
+    /**
+     * review request
+     **/
     public static Member of(Long memberNo) {
         return new Member(memberNo);
     }

@@ -113,7 +113,7 @@ public class ReviewService {
             reviewRepository.saveAndFlush(reviewRequestDto.toEntityForUpdate());
             log.info("리뷰 수정 -> review_no {}", reviewRequestDto.reviewNo());
 
-            fileRepository.findByReferenceNo(reviewRequestDto.reviewNo())
+            fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewRequestDto.reviewNo())
                           .stream()
                           .forEach(file -> {
                               if (!reviewRequestDto.files().contains(file.getFileUrl())) {
@@ -138,13 +138,13 @@ public class ReviewService {
         reviewRepository.deleteById(reviewNo);
         log.info("리뷰 삭제 -> review_no {}", reviewNo);
 
-        fileRepository.findByReferenceNo(reviewNo)
+        fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo)
                       .stream()
                       .forEach(file -> {
                           fileUtils.delete(file.getFileKey());
                           log.info("리뷰 파일 삭제 -> file_no {}", file.getFileNo());
                       });
-        fileRepository.deleteByReferenceNo(reviewNo);
+        fileRepository.deleteByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo);
     }
 
     private Review isVisibleReview(Long reviewNo) {

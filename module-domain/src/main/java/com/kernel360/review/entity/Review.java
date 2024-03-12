@@ -51,7 +51,7 @@ public class Review extends BaseEntity {
         this.isVisible = isVisible;
     }
 
-    public Review(Long reviewNo, BigDecimal starRating, String title, String contents, Boolean isVisible) {
+    private Review(Long reviewNo, BigDecimal starRating, String title, String contents, Boolean isVisible) {
         this.reviewNo = reviewNo;
         this.starRating = starRating;
         this.title = title;
