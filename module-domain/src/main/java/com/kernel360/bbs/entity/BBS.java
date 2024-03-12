@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class BBS extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bbs_id_gen")
-    @SequenceGenerator(name = "bbs_id_gen", sequenceName = "bbs_no_seq")
+    @SequenceGenerator(name = "bbs_id_gen", sequenceName = "bbs_bbs_no_seq")
     private Long bbsNo;
 
     private Long upperNo;
@@ -33,7 +33,7 @@ public class BBS extends BaseEntity {
     @JoinColumn(name = "member_no", nullable = false, updatable = false)
     private Member member;
 
-    public BBS(Long bbsNo, Long upperNo, String type, String title, String contents, Boolean isVisible, Long viewConut, Member member) {
+    private BBS(Long bbsNo, Long upperNo, String type, String title, String contents, Boolean isVisible, Long viewConut, Member member) {
         this.bbsNo = bbsNo;
         this.upperNo = upperNo;
         this.type = type;
@@ -44,7 +44,9 @@ public class BBS extends BaseEntity {
         this.viewCount = viewConut;
     }
 
-    public BBS of (Long bbsNo, Long upperNo, String type, String title, String contents, Boolean isVisible, Long viewConut, Member member){
-        return new BBS (bbsNo, upperNo, type, title, contents, isVisible, viewConut, member);
+    public static BBS save(Long bbsNo, Long upperNo, String type, String title, String contents, Boolean isVisible, Long viewCount, Member member){
+
+        return new BBS (bbsNo, upperNo, type, title, contents, isVisible, viewCount, member);
     }
+
 }
