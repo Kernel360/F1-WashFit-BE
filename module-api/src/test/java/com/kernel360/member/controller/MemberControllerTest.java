@@ -15,6 +15,7 @@ import com.kernel360.common.ControllerTest;
 import com.kernel360.member.dto.MemberCredentialDto;
 import com.kernel360.member.dto.MemberDto;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ class MemberControllerTest extends ControllerTest {
                 "",
                 null,
                 null,
-                LocalDate.now(),
+                LocalDateTime.now(),
                 "test01",
                 null,
                 null,
