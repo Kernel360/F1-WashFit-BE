@@ -3,7 +3,7 @@ package com.kernel360.bbs.dto;
 import com.kernel360.bbs.entity.BBS;
 import com.kernel360.member.dto.MemberDto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * DTO for {@link com.kernel360.bbs.entity.BBS}
@@ -15,9 +15,9 @@ public record BBSDto(
         String title,
         String contents,
         Boolean isVisible,
-        LocalDate createdAt,
+        LocalDateTime createdAt,
         String createdBy,
-        LocalDate modifiedAt,
+        LocalDateTime modifiedAt,
         String modifiedBy,
         Long viewCount,
         MemberDto memberDto
@@ -30,9 +30,9 @@ public record BBSDto(
             String title,
             String contents,
             Boolean isVisible,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy,
             Long viewCount,
             MemberDto memberDto

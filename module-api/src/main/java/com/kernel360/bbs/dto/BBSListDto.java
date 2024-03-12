@@ -3,7 +3,7 @@ package com.kernel360.bbs.dto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @RequiredArgsConstructor
@@ -11,7 +11,7 @@ public class BBSListDto {
     Long bbsNo;
     String type;
     String title;
-    LocalDate createdAt;
+    LocalDateTime createdAt;
     String createdBy;
     Long viewCount;
     Long memberNo;
