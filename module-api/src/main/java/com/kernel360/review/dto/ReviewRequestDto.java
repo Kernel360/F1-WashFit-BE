@@ -5,7 +5,7 @@ import com.kernel360.product.entity.Product;
 import com.kernel360.review.entity.Review;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -17,9 +17,9 @@ public record ReviewRequestDto(Long reviewNo,
                                BigDecimal starRating,
                                String title,
                                String contents,
-                               LocalDate createdAt,
+                               LocalDateTime createdAt,
                                String createdBy,
-                               LocalDate modifiedAt,
+                               LocalDateTime modifiedAt,
                                String modifiedBy,
                                List<String> files) {
 
@@ -30,9 +30,9 @@ public record ReviewRequestDto(Long reviewNo,
             BigDecimal starRating,
             String title,
             String contents,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy,
             List<String> files
     ) {

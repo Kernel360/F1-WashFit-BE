@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +23,9 @@ public class ReviewSearchResult {
     BigDecimal starRating;
     String title;
     String contents;
-    LocalDate createdAt;
+    LocalDateTime createdAt;
     String createdBy;
-    LocalDate modifiedAt;
+    LocalDateTime modifiedAt;
     String modifiedBy;
 
     // member
