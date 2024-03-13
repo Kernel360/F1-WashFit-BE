@@ -51,9 +51,9 @@ public class FetchViolatedProductDetailJobConfig {
     @Bean
     public Step fetchViolatedProductDetailStep(JobRepository jobRepository,
                                                PlatformTransactionManager transactionManager) {
-        int chunkSize = 100;
+
         return new StepBuilder("fetchViolatedProductDetailStep", jobRepository)
-                .<ViolatedProduct, ViolatedProduct>chunk(chunkSize, transactionManager)
+                .<ViolatedProduct, ViolatedProduct>chunk(100, transactionManager)
                 .reader(fetchViolatedProductDetailJpaCursorItemReader())
                 .processor(fetchViolatedProductDetailItemProcessor)
                 .writer(fetchViolatedProductDetailJpaItemWriter())
