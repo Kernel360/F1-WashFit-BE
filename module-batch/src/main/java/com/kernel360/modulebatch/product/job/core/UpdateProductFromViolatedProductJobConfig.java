@@ -1,18 +1,15 @@
 package com.kernel360.modulebatch.product.job.core;
 
+import com.kernel360.modulebatch.global.BaseJobExecutionListener;
+import com.kernel360.modulebatch.global.BaseStepExecutionListener;
 import com.kernel360.modulebatch.product.dto.ProductJoinDto;
 import com.kernel360.modulebatch.product.job.infra.UpdateProductFromViolatedProductItemProcessor;
 import com.kernel360.product.entity.Product;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -23,6 +20,7 @@ import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilde
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.database.orm.JpaNativeQueryProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -30,19 +28,22 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "job.name", havingValue = UpdateProductFromViolatedProductJobConfig.JOB_NAME)
 public class UpdateProductFromViolatedProductJobConfig {
+    public static final String JOB_NAME = "UpdateProductFromViolatedProductJob";
 
     private final EntityManagerFactory emf;
-
-    private final UpdateProductFromViolatedProductItemProcessor updateProductFromViolatedProductItemProcessor;
+    private final UpdateProductFromViolatedProductItemProcessor updateProductItemProcessor;
+    private final BaseJobExecutionListener baseJobExecutionListener;
+    private final BaseStepExecutionListener baseStepExecutionListener;
 
     @Bean
-    public Job updateProductFromViolatedProductJob(JobRepository jobRepository,
+    public Job UpdateProductFromViolatedProductJob(JobRepository jobRepository,
                                                    @Qualifier("updateProductFromViolatedProductStep") Step updateProductFromViolatedProductStep) {
 
-        return new JobBuilder("updateProductFromViolatedProductJob", jobRepository)
+        return new JobBuilder(JOB_NAME, jobRepository)
                 .start(updateProductFromViolatedProductStep)
-                .listener(new UpdateProductFromViolatedProductJobListener())
+                .listener(baseJobExecutionListener)
                 .build();
     }
 
@@ -53,9 +54,9 @@ public class UpdateProductFromViolatedProductJobConfig {
         return new StepBuilder("updateProductFromViolatedProductStep", jobRepository)
                 .<ProductJoinDto, Product>chunk(100, transactionManager)
                 .reader(updateProductFromViolatedProductJpaPagingItemReader())
-                .processor(updateProductFromViolatedProductItemProcessor)
+                .processor(updateProductItemProcessor)
                 .writer(updateProductFromViolatedProductJpaItemWriter())
-                .listener(new UpdateProductFromViolatedProductStepListener())
+                .listener(baseStepExecutionListener)
                 .build();
     }
 
@@ -89,38 +90,5 @@ public class UpdateProductFromViolatedProductJobConfig {
         return new JpaItemWriterBuilder<Product>()
                 .entityManagerFactory(emf)
                 .build();
-    }
-
-
-    //-- Execution Listener --//
-    public static class UpdateProductFromViolatedProductJobListener implements JobExecutionListener {
-        @Override
-        public void beforeJob(JobExecution jobExecution) {
-            log.info("{} starts", jobExecution.getJobInstance().getJobName());
-        }
-
-        @Override
-        public void afterJob(JobExecution jobExecution) {
-            log.info("{} ends", jobExecution.getJobInstance().getJobName());
-        }
-    }
-
-    public static class UpdateProductFromViolatedProductStepListener implements StepExecutionListener {
-        @Override
-        public void beforeStep(StepExecution stepExecution) {
-            log.info("{} starts", stepExecution.getStepName());
-        }
-
-        @Override
-        public ExitStatus afterStep(StepExecution stepExecution) {
-            log.info("StepExecutionListener - afterStep, step name: {}, status: {}", stepExecution.getStepName(),
-                    stepExecution.getStatus());
-            log.info(
-                    "StepExecutionListener - ReadCount: {}, WriteCount: {}, FilterCount: {}, ReadSkipCount: {}, ProcessSkipCount: {}, WriteSkipCount: {}",
-                    stepExecution.getReadCount(), stepExecution.getWriteCount(), stepExecution.getFilterCount(),
-                    stepExecution.getReadSkipCount(), stepExecution.getProcessSkipCount(),
-                    stepExecution.getWriteSkipCount());
-            return StepExecutionListener.super.afterStep(stepExecution);
-        }
     }
 }

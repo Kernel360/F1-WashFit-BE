@@ -1,23 +1,25 @@
 package com.kernel360.commoncode.controller;
 
-import com.kernel360.common.ControllerTest;
-import com.kernel360.commoncode.dto.CommonCodeDto;
-import org.junit.jupiter.api.Test;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.ResultActions;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
 import static com.kernel360.common.utils.RestDocumentUtils.getDocumentRequest;
 import static com.kernel360.common.utils.RestDocumentUtils.getDocumentResponse;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.kernel360.common.ControllerTest;
+import com.kernel360.commoncode.dto.CommonCodeDto;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
 
 // FIXME :: 삭제 예정 파일입니다
 class CommonCodeControllerRestDocsTest extends ControllerTest {
@@ -34,7 +36,7 @@ class CommonCodeControllerRestDocsTest extends ControllerTest {
                         1,
                         true,
                         "세단",
-                        LocalDate.now(),
+                        LocalDateTime.now(),
                         "admin",
                         null,
                         null),
@@ -46,7 +48,7 @@ class CommonCodeControllerRestDocsTest extends ControllerTest {
                         2,
                         true,
                         "해치백",
-                        LocalDate.now(),
+                        LocalDateTime.now(),
                         "admin",
                         null,
                         null)
