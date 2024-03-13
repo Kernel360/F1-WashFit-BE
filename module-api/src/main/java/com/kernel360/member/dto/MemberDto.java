@@ -153,4 +153,26 @@ public record MemberDto(Long memberNo,
                 null
         );
     }
+
+    /** find review **/
+    public static MemberDto of(
+            Long memberNo,
+            String id,
+            int age,
+            int gender
+    ){
+        return new MemberDto(
+                memberNo,
+                id,
+                null,
+                null,
+                Gender.ordinalToName(gender),
+                Age.ordinalToValue(age),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
 }

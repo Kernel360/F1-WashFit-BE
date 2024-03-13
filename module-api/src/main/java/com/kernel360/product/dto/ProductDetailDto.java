@@ -1,10 +1,6 @@
 package com.kernel360.product.dto;
 
 import com.kernel360.product.entity.Product;
-import jakarta.persistence.Column;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 
@@ -114,6 +110,51 @@ public record ProductDetailDto(
                 createdBy,
                 modifiedAt,
                 modifiedBy
+        );
+    }
+
+    /** find review **/
+    public static ProductDetailDto of(
+            Long   productNo,
+            String productName,
+            String imageSource,
+            String companyName,
+            String upperItem,
+            String item
+    ) {
+        return new ProductDetailDto(
+                productNo,
+                productName,
+                null,
+                imageSource,
+                null,
+                null,
+                null,
+                companyName,
+                null,
+                null,
+                null,
+                upperItem,
+                item,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 

@@ -13,7 +13,6 @@ public record ReviewSearchDto(
         return ReviewSearchDto.of(productNo, null, sortBy);
     }
 
-    // TODO: 추후 mypage 리뷰 관리에서 사용 예정
     public static ReviewSearchDto byMemberNo(Long memberNo, String sortBy) {
         return ReviewSearchDto.of(null, memberNo, sortBy);
     }

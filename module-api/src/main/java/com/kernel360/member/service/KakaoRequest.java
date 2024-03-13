@@ -22,7 +22,8 @@ public class KakaoRequest {
 
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer "+accessToken);
-        headers.set("charset", "utf-8");
+        headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
@@ -38,9 +39,8 @@ public class KakaoRequest {
         }
         Map<String, Object> kakaoAccount = mapper.convertValue(kakaoResponse.get("kakao_account"), HashMap.class);
 
-        KakaoUserDto dto = KakaoUserDto.of(kakaoResponse.get("id").toString(),kakaoAccount.get("email").toString());
+        return KakaoUserDto.of(kakaoResponse.get("id").toString(),kakaoAccount.get("email").toString());
 
-        return dto;
     }
 
 

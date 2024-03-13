@@ -9,7 +9,7 @@ import java.time.LocalDate;
  */
 public record CommonCodeDto(Long codeNo,
                             String codeName,
-                            Integer upperNo,
+                            Long upperNo,
                             String upperName,
                             Integer sortOrder,
 
@@ -27,7 +27,7 @@ public record CommonCodeDto(Long codeNo,
     public static CommonCodeDto of(
             Long codeNo,
             String codeName,
-            Integer upperNo,
+            Long upperNo,
             String upperName,
             Integer sortOrder,
             Boolean isUsed,

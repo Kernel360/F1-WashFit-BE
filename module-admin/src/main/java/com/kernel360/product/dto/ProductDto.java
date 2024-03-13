@@ -73,11 +73,4 @@ public record ProductDto(
                 entity.getModifiedBy()
         );
     }
-
-    public Product toEntity() {
-        return Product.of(
-                productNo,
-                productName
-        );
-    }
 }
