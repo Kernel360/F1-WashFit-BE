@@ -85,7 +85,17 @@ public class ReviewService {
                 uploadFiles(files, reviewRequestDto.productNo(), review.getReviewNo());
             }
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
+            String msg = e.getMessage().toString();
+
+            if (msg.contains("review_product_no_fkey")) {
+                throw new BusinessException(ReviewErrorCode.NOT_FOUND_PRODUCT_FOR_REVIEW_CREATION);
+            }
+
+            if (msg.contains("review_member_no_fkey")) {
+                throw new BusinessException(ReviewErrorCode.NOT_FOUND_MEMBER_FOR_REVIEW_CREATION);
+            }
+
+            throw new BusinessException(ReviewErrorCode.DUPLICATE_REVIEW_EXISTS);
         }
 
         return review;
@@ -127,7 +137,7 @@ public class ReviewService {
                 uploadFiles(files, productNo, reviewRequestDto.reviewNo());
             }
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
+            throw new BusinessException(ReviewErrorCode.DUPLICATE_REVIEW_EXISTS);
         }
     }
 
