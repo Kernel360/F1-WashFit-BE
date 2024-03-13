@@ -3,14 +3,13 @@ package com.kernel360.base;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDate;
 
 @Getter
 @MappedSuperclass
@@ -21,7 +20,7 @@ public abstract class BaseEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "created_by", nullable = false, length = MAX_STRING_LENGTH, updatable = false)
     @CreatedBy
@@ -29,7 +28,7 @@ public abstract class BaseEntity {
 
     @Column(name = "modified_at")
     @LastModifiedDate
-    private LocalDate modifiedAt;
+    private LocalDateTime modifiedAt;
 
     @Column(name = "modified_by", length = MAX_STRING_LENGTH )
     @LastModifiedBy

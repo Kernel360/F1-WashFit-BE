@@ -3,16 +3,16 @@ package com.kernel360.review.dto;
 import com.kernel360.product.dto.ProductDto;
 import com.kernel360.review.entity.Review;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record AdminReviewDto(Long reviewNo,
                              ProductDto productDto,
                              BigDecimal starRating,
                              String title,
                              String contents,
-                             LocalDate createdAt,
+                             LocalDateTime createdAt,
                              String createdBy,
-                             LocalDate modifiedAt,
+                             LocalDateTime modifiedAt,
                              String modifiedBy) {
 
     public static AdminReviewDto of(
@@ -21,9 +21,9 @@ public record AdminReviewDto(Long reviewNo,
             BigDecimal starRating,
             String title,
             String contents,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy
     ) {
         return new AdminReviewDto(
