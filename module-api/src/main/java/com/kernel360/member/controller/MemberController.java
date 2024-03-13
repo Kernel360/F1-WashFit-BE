@@ -92,7 +92,7 @@ public class MemberController {
     @PostMapping("/find-password")
     public ResponseEntity<ApiResponse<Object>> sendPasswordResetUriByEmail(@RequestBody MemberCredentialDto dto) {
         //--입력받은 아이디를 데이터베이스에 조회, 없으면 예외 발생--/
-        MemberDto memberDto = memberService.findByMemberId(dto.memberId());
+        MemberDto memberDto = memberService.findOneByIdForAccountTypeByPlatform(dto.memberId());
         //--유효성이 검증된 아이디에 대해서 만료시간이 있는 비밀번호 초기화 (호스트 + UUID) 링크 생성 --//
         String resetUri = findCredentialService.generatePasswordResetPageUri(memberDto);
         //-- 가입시 입력한 이메일로 비밀번호 초기화 이메일 발송 --//
