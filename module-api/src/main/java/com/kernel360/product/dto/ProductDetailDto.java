@@ -3,6 +3,7 @@ package com.kernel360.product.dto;
 import com.kernel360.product.entity.Product;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * DTO for {@link com.kernel360.product.entity.Product}
@@ -36,9 +37,9 @@ public record ProductDetailDto(
         String manufactureMethod,
         String manufactureNation,
         String violationInfo,
-        LocalDate createdAt,
+        LocalDateTime createdAt,
         String createdBy,
-        LocalDate modifiedAt,
+        LocalDateTime modifiedAt,
         String modifiedBy
         //TODO 브랜드 엔티티
 ) {
@@ -72,9 +73,9 @@ public record ProductDetailDto(
             String manufactureMethod,
             String manufactureNation,
             String violationInfo,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy
     ) {
         return new ProductDetailDto(

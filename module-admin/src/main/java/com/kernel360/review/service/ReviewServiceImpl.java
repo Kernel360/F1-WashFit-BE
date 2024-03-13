@@ -49,8 +49,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(readOnly = true)
     public AdminReviewDto getReview(Long reviewNo) {
         log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
-
-        return AdminReviewDto.from(reviewRepository.findByReviewNo(reviewNo));
+        // FIXME :: Admin member 작업 이후 Admin Review 리팩터링 필요 -> 임시로 CRUDRepository 의 GetReferenceById 사용
+        return AdminReviewDto.from(reviewRepository.getReferenceById(reviewNo));
     }
 
     @Override

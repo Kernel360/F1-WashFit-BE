@@ -2,8 +2,7 @@ package com.kernel360.product.dto;
 
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.enumset.SafetyStatus;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * DTO for {@link com.kernel360.product.entity.Product}
@@ -18,9 +17,9 @@ public record ProductDto(
         Integer viewCount,
         String brand,
         String upperItem,
-        LocalDate createdAt,
+        LocalDateTime createdAt,
         String createdBy,
-        LocalDate modifiedAt,
+        LocalDateTime modifiedAt,
         String modifiedBy
 ) {
 
@@ -34,9 +33,9 @@ public record ProductDto(
             String brand,
             String upperItem,
             Integer viewCount,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy
     ) {
         return new ProductDto(

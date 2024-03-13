@@ -3,7 +3,7 @@ package com.kernel360.base;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,7 +18,7 @@ public class BaseRawEntity {
     // FIXME :: createdAt 자동 생성시, update 로직 진행중에 null or transient 문제가 발생. 임시방편으로 직접 지정하였으나 이후 수정 필요
     @Column(name = "created_at", nullable = false)
     @CreatedDate
-    private LocalDate createdAt = LocalDate.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "created_by", nullable = false)
     @CreatedBy
@@ -26,7 +26,7 @@ public class BaseRawEntity {
 
     @Column(name = "modified_at")
     @LastModifiedDate
-    private LocalDate modifiedAt;
+    private LocalDateTime modifiedAt;
 
     @Column(name = "modified_by")
     @LastModifiedBy

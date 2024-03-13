@@ -1,19 +1,16 @@
 package com.kernel360.modulebatch.product.job.core;
 
 import com.kernel360.ecolife.entity.ReportedProduct;
+import com.kernel360.modulebatch.global.BaseJobExecutionListener;
+import com.kernel360.modulebatch.global.BaseStepExecutionListener;
 import com.kernel360.modulebatch.product.job.infra.FilterUnusedProductTasklet;
 import com.kernel360.modulebatch.product.job.infra.ReportedProductToProductItemProcessor;
 import com.kernel360.product.entity.Product;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -26,6 +23,7 @@ import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.item.database.orm.JpaNativeQueryProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,25 +33,27 @@ import org.springframework.web.client.ResourceAccessException;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "job.name", havingValue = ImportProductFromReportedProductJobConfig.JOB_NAME)
 public class ImportProductFromReportedProductJobConfig {
 
+    public static final String JOB_NAME = "ImportProductFromReportedProductJob";
     private final ReportedProductToProductItemProcessor reportedProductToProductItemProcessor;
-
     private final FilterUnusedProductTasklet filterUnusedProductTasklet;
-
+    private final BaseJobExecutionListener baseJobExecutionListener;
+    private final BaseStepExecutionListener baseStepExecutionListener;
     private final EntityManagerFactory emf;
 
     @Bean
-    public Job importProductFromReportedProductJob(JobRepository jobRepository,
+    public Job ImportProductFromReportedProductJob(JobRepository jobRepository,
                                                    @Qualifier("importProductFromReportedProductStep") Step importProductFromReportedProductStep,
                                                    @Qualifier("filterUnusedProductStep") Step filterUnusedProductStep) {
         log.info("Import Product from ReportedProduct by Brand Job Build Configuration");
 
-        return new JobBuilder("ImportProductFromReportedProductJob", jobRepository)
+        return new JobBuilder(JOB_NAME, jobRepository)
                 .start(importProductFromReportedProductStep)
                 .next(filterUnusedProductStep)
                 .incrementer(new RunIdIncrementer())
-                .listener(new ImportProductFromReportedProductJobListener())
+                .listener(baseJobExecutionListener)
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class ImportProductFromReportedProductJobConfig {
 
         return new StepBuilder("ImportProductFromReportedProductStep", jobRepository)
                 .<ReportedProduct, Product>chunk(100, transactionManager)
-                .listener(new ImportProductFromReportedProductStepListener())
+                .listener(baseStepExecutionListener)
                 .reader(importProductFromReportedProductItemReader())
                 .processor(reportedProductToProductItemProcessor)
                 .writer(productJpaItemWriter())
@@ -111,36 +111,8 @@ public class ImportProductFromReportedProductJobConfig {
 
         return new StepBuilder("filterUnusedProductStep", jobRepository)
                 .tasklet(filterUnusedProductTasklet, transactionManager)
-                .listener(new ImportProductFromReportedProductStepListener())
+                .listener(baseStepExecutionListener)
                 .build();
     }
-
-//-- Execution Listener --//
-
-    public static class ImportProductFromReportedProductJobListener implements JobExecutionListener {
-        @Override
-        public void beforeJob(JobExecution jobExecution) {
-            log.info("{} starts", jobExecution.getJobInstance().getJobName());
-        }
-
-        @Override
-        public void afterJob(JobExecution jobExecution) {
-            log.info("{} ends", jobExecution.getJobInstance().getJobName());
-        }
-    }
-
-    public static class ImportProductFromReportedProductStepListener implements StepExecutionListener {
-        @Override
-        public void beforeStep(StepExecution stepExecution) {
-            log.info("{} starts", stepExecution.getStepName());
-        }
-
-        @Override
-        public ExitStatus afterStep(StepExecution stepExecution) {
-            log.info("{} ends", stepExecution.getStepName());
-            return stepExecution.getExitStatus();
-        }
-    }
-
 }
 

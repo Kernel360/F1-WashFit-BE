@@ -59,10 +59,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: "prometheus, health"
   endpoint:
     health:
-      show-details: always
+      show-details: never
 
 constants:
   host-url: ${PROD_HOST_URL}
