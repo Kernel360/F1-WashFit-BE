@@ -21,9 +21,7 @@ public class LogFilter implements Filter {
         ContentCachingRequestWrapper request = new ContentCachingRequestWrapper((HttpServletRequest) req);
         ContentCachingResponseWrapper response = new ContentCachingResponseWrapper((HttpServletResponse) res);
 
-        if(!deninedList().containsKey(request.getRequestURI())) {
-            printLog(chain, request, response);
-        }
+        printLog(chain, request, response);
     }
 
     private static void printLog(FilterChain chain, ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException, ServletException {
@@ -63,12 +61,13 @@ public class LogFilter implements Filter {
         });
 
         String responseBody = new String(response.getContentAsByteArray());
-        log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, responseHeaderValues, responseBody);
-
+        if(!deninedList().containsKey(uri)) {
+            log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, responseHeaderValues, responseBody);
+        }
         response.copyBodyToResponse();
     }
 
-    private Trie<String, Integer> deninedList (){
+    private static Trie<String, Integer> deninedList(){
         Trie<String, Integer> trie = new PatriciaTrie<>();
 
         trie.put("/actuator/prometheus",0);
