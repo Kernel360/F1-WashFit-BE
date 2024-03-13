@@ -5,7 +5,7 @@ import com.kernel360.washzone.entity.WashZone;
 import com.kernel360.washzonereview.entity.WashzoneReview;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -17,9 +17,9 @@ public record WashzoneReviewRequestDto(Long washzoneReviewNo,
                                        BigDecimal starRating,
                                        String title,
                                        String contents,
-                                       LocalDate createdAt,
+                                       LocalDateTime createdAt,
                                        String createdBy,
-                                       LocalDate modifiedAt,
+                                       LocalDateTime modifiedAt,
                                        String modifiedBy,
                                        List<String> files) {
 
@@ -30,9 +30,9 @@ public record WashzoneReviewRequestDto(Long washzoneReviewNo,
             BigDecimal starRating,
             String title,
             String contents,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy,
             List<String> files
     ) {
