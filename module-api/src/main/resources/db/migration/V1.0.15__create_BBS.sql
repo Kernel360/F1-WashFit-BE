@@ -7,9 +7,9 @@ CREATE TABLE IF NOT EXISTS bbs (
     contents    VARCHAR NOT NULL,
     is_visible  BOOL NOT NULL DEFAULT TRUE,
     view_count  BIGINT NOT NULL,
-    created_at  DATE NOT NULL,
+    created_at  TIMESTAMP NOT NULL,
     created_by  VARCHAR NOT NULL,
-    modified_at DATE,
+    modified_at TIMESTAMP,
     modified_by VARCHAR,
     FOREIGN KEY (member_no) REFERENCES Member (member_no)
     );
