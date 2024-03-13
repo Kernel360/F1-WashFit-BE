@@ -4,6 +4,7 @@ import com.kernel360.exception.BusinessException;
 import com.kernel360.file.entity.File;
 import com.kernel360.file.entity.FileReferType;
 import com.kernel360.file.repository.FileRepository;
+import com.kernel360.member.repository.MemberRepository;
 import com.kernel360.review.code.ReviewErrorCode;
 import com.kernel360.review.dto.ReviewRequestDto;
 import com.kernel360.review.dto.ReviewResponseDto;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final MemberRepository memberRepository;
     private final FileRepository fileRepository;
     private final FileUtils fileUtils;
 
@@ -72,7 +74,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review createReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
+    public Review createReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files, String id) {
+        isValidMemberInfo(id, reviewRequestDto.memberNo());
         isValidStarRating(reviewRequestDto.starRating());
 
         Review review;
@@ -113,11 +116,12 @@ public class ReviewService {
     }
 
     @Transactional
-    public void updateReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
+    public void updateReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files, String id) {
         Review review = isVisibleReview(reviewRequestDto.reviewNo());
-        long productNo = review.getProduct().getProductNo();
-
+        isValidMemberInfo(id, review.getMember().getMemberNo());
         isValidStarRating(reviewRequestDto.starRating());
+
+        long productNo = review.getProduct().getProductNo();
 
         try {
             reviewRepository.saveAndFlush(reviewRequestDto.toEntityForUpdate());
@@ -142,8 +146,9 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteReview(Long reviewNo) {
-        isVisibleReview(reviewNo);
+    public void deleteReview(Long reviewNo, String id) {
+        Review review = isVisibleReview(reviewNo);
+        isValidMemberInfo(id, review.getMember().getMemberNo());
 
         reviewRepository.deleteById(reviewNo);
         log.info("제품 리뷰 삭제 -> review_no {}", reviewNo);
@@ -165,6 +170,11 @@ public class ReviewService {
         }
 
         return review.get();
+    }
+
+    private void isValidMemberInfo(String id, Long memberNo) {
+        memberRepository.findOneByIdAndMemberNo(id, memberNo)
+                        .orElseThrow(() -> new BusinessException(ReviewErrorCode.MISMATCHED_MEMBER_NO_AND_ID));
     }
 
     private void isValidStarRating(BigDecimal starRating) {

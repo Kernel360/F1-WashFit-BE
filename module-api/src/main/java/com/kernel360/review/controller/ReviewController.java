@@ -2,8 +2,8 @@ package com.kernel360.review.controller;
 
 import com.kernel360.response.ApiResponse;
 import com.kernel360.review.code.ReviewBusinessCode;
-import com.kernel360.review.dto.ReviewResponseDto;
 import com.kernel360.review.dto.ReviewRequestDto;
+import com.kernel360.review.dto.ReviewResponseDto;
 import com.kernel360.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,27 +45,31 @@ public class ReviewController {
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_GET_REVIEW, reviewService.getReview(reviewNo));
     }
 
-    @PostMapping("")
+    @PostMapping
     public <T> ResponseEntity<ApiResponse<T>> createReview(
             @RequestPart ReviewRequestDto review,
-            @RequestPart(required = false) List<MultipartFile> files) {
-        reviewService.createReview(review, files);
+            @RequestPart(required = false) List<MultipartFile> files,
+            @RequestHeader("Id") String id) {
+        reviewService.createReview(review, files, id);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_CREATE_REVIEW);
     }
 
-    @PatchMapping("")
+    @PatchMapping
     public <T> ResponseEntity<ApiResponse<T>> updateReview(
             @RequestPart ReviewRequestDto review,
-            @RequestPart(required = false) List<MultipartFile> files) {
-        reviewService.updateReview(review, files);
+            @RequestPart(required = false) List<MultipartFile> files,
+            @RequestHeader("Id") String id) {
+        reviewService.updateReview(review, files, id);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_UPDATE_REVIEW);
     }
 
     @DeleteMapping("/{reviewNo}")
-    public <T> ResponseEntity<ApiResponse<T>> deleteReview(@PathVariable Long reviewNo) {
-        reviewService.deleteReview(reviewNo);
+    public <T> ResponseEntity<ApiResponse<T>> deleteReview(
+            @PathVariable Long reviewNo,
+            @RequestHeader("Id") String id) {
+        reviewService.deleteReview(reviewNo, id);
 
         return ApiResponse.toResponseEntity(ReviewBusinessCode.SUCCESS_DELETE_REVIEW);
     }
