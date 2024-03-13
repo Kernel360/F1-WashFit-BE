@@ -48,8 +48,9 @@ public class WashzoneReviewController {
     @PostMapping
     public <T> ResponseEntity<ApiResponse<T>> createWashzoneReview(
             @RequestPart WashzoneReviewRequestDto washzoneReview,
-            @RequestPart(required = false) List<MultipartFile> files) {
-        washzoneReviewService.createWashzoneReview(washzoneReview, files);
+            @RequestPart(required = false) List<MultipartFile> files,
+            @RequestHeader("Id") String id) {
+        washzoneReviewService.createWashzoneReview(washzoneReview, files, id);
 
         return ApiResponse.toResponseEntity(WashzoneReviewBusinessCode.SUCCESS_CREATE_WASHZONE_REVIEW);
     }
@@ -57,15 +58,18 @@ public class WashzoneReviewController {
     @PatchMapping
     public <T> ResponseEntity<ApiResponse<T>> updateWashzoneReview(
             @RequestPart WashzoneReviewRequestDto washzoneReview,
-            @RequestPart(required = false) List<MultipartFile> files) {
-        washzoneReviewService.updateWashzoneReview(washzoneReview, files);
+            @RequestPart(required = false) List<MultipartFile> files,
+            @RequestHeader("Id") String id) {
+        washzoneReviewService.updateWashzoneReview(washzoneReview, files, id);
 
         return ApiResponse.toResponseEntity(WashzoneReviewBusinessCode.SUCCESS_UPDATE_WASHZONE_REVIEW);
     }
 
     @DeleteMapping("/{washzoneReviewNo}")
-    public <T> ResponseEntity<ApiResponse<T>> deleteWashzoneReview(@PathVariable Long washzoneReviewNo) {
-        washzoneReviewService.deleteWashzoneReview(washzoneReviewNo);
+    public <T> ResponseEntity<ApiResponse<T>> deleteWashzoneReview(
+            @PathVariable Long washzoneReviewNo,
+            @RequestHeader("Id") String id) {
+        washzoneReviewService.deleteWashzoneReview(washzoneReviewNo, id);
 
         return ApiResponse.toResponseEntity(WashzoneReviewBusinessCode.SUCCESS_DELETE_WASHZONE_REVIEW);
     }

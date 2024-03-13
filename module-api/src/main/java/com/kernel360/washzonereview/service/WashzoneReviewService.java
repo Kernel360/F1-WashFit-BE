@@ -4,6 +4,7 @@ import com.kernel360.exception.BusinessException;
 import com.kernel360.file.entity.File;
 import com.kernel360.file.entity.FileReferType;
 import com.kernel360.file.repository.FileRepository;
+import com.kernel360.member.repository.MemberRepository;
 import com.kernel360.utils.file.FileUtils;
 import com.kernel360.washzonereview.code.WashzoneReviewErrorCode;
 import com.kernel360.washzonereview.dto.WashzoneReviewRequestDto;
@@ -32,6 +33,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WashzoneReviewService {
     private final WashzoneReviewRepository washzoneReviewRepository;
+    private final MemberRepository memberRepository;
     private final FileRepository fileRepository;
     private final FileUtils fileUtils;
 
@@ -71,7 +73,8 @@ public class WashzoneReviewService {
     }
 
     @Transactional
-    public WashzoneReview createWashzoneReview(WashzoneReviewRequestDto requestDto, List<MultipartFile> files) {
+    public WashzoneReview createWashzoneReview(WashzoneReviewRequestDto requestDto, List<MultipartFile> files, String id) {
+        isValidMemberInfo(id, requestDto.memberNo());
         isValidStarRating(requestDto.starRating());
 
         WashzoneReview washzoneReview;
@@ -84,7 +87,17 @@ public class WashzoneReviewService {
                 uploadFiles(files, requestDto.washzoneNo(), washzoneReview.getWashzoneReviewNo());
             }
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(WashzoneReviewErrorCode.INVALID_WASHZONE_REVIEW_WRITE_REQUEST);
+            String msg = e.getMessage().toString();
+
+            if (msg.contains("washzone_review_washzone_no_fkey")) {
+                throw new BusinessException(WashzoneReviewErrorCode.NOT_FOUND_WASHZONE_FOR_WASHZONE_REVIEW_CREATION);
+            }
+
+            if (msg.contains("washzone_review_member_no_fkey")) {
+                throw new BusinessException(WashzoneReviewErrorCode.NOT_FOUND_MEMBER_FOR_WASHZONE_REVIEW_CREATION);
+            }
+
+            throw new BusinessException(WashzoneReviewErrorCode.DUPLICATE_WASHZONE_REVIEW_EXISTS);
         }
 
         return washzoneReview;
@@ -102,11 +115,12 @@ public class WashzoneReviewService {
     }
 
     @Transactional
-    public void updateWashzoneReview(WashzoneReviewRequestDto requestDto, List<MultipartFile> files) {
+    public void updateWashzoneReview(WashzoneReviewRequestDto requestDto, List<MultipartFile> files, String id) {
         WashzoneReview washzoneReview = isVisibleStatus(requestDto.washzoneReviewNo());
-        long washzoneNo = washzoneReview.getWashzone().getWashZoneNo();
-
+        isValidMemberInfo(id, washzoneReview.getMember().getMemberNo());
         isValidStarRating(requestDto.starRating());
+
+        long washzoneNo = washzoneReview.getWashzone().getWashZoneNo();
 
         try {
             washzoneReviewRepository.saveAndFlush(requestDto.toEntityForUpdate());
@@ -126,24 +140,25 @@ public class WashzoneReviewService {
                 uploadFiles(files, washzoneNo, requestDto.washzoneReviewNo());
             }
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(WashzoneReviewErrorCode.INVALID_WASHZONE_REVIEW_WRITE_REQUEST);
+            throw new BusinessException(WashzoneReviewErrorCode.DUPLICATE_WASHZONE_REVIEW_EXISTS);
         }
     }
 
     @Transactional
-    public void deleteWashzoneReview(Long washzoneReview) {
-        isVisibleStatus(washzoneReview);
+    public void deleteWashzoneReview(Long washzoneReviewNo, String id) {
+        WashzoneReview washzoneReview = isVisibleStatus(washzoneReviewNo);
+        isValidMemberInfo(id, washzoneReview.getMember().getMemberNo());
 
-        washzoneReviewRepository.deleteById(washzoneReview);
-        log.info("세차장 리뷰 삭제 -> washzone_review_no {}", washzoneReview);
+        washzoneReviewRepository.deleteById(washzoneReviewNo);
+        log.info("세차장 리뷰 삭제 -> washzone_review_no {}", washzoneReviewNo);
 
-        fileRepository.findByReferenceTypeAndReferenceNo(WashzoneReviewService.WASHZONE_REVIEW_CODE, washzoneReview)
+        fileRepository.findByReferenceTypeAndReferenceNo(WashzoneReviewService.WASHZONE_REVIEW_CODE, washzoneReviewNo)
                       .stream()
                       .forEach(file -> {
                           fileUtils.delete(file.getFileKey());
                           log.info("세차장 리뷰 파일 삭제 -> file_no {}", file.getFileNo());
                       });
-        fileRepository.deleteByReferenceTypeAndReferenceNo(WashzoneReviewService.WASHZONE_REVIEW_CODE, washzoneReview);
+        fileRepository.deleteByReferenceTypeAndReferenceNo(WashzoneReviewService.WASHZONE_REVIEW_CODE, washzoneReviewNo);
     }
 
     private WashzoneReview isVisibleStatus(Long washzoneReviewNo) {
@@ -154,6 +169,11 @@ public class WashzoneReviewService {
         }
 
         return washzoneReview.get();
+    }
+
+    private void isValidMemberInfo(String id, Long memberNo) {
+        memberRepository.findOneByIdAndMemberNo(id, memberNo)
+                        .orElseThrow(() -> new BusinessException(WashzoneReviewErrorCode.MISMATCHED_MEMBER_NO_AND_ID));
     }
 
     private void isValidStarRating(BigDecimal starRating) {
