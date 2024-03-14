@@ -26,7 +26,7 @@ jobs:
           dir_path="./module-api/src/main/resources/db/migration"
           old_text="changeRequired"
           new_text="${{ secrets.PUBLIC_KEY }}"
-          find "dir_path" -type f -name "*.sql" -exec sed -i "s|old_text|new_text|g" {} +
+          find "$dir_path" -type f -name "*.sql" -exec sed -i "s|$old_text|$new_text|g" {} +
 
       - name: Set application yml file (api)
         uses: microsoft/variable-substitution@v1
