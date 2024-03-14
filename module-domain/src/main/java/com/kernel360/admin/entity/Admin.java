@@ -1,4 +1,4 @@
-package com.kernel360.member.entity;
+package com.kernel360.admin.entity;
 
 
 import com.kernel360.base.BaseEntity;
