@@ -4,7 +4,7 @@ import com.kernel360.carinfo.entity.CarInfo;
 import com.kernel360.washinfo.entity.WashInfo;
 import lombok.Builder;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 public record MemberSearchDto(
@@ -12,7 +12,7 @@ public record MemberSearchDto(
         String name,
         String email,
         String age,
-        LocalDate registerDate,
+        LocalDateTime registerDate,
         WashInfo washInfo,
         CarInfo carInfo
 ) {
