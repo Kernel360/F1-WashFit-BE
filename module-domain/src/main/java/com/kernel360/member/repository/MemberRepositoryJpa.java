@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 
-public interface MemberRepository extends JpaRepository<Member, Id> {
+public interface MemberRepositoryJpa extends JpaRepository<Member, Id> {
 
     Member findOneByIdAndPassword(String id, String password);
 

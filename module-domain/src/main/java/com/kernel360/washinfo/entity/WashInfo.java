@@ -31,8 +31,11 @@ public class WashInfo extends BaseEntity {
     @JoinColumn(name = "member_no", nullable = false)
     private Member member;
 
+    @Column(name= "wash_count")
     private Integer washCount;
+    @Column(name = "monthly_expense")
     private Integer monthlyExpense;
+    @Column(name = "interest")
     private Integer interest;
 
     private WashInfo(Integer washCount, Integer monthlyExpense, Integer interest) {
