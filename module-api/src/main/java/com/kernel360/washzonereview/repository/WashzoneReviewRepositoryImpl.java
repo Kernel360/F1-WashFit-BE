@@ -78,7 +78,7 @@ public class WashzoneReviewRepositoryImpl implements WashzoneReviewRepositoryDsl
                         stringTemplate("SUBSTRING({0}, 1, 2) || REPEAT('*', LENGTH({0}) - 2)", member.id).as("id"),
                         member.age,
                         member.gender,
-                        washZone.washZoneNo,
+                        washZone.washZoneNo.as("washzoneNo"),
                         washZone.name,
                         washZone.address,
                         washZone.type,
