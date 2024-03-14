@@ -44,6 +44,9 @@ dependencies {
 
     // aws s3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.625'
+
+    // commons-lang3
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 tasks.named('test') {
