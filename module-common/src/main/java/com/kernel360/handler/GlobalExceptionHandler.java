@@ -11,10 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 @Slf4j
 @RestControllerAdvice
@@ -97,6 +99,14 @@ public class GlobalExceptionHandler {
         log.error("handleMissingParameterException", e);
 
         final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_REQUEST_PARAMETER);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public final ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, WebRequest request) {
+        log.error("handleMethodArgumentNotValid", e);
+        ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_WORD_PARAMETER);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
