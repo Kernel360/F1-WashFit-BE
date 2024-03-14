@@ -7,7 +7,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -17,12 +17,12 @@ public class MemberResponse {
     private String email;
     private int gender;
     private int age;
-    private LocalDate registerDate;
+    private LocalDateTime registerDate;
     private String accountType;
     private WashInfo washInfo;
     private CarInfo carInfo;
     @QueryProjection
-    public MemberResponse(Long memberNo, String id, String email, int gender, int age, LocalDate registerDate,
+    public MemberResponse(Long memberNo, String id, String email, int gender, int age, LocalDateTime registerDate,
             String accountType, WashInfo washInfo, CarInfo carInfo) {
         this.memberNo = memberNo;
         this.id = id;

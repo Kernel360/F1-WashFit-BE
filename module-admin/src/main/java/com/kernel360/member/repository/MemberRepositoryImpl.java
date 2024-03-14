@@ -37,8 +37,8 @@ public class MemberRepositoryImpl implements MemberRepositoryDsl {
                         carInfo
                 ))
                 .from(member)
-                .leftJoin(member.washInfo, washInfo).on(IsWashInfoNotNull())
-                .leftJoin(member.carInfo, carInfo).on(IsCarInfoNotNull())
+                .leftJoin(member.washInfo, washInfo).on(isWashInfoNotNull())
+                .leftJoin(member.carInfo, carInfo).on(isCarInfoNotNull())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(member.memberNo.desc())
@@ -47,11 +47,11 @@ public class MemberRepositoryImpl implements MemberRepositoryDsl {
         return PageableExecutionUtils.getPage(members, pageable, members::size);
     }
 
-    private static BooleanExpression IsCarInfoNotNull() {
+    private static BooleanExpression isCarInfoNotNull() {
         return member.carInfo.carNo.isNotNull();
     }
 
-    private static BooleanExpression IsWashInfoNotNull() {
+    private static BooleanExpression isWashInfoNotNull() {
         return member.washInfo.washNo.isNotNull();
     }
 

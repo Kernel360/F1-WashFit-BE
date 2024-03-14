@@ -1,20 +1,18 @@
 package com.kernel360.member.dto;
 
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-/**
- * DTO for {@link com.kernel360.member.entity.Member}
- */
+
 public record MemberDto(Long memberNo,
                         String id,
                         String email,
                         String password,
                         String gender,
                         String age,
-                        LocalDate createdAt,
+                        LocalDateTime createdAt,
                         String createdBy,
-                        LocalDate modifiedAt,
+                        LocalDateTime modifiedAt,
                         String modifiedBy
 ) {
 
@@ -25,9 +23,9 @@ public record MemberDto(Long memberNo,
             String password,
             String gender,
             String age,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy
     ) {
         return new MemberDto(
