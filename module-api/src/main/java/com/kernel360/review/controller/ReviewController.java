@@ -5,6 +5,7 @@ import com.kernel360.review.code.ReviewBusinessCode;
 import com.kernel360.review.dto.ReviewResponseDto;
 import com.kernel360.review.dto.ReviewRequestDto;
 import com.kernel360.review.service.ReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +48,7 @@ public class ReviewController {
 
     @PostMapping("")
     public <T> ResponseEntity<ApiResponse<T>> createReview(
-            @RequestPart ReviewRequestDto review,
+            @Valid @RequestPart ReviewRequestDto review,
             @RequestPart(required = false) List<MultipartFile> files) {
         reviewService.createReview(review, files);
 
@@ -56,7 +57,7 @@ public class ReviewController {
 
     @PatchMapping("")
     public <T> ResponseEntity<ApiResponse<T>> updateReview(
-            @RequestPart ReviewRequestDto review,
+            @Valid @RequestPart  ReviewRequestDto review,
             @RequestPart(required = false) List<MultipartFile> files) {
         reviewService.updateReview(review, files);
 
