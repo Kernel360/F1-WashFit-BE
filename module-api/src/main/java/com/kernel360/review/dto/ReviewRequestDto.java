@@ -1,5 +1,6 @@
 package com.kernel360.review.dto;
 
+import com.kernel360.code.common.ValidationMessage;
 import com.kernel360.global.annotation.BadWordFilter;
 import com.kernel360.member.entity.Member;
 import com.kernel360.product.entity.Product;
@@ -16,10 +17,8 @@ public record ReviewRequestDto(Long reviewNo,
                                Long productNo,
                                Long memberNo,
                                BigDecimal starRating,
-                               @BadWordFilter
-                               String title,
-                               @BadWordFilter
-                               String contents,
+                               @BadWordFilter(message = ValidationMessage.INVALID_WORD_PARAMETER) String title,
+                               @BadWordFilter(message = ValidationMessage.INVALID_WORD_PARAMETER) String contents,
                                LocalDateTime createdAt,
                                String createdBy,
                                LocalDateTime modifiedAt,
