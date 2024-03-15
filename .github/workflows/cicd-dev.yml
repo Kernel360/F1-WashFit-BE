@@ -2,7 +2,7 @@ name: CI and CD in WashPedia Project
 
 on:
   push:
-    branches: [ "refactor/sql-repack-and-add-ecr-upload" ]    # develop
+    branches: [ "develop" ]
 
 permissions:
   contents: read
