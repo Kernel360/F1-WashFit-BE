@@ -2,8 +2,10 @@ package com.kernel360.global.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -18,6 +20,23 @@ public class LogAspect {
 
         long executionTime = System.currentTimeMillis() - start;
         log.info("##### @LogExecutionTime ##### " + joinPoint.getSignature() + " executed in " + executionTime + "ms");
+
+        return proceed;
+    }
+
+    @Pointcut("within(*..*Controller)")
+    public void controller() {}
+
+    @Around("controller()")
+    public Object logApiExecTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        Object proceed = joinPoint.proceed();
+
+        long executionTime = System.currentTimeMillis() - start;
+        Signature signature = joinPoint.getSignature();
+
+        log.info(String.format("##### @API Execution Time ##### [%dms] → %s.%s",
+                executionTime, signature.getDeclaringTypeName(), signature.getName()));
 
         return proceed;
     }
