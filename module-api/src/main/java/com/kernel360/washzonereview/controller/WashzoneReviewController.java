@@ -5,6 +5,7 @@ import com.kernel360.washzonereview.code.WashzoneReviewBusinessCode;
 import com.kernel360.washzonereview.dto.WashzoneReviewRequestDto;
 import com.kernel360.washzonereview.dto.WashzoneReviewResponseDto;
 import com.kernel360.washzonereview.service.WashzoneReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +48,7 @@ public class WashzoneReviewController {
 
     @PostMapping
     public <T> ResponseEntity<ApiResponse<T>> createWashzoneReview(
-            @RequestPart WashzoneReviewRequestDto washzoneReview,
+            @Valid @RequestPart WashzoneReviewRequestDto washzoneReview,
             @RequestPart(required = false) List<MultipartFile> files,
             @RequestHeader("Id") String id) {
         washzoneReviewService.createWashzoneReview(washzoneReview, files, id);
@@ -57,7 +58,7 @@ public class WashzoneReviewController {
 
     @PatchMapping
     public <T> ResponseEntity<ApiResponse<T>> updateWashzoneReview(
-            @RequestPart WashzoneReviewRequestDto washzoneReview,
+            @Valid @RequestPart WashzoneReviewRequestDto washzoneReview,
             @RequestPart(required = false) List<MultipartFile> files,
             @RequestHeader("Id") String id) {
         washzoneReviewService.updateWashzoneReview(washzoneReview, files, id);

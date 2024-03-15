@@ -1,5 +1,7 @@
 package com.kernel360.washzonereview.dto;
 
+import com.kernel360.code.common.ValidationMessage;
+import com.kernel360.global.annotation.BadWordFilter;
 import com.kernel360.member.entity.Member;
 import com.kernel360.washzone.entity.WashZone;
 import com.kernel360.washzonereview.entity.WashzoneReview;
@@ -15,8 +17,8 @@ public record WashzoneReviewRequestDto(Long washzoneReviewNo,
                                        Long washzoneNo,
                                        Long memberNo,
                                        BigDecimal starRating,
-                                       String title,
-                                       String contents,
+                                       @BadWordFilter(message = ValidationMessage.INVALID_WORD_PARAMETER) String title,
+                                       @BadWordFilter(message = ValidationMessage.INVALID_WORD_PARAMETER) String contents,
                                        LocalDateTime createdAt,
                                        String createdBy,
                                        LocalDateTime modifiedAt,

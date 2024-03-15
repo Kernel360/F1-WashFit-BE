@@ -14,4 +14,12 @@ public record ErrorResponse(
                 code.getMessage()
         );
     }
+
+    public static ErrorResponse of(ErrorCode code, String detailMessage) {
+        return new ErrorResponse(
+                code.getStatus(),
+                code.getCode(),
+                code.getMessage() + detailMessage
+        );
+    }
 }
