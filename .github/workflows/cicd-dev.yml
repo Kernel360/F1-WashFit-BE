@@ -23,7 +23,7 @@ jobs:
 
       - name: Replace SQL Queries
         run: |
-          dir_path="./module-api/src/main/resources/db/migration"
+          dir_path="./module-domain/src/main/resources/db/migration"
           old_text="changeRequired"
           new_text="${{ secrets.PUBLIC_KEY }}"
           find "$dir_path" -type f -name "*.sql" -exec sed -i "s|$old_text|$new_text|g" {} +
