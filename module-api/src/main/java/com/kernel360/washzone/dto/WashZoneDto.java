@@ -7,6 +7,7 @@ import com.kernel360.washzone.entity.WashZone;
  * DTO for {@link com.kernel360.washzone.entity.WashZone}
  */
 public record WashZoneDto(
+        Long washZoneNo,
         String name,
         String address,
         Double latitude,
@@ -23,6 +24,7 @@ public record WashZoneDto(
             String remarks
     ){
         return new WashZoneDto(
+                        null,
                         name,
                         address,
                         latitude,
@@ -51,5 +53,22 @@ public record WashZoneDto(
                 this.type,
                 this.remarks
         );
+    }
+
+    /** find review **/
+    public static WashZoneDto of(
+            Long washZoneNo,
+            String name,
+            String address,
+            String type
+    ){
+        return new WashZoneDto(
+                washZoneNo,
+                name,
+                address,
+                null,
+                null,
+                type,
+                null);
     }
 }

@@ -48,4 +48,18 @@ public class WashZone {
                               Double latitude, Double longitude, String type, String remarks) {
         return new WashZone(name, address, latitude, longitude, type, remarks);
     }
+
+    /**
+     * review request
+     **/
+    public WashZone(Long washZoneNo) {
+        this.washZoneNo = washZoneNo;
+    }
+
+    /**
+     * review request
+     **/
+    public static WashZone of(Long washZoneNo) {
+        return new WashZone(washZoneNo);
+    }
 }

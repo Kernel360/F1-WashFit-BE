@@ -15,6 +15,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(acceptInterceptor)
                 .addPathPatterns("/auth/**") //** 인증 JWT 토큰 관련 **//
                 .addPathPatterns("/reviews/**")
+                .addPathPatterns("/reviews-washzone/**")
                 .addPathPatterns("/likes/**")
                 .addPathPatterns("/mypage/**");
                 //.excludePathPatterns("/public/**"); // 제외할 URL 패턴

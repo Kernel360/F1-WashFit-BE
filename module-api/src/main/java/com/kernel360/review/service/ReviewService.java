@@ -4,6 +4,7 @@ import com.kernel360.exception.BusinessException;
 import com.kernel360.file.entity.File;
 import com.kernel360.file.entity.FileReferType;
 import com.kernel360.file.repository.FileRepository;
+import com.kernel360.member.repository.MemberRepository;
 import com.kernel360.review.code.ReviewErrorCode;
 import com.kernel360.review.dto.ReviewRequestDto;
 import com.kernel360.review.dto.ReviewResponseDto;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final MemberRepository memberRepository;
     private final FileRepository fileRepository;
     private final FileUtils fileUtils;
 
@@ -45,7 +47,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewResponseDto> getReviewsByProduct(Long productNo, String sortBy, Pageable pageable) {
-        log.info("제품 리뷰 목록 조회 -> product_no {}", productNo);
+        log.info("제품별 리뷰 목록 조회 -> product_no {}", productNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byProductNo(productNo, sortBy), pageable)
                                .map(ReviewSearchResult::toDto);
@@ -53,7 +55,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewResponseDto> getReviewsByMember(Long memberNo, String sortBy, Pageable pageable) {
-        log.info("멤버 리뷰 목록 조회 -> memberNo {}", memberNo);
+        log.info("멤버별 제품 리뷰 목록 조회 -> member_no {}", memberNo);
 
         return reviewRepository.findAllByCondition(ReviewSearchDto.byMemberNo(memberNo, sortBy), pageable)
                                .map(ReviewSearchResult::toDto);
@@ -61,7 +63,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public ReviewResponseDto getReview(Long reviewNo) {
-        log.info("리뷰 단건 조회 -> review_no {}", reviewNo);
+        log.info("제품 리뷰 단건 조회 -> review_no {}", reviewNo);
         ReviewSearchResult review = reviewRepository.findByReviewNo(reviewNo);
 
         if (Objects.isNull(review)) {
@@ -72,20 +74,31 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review createReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
+    public Review createReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files, String id) {
+        isValidMemberInfo(id, reviewRequestDto.memberNo());
         isValidStarRating(reviewRequestDto.starRating());
 
         Review review;
 
         try {
             review = reviewRepository.saveAndFlush(reviewRequestDto.toEntity());
-            log.info("리뷰 등록 -> review_no {}", review.getReviewNo());
+            log.info("제품 리뷰 등록 -> review_no {}", review.getReviewNo());
 
             if (Objects.nonNull(files)) {
                 uploadFiles(files, reviewRequestDto.productNo(), review.getReviewNo());
             }
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
+            String msg = e.getMessage().toString();
+
+            if (msg.contains("review_product_no_fkey")) {
+                throw new BusinessException(ReviewErrorCode.NOT_FOUND_PRODUCT_FOR_REVIEW_CREATION);
+            }
+
+            if (msg.contains("review_member_no_fkey")) {
+                throw new BusinessException(ReviewErrorCode.NOT_FOUND_MEMBER_FOR_REVIEW_CREATION);
+            }
+
+            throw new BusinessException(ReviewErrorCode.DUPLICATE_REVIEW_EXISTS);
         }
 
         return review;
@@ -98,20 +111,21 @@ public class ReviewService {
             String fileUrl = String.join("/", bucketUrl, fileKey);
 
             File fileInfo = fileRepository.save(File.of(null, file.getOriginalFilename(), fileKey, fileUrl, REVIEW_CODE, reviewNo));
-            log.info("리뷰 파일 등록 -> file_no {}", fileInfo.getFileNo());
+            log.info("제품 리뷰 파일 등록 -> file_no {}", fileInfo.getFileNo());
         });
     }
 
     @Transactional
-    public void updateReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files) {
+    public void updateReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files, String id) {
         Review review = isVisibleReview(reviewRequestDto.reviewNo());
-        long productNo = review.getProduct().getProductNo();
-
+        isValidMemberInfo(id, review.getMember().getMemberNo());
         isValidStarRating(reviewRequestDto.starRating());
+
+        long productNo = review.getProduct().getProductNo();
 
         try {
             reviewRepository.saveAndFlush(reviewRequestDto.toEntityForUpdate());
-            log.info("리뷰 수정 -> review_no {}", reviewRequestDto.reviewNo());
+            log.info("제품 리뷰 수정 -> review_no {}", reviewRequestDto.reviewNo());
 
             fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewRequestDto.reviewNo())
                           .stream()
@@ -119,7 +133,7 @@ public class ReviewService {
                               if (!reviewRequestDto.files().contains(file.getFileUrl())) {
                                   fileUtils.delete(file.getFileKey());
                                   fileRepository.deleteById(file.getFileNo());
-                                  log.info("리뷰 파일 삭제 -> file_no {}", file.getFileNo());
+                                  log.info("제품 리뷰 파일 삭제 -> file_no {}", file.getFileNo());
                               }
                           });
 
@@ -127,22 +141,23 @@ public class ReviewService {
                 uploadFiles(files, productNo, reviewRequestDto.reviewNo());
             }
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(ReviewErrorCode.INVALID_REVIEW_WRITE_REQUEST);
+            throw new BusinessException(ReviewErrorCode.DUPLICATE_REVIEW_EXISTS);
         }
     }
 
     @Transactional
-    public void deleteReview(Long reviewNo) {
-        isVisibleReview(reviewNo);
+    public void deleteReview(Long reviewNo, String id) {
+        Review review = isVisibleReview(reviewNo);
+        isValidMemberInfo(id, review.getMember().getMemberNo());
 
         reviewRepository.deleteById(reviewNo);
-        log.info("리뷰 삭제 -> review_no {}", reviewNo);
+        log.info("제품 리뷰 삭제 -> review_no {}", reviewNo);
 
         fileRepository.findByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo)
                       .stream()
                       .forEach(file -> {
                           fileUtils.delete(file.getFileKey());
-                          log.info("리뷰 파일 삭제 -> file_no {}", file.getFileNo());
+                          log.info("제품 리뷰 파일 삭제 -> file_no {}", file.getFileNo());
                       });
         fileRepository.deleteByReferenceTypeAndReferenceNo(REVIEW_CODE, reviewNo);
     }
@@ -155,6 +170,11 @@ public class ReviewService {
         }
 
         return review.get();
+    }
+
+    private void isValidMemberInfo(String id, Long memberNo) {
+        memberRepository.findOneByIdAndMemberNo(id, memberNo)
+                        .orElseThrow(() -> new BusinessException(ReviewErrorCode.MISMATCHED_MEMBER_NO_AND_ID));
     }
 
     private void isValidStarRating(BigDecimal starRating) {
