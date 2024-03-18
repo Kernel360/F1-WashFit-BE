@@ -1,6 +1,6 @@
 package com.kernel360.likes.dto;
 
-import com.kernel360.main.controller.Sort;
+import com.kernel360.main.enumset.Sort;
 
 public record LikeSearchDto(
         String token,

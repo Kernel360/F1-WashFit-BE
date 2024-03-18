@@ -1,6 +1,7 @@
 package com.kernel360.product.entity;
 
 import com.kernel360.base.BaseEntity;
+import com.kernel360.product.enumset.SafetyStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -170,12 +171,11 @@ public class Product extends BaseEntity {
         this.violationInfo = violationInfo;
     }
 
-    private Product(
-            Long productNo,
-            String productName
-    ) {
+    /**
+     * review request
+     **/
+    private Product(Long productNo) {
         this.productNo = productNo;
-        this.productName = productName;
     }
 
     public static Product of(String productName,
@@ -213,8 +213,11 @@ public class Product extends BaseEntity {
                 fluorescentWhitening, manufactureType, manufactureMethod, manufactureNation, violation_info);
     }
 
-    public static Product of(Long productNo, String productName) {
-        return new Product(productNo, productName);
+    /**
+     * review request
+     **/
+    public static Product of(Long productNo) {
+        return new Product(productNo);
     }
 
     public void updateDetail(

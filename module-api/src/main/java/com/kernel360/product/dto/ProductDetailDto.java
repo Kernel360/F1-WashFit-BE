@@ -1,12 +1,9 @@
 package com.kernel360.product.dto;
 
 import com.kernel360.product.entity.Product;
-import jakarta.persistence.Column;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * DTO for {@link com.kernel360.product.entity.Product}
@@ -40,9 +37,9 @@ public record ProductDetailDto(
         String manufactureMethod,
         String manufactureNation,
         String violationInfo,
-        LocalDate createdAt,
+        LocalDateTime createdAt,
         String createdBy,
-        LocalDate modifiedAt,
+        LocalDateTime modifiedAt,
         String modifiedBy
         //TODO 브랜드 엔티티
 ) {
@@ -76,9 +73,9 @@ public record ProductDetailDto(
             String manufactureMethod,
             String manufactureNation,
             String violationInfo,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy
     ) {
         return new ProductDetailDto(
@@ -114,6 +111,51 @@ public record ProductDetailDto(
                 createdBy,
                 modifiedAt,
                 modifiedBy
+        );
+    }
+
+    /** find review **/
+    public static ProductDetailDto of(
+            Long   productNo,
+            String productName,
+            String imageSource,
+            String companyName,
+            String upperItem,
+            String item
+    ) {
+        return new ProductDetailDto(
+                productNo,
+                productName,
+                null,
+                imageSource,
+                null,
+                null,
+                null,
+                companyName,
+                null,
+                null,
+                null,
+                upperItem,
+                item,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 

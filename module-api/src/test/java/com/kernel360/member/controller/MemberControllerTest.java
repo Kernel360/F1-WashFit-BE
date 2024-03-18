@@ -7,15 +7,12 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel360.common.ControllerTest;
 import com.kernel360.member.dto.MemberCredentialDto;
 import com.kernel360.member.dto.MemberDto;
-import java.time.LocalDate;
-import org.junit.jupiter.api.Disabled;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -56,7 +53,7 @@ class MemberControllerTest extends ControllerTest {
                 "",
                 null,
                 null,
-                LocalDate.now(),
+                LocalDateTime.now(),
                 "test01",
                 null,
                 null,
@@ -151,7 +148,7 @@ class MemberControllerTest extends ControllerTest {
         MemberCredentialDto credentialDto = MemberCredentialDto.of(null, null, "kernel360", null);
         MemberDto memberDto = MemberDto.of("testMemberId", "testPassword001");
 
-        given(memberService.findByMemberId(credentialDto.memberId())).willReturn(memberDto);
+        given(memberService.findOneByIdForAccountTypeByPlatform(credentialDto.memberId())).willReturn(memberDto);
         given(findCredentialService.generatePasswordResetPageUri(memberDto)).willReturn("테스트 URI");
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -29,19 +29,14 @@ public class CarInfo extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "member_no")
     private Member member;
-
     @Column(name = "car_type")
     private Integer carType;
-
     @Column(name = "car_size")
     private Integer carSize;
-
     @Column(name = "car_color")
     private Integer carColor;
-
     @Column(name = "driving_env")
     private Integer drivingEnv;
-
     @Column(name = "parking_env")
     private Integer parkingEnv;
 

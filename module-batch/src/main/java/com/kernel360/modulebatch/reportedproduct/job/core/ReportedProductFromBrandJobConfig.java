@@ -1,6 +1,8 @@
 package com.kernel360.modulebatch.reportedproduct.job.core;
 
 import com.kernel360.brand.entity.Brand;
+import com.kernel360.modulebatch.global.BaseJobExecutionListener;
+import com.kernel360.modulebatch.global.BaseStepExecutionListener;
 import com.kernel360.modulebatch.reportedproduct.dto.ReportedProductDto;
 import com.kernel360.modulebatch.reportedproduct.job.infra.FetchReportedProductListFromBrandItemProcessor;
 import com.kernel360.modulebatch.reportedproduct.job.infra.ReportedProductListItemWriter;
@@ -17,6 +19,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -25,21 +28,25 @@ import org.springframework.web.client.ResourceAccessException;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "job.name", havingValue = ReportedProductFromBrandJobConfig.JOB_NAME)
 public class ReportedProductFromBrandJobConfig {
 
+    public static final String JOB_NAME = "FetchReportedProductFromBrandJob";
     private final ReportedProductListItemWriter reportedProductListItemWriter;
-
-    private final FetchReportedProductListFromBrandItemProcessor fetchReportedProductListFromBrandItemProcessor;
-
+    private final FetchReportedProductListFromBrandItemProcessor fetchReportedProductItemProcessor;
     private final EntityManagerFactory emf;
+    private final BaseJobExecutionListener baseJobExecutionListener;
+    private final BaseStepExecutionListener baseStepExecutionListener;
+
 
     @Bean
-    public Job fetchReportedProductFromBrandJob(JobRepository jobRepository,
+    public Job FetchReportedProductFromBrandJob(JobRepository jobRepository,
                                                 @Qualifier("fetchReportedProductFromBrandStep") Step fetchReportedProductFromBrandStep) {
 
-        return new JobBuilder("fetchReportedProductFromBrandJob", jobRepository)
+        return new JobBuilder(JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(fetchReportedProductFromBrandStep)
+                .listener(baseJobExecutionListener)
                 .build();
     }
 
@@ -50,8 +57,9 @@ public class ReportedProductFromBrandJobConfig {
 
         return new StepBuilder("fetchReportedProductFromBrandStep", jobRepository)
                 .<Brand, List<ReportedProductDto>>chunk(1, transactionManager)
+                .listener(baseStepExecutionListener)
                 .reader(readBrand()) // brand 목록을 읽어와서 전달
-                .processor(fetchReportedProductListFromBrandItemProcessor) // 브랜드 정보를 통해서 API 요청, reportedProductDto 리스트 반환
+                .processor(fetchReportedProductItemProcessor) // 브랜드 정보를 통해서 API 요청, reportedProductDto 리스트 반환
                 .writer(reportedProductListItemWriter)
                 .faultTolerant()
                 .retryLimit(2)
@@ -69,5 +77,4 @@ public class ReportedProductFromBrandJobConfig {
 
         return jpaPagingItemReader;
     }
-
 }

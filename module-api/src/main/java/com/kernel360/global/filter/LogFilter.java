@@ -4,6 +4,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -18,6 +20,11 @@ public class LogFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         ContentCachingRequestWrapper request = new ContentCachingRequestWrapper((HttpServletRequest) req);
         ContentCachingResponseWrapper response = new ContentCachingResponseWrapper((HttpServletResponse) res);
+
+        printLog(chain, request, response);
+    }
+
+    private static void printLog(FilterChain chain, ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException, ServletException {
         log.info("##### INIT URI: {}", request.getRequestURI());
 
         chain.doFilter(request, response);
@@ -54,8 +61,16 @@ public class LogFilter implements Filter {
         });
 
         String responseBody = new String(response.getContentAsByteArray());
-        log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, responseHeaderValues, responseBody);
-
+        if(!deninedList().containsKey(uri)) {
+            log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, responseHeaderValues, responseBody);
+        }
         response.copyBodyToResponse();
+    }
+
+    private static Trie<String, Integer> deninedList(){
+        Trie<String, Integer> trie = new PatriciaTrie<>();
+
+        trie.put("/actuator/prometheus",0);
+        return trie;
     }
 }

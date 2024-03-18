@@ -5,6 +5,7 @@ import com.kernel360.member.enumset.Age;
 import com.kernel360.member.enumset.Gender;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * DTO for {@link com.kernel360.member.entity.Member}
@@ -15,9 +16,9 @@ public record MemberDto(Long memberNo,
                         String password,
                         String gender,
                         String age,
-                        LocalDate createdAt,
+                        LocalDateTime createdAt,
                         String createdBy,
-                        LocalDate modifiedAt,
+                        LocalDateTime modifiedAt,
                         String modifiedBy,
                         String jwtToken
 ) {
@@ -29,9 +30,9 @@ public record MemberDto(Long memberNo,
             String password,
             String gender,
             String age,
-            LocalDate createdAt,
+            LocalDateTime createdAt,
             String createdBy,
-            LocalDate modifiedAt,
+            LocalDateTime modifiedAt,
             String modifiedBy,
             String jwtToken
     ) {
@@ -146,6 +147,28 @@ public record MemberDto(Long memberNo,
                 password,
                 null,
                 null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    /** find review **/
+    public static MemberDto of(
+            Long memberNo,
+            String id,
+            int age,
+            int gender
+    ){
+        return new MemberDto(
+                memberNo,
+                id,
+                null,
+                null,
+                Gender.ordinalToName(gender),
+                Age.ordinalToValue(age),
                 null,
                 null,
                 null,

@@ -101,7 +101,7 @@ public class MemberService {
     public boolean emailDuplicationCheck(String email) {
         Member member = memberRepository.findOneByEmailForAccountTypeByPlatform(email);
 
-        return member != null;
+        return Objects.nonNull(member);
     }
 
     public MemberDto findMemberByToken(String token) {
@@ -238,7 +238,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberDto findByMemberId(String memberId) {
+    public MemberDto findOneByIdForAccountTypeByPlatform(String memberId) {
         Member member = memberRepository.findOneByIdForAccountTypeByPlatform(memberId);
         if (member == null) {
             throw new BusinessException(MemberErrorCode.FAILED_FIND_MEMBER_INFO);
@@ -283,5 +283,10 @@ public class MemberService {
         Member member = memberRepository.findOneById(id);
 
         return member.getPassword().equals(ConvertSHA256.convertToSHA256(password));
+    }
+
+    public MemberDto findByMemberId(String id) {
+        Member member = memberRepository.findOneById(id);
+        return MemberDto.from(member);
     }
 }

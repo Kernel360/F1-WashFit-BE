@@ -1,6 +1,6 @@
 package com.kernel360.product.controller;
 
-import com.kernel360.main.controller.Sort;
+import com.kernel360.main.enumset.Sort;
 import com.kernel360.product.code.ProductsBusinessCode;
 import com.kernel360.product.dto.ProductDetailDto;
 import com.kernel360.product.dto.ProductDto;

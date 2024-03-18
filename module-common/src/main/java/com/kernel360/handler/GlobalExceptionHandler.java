@@ -8,9 +8,11 @@ import com.kernel360.response.ErrorResponse;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -75,21 +77,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException e){
-        log.error("handleIllegalArgumentException",e);
+    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException e) {
+        log.error("handleIllegalArgumentException", e);
 
         final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_ARGUMENT);
 
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e){
-        log.error("handleHttpRequestMethodNotSupportedException",e);
+    protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+        log.error("handleHttpRequestMethodNotSupportedException", e);
 
-        final ErrorResponse response =ErrorResponse.of(CommonErrorCode.INVALID_HTTP_REQUEST_METHOD);
+        final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_HTTP_REQUEST_METHOD);
 
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -98,6 +100,20 @@ public class GlobalExceptionHandler {
 
         final ErrorResponse response = ErrorResponse.of(CommonErrorCode.INVALID_REQUEST_PARAMETER);
 
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        log.error("handleMethodArgumentNotValidException", e);
+
+        String defaultMessage = e.getBindingResult().getFieldError().getDefaultMessage();
+        if (!StringUtils.isBlank(defaultMessage)) {
+            defaultMessage = String.format(" (%s)", defaultMessage);
+        }
+
+        final ErrorResponse response = ErrorResponse.of(CommonErrorCode.ARGUMENT_VALIDATION_FAILED, defaultMessage);
+        
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

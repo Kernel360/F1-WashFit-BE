@@ -11,6 +11,8 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: validate
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -57,10 +59,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: "prometheus, health"
   endpoint:
     health:
-      show-details: always
+      show-details: never
 
 constants:
   host-url: ${DEV_HOST_URL}
