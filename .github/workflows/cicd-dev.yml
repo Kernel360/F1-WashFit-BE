@@ -23,7 +23,7 @@ jobs:
 
       - name: Replace SQL Queries
         run: |
-          dir_path="./module-api/src/main/resources/db/migration"
+          dir_path="./module-domain/src/main/resources/db/migration"
           old_text="changeRequired"
           new_text="${{ secrets.PUBLIC_KEY }}"
           find "$dir_path" -type f -name "*.sql" -exec sed -i "s|$old_text|$new_text|g" {} +
@@ -83,23 +83,36 @@ jobs:
           chmod +x ./gradlew
           ./gradlew bootJar
 
-      - name: DockerHub Login
-        uses: docker/login-action@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
 
-      - name: Docker Image Build And Push (api)
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR (api)
         working-directory: ./module-api
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: dev-washfit-api
+          IMAGE_TAG: latest
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_API_NAME }} . --platform=linux/amd64
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_API_NAME }}
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-      - name: Docker Image Build And Push (batch)
+      - name: Build, tag, and push docker image to Amazon ECR (batch)
         working-directory: ./module-batch
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: dev-washfit-batch
+          IMAGE_TAG: latest
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_BATCH_NAME }} . --platform=linux/amd64
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.MODULE_BATCH_NAME }}
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG          
 
       - name: Application Run
         uses: appleboy/ssh-action@v0.1.6
@@ -123,7 +136,7 @@ jobs:
             echo "${{ secrets.DEV_REDIS_CONF }}" > ./redis/redis.conf
             echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
 
-            echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
             
             docker image prune -af
             

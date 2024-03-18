@@ -23,7 +23,7 @@ jobs:
 
       - name: Replace SQL Queries
         run: |
-          dir_path="./module-api/src/main/resources/db/migration"
+          dir_path="./module-domain/src/main/resources/db/migration"
           old_text="changeRequired"
           new_text="${{ secrets.PUBLIC_KEY }}"
           find "$dir_path" -type f -name "*.sql" -exec sed -i "s|$old_text|$new_text|g" {} +
@@ -32,6 +32,13 @@ jobs:
         uses: microsoft/variable-substitution@v1
         with:
           files: ./module-api/src/main/resources/application.yml
+        env:
+          spring.profiles.active: "prod"
+
+      - name: Set application yml file (batch)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-batch/src/main/resources/application.yml
         env:
           spring.profiles.active: "prod"
 
@@ -53,11 +60,28 @@ jobs:
           aws.s3.bucket.name: ${{ secrets.AWS_S3_BUCKET_NAME }}
           aws.s3.bucket.url: ${{ secrets.AWS_S3_BUCKET_URL }}
 
+      - name: Set application-dev yml file (batch)
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./module-batch/src/main/resources/application-prod.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL_AWS }}
+          spring.datasource.username: ${{ secrets.DB_USER }}
+          spring.datasource.password: ${{ secrets.DB_PW }}
+          external.ecolife-api.path: ${{ secrets.ECOLIFE_PATH }}
+          external.ecolife-api.service-key: ${{ secrets.ECOLIFE_KEY }}
+
       - name: Grant execute permission And Build with Gradle (api)
         working-directory: ./module-api
         run: |
           chmod +x ./gradlew
           ./gradlew bootJar
+
+      - name: Grant execute permission And Build with Gradle (batch)
+        working-directory: ./module-batch
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bootJar          
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -70,11 +94,21 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push docker image to Amazon ECR
+      - name: Build, tag, and push docker image to Amazon ECR (api)
         working-directory: ./module-api
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: washfit-api
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Build, tag, and push docker image to Amazon ECR (batch)
+        working-directory: ./module-batch
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: washfit-batch
           IMAGE_TAG: latest
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .

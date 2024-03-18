@@ -1,0 +1,47 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        generate_statistics: true
+        jdbc:
+          batch_size: 100
+        format_sql: true
+    open-in-view: true
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL_AWS}
+    username: ${DB_USER}
+    password: ${DB_PW}
+    hikari:
+      maximum-pool-size: 100
+      idle-timeout: 20000
+      validation-timeout: 5000
+      minimum-idle: 5
+
+external:
+  ecolife-api:
+    path: ${ECOLIFE_PATH}
+    service-key: ${ECOLIFE_KEY}
+
+
+logging:
+  file:
+    path: ./logs/batch/
+    name: batch-log
+  logback:
+    rolling policy:
+      max-history: 14
+      max-file-size: 50MB
+      total-size-cap: 5GB
+  level:
+    root: warn
+    com.kernel360: debug
+    org.hibernate.sql: debug
+    org.hibernate.type.descriptor.sql: trace
+    org:
+      springframework:
+        transaction=DEBUG:
