@@ -2,7 +2,7 @@ name: Project CI/CD with AWS
 
 on:
   push:
-    branches: [ "refactor/sql-repack-and-add-ecr-upload" ]    # main
+    branches: [ "main" ]
 
 permissions:
   contents: read
