@@ -12,6 +12,7 @@ import com.kernel360.product.entity.Product;
 import com.kernel360.product.enumset.SafetyStatus;
 import com.kernel360.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final LikeRepository likeRepository;
 
+    @Cacheable(value = "productsCache")
     @Transactional(readOnly = true)
     public List<ProductDto> getProducts() {
 
