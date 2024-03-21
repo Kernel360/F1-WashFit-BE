@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: washfit
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${DB_URL_AWS}
