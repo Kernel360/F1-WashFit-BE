@@ -6,6 +6,7 @@ import com.kernel360.auth.service.AuthService;
 import com.kernel360.commoncode.controller.CommonCodeController;
 import com.kernel360.commoncode.service.CommonCodeService;
 import com.kernel360.global.Interceptor.AcceptInterceptor;
+import com.kernel360.global.Interceptor.InterceptorConfig;
 import com.kernel360.main.controller.MainController;
 import com.kernel360.main.service.MainService;
 import com.kernel360.member.controller.MemberController;
@@ -14,6 +15,8 @@ import com.kernel360.member.service.MemberService;
 import com.kernel360.mypage.controller.MyPageController;
 import com.kernel360.product.controller.ProductController;
 import com.kernel360.product.service.ProductService;
+import com.kernel360.review.controller.ReviewController;
+import com.kernel360.review.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,7 +29,8 @@ import org.springframework.test.web.servlet.MockMvc;
         ProductController.class,
         MainController.class,
         MyPageController.class,
-        AuthController.class
+        AuthController.class,
+        ReviewController.class
 })
 @AutoConfigureRestDocs
 public abstract class ControllerTest {
@@ -36,6 +40,9 @@ public abstract class ControllerTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected InterceptorConfig interceptorConfig;
 
     @MockBean
     protected AcceptInterceptor acceptInterceptor;
@@ -57,4 +64,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected AuthService authService;
+
+    @MockBean
+    protected ReviewService reviewService;
 }
