@@ -19,7 +19,7 @@ public class LogAspect {
         Object proceed = joinPoint.proceed();
 
         long executionTime = System.nanoTime() - start;
-        log.info("##### @LogExecutionTime ##### " + joinPoint.getSignature() + " executed in " + executionTime + "ms");
+        log.info("##### @LogExecutionTime ##### " + joinPoint.getSignature() + " executed in " + executionTime + "ns");
 
         return proceed;
     }
@@ -35,7 +35,7 @@ public class LogAspect {
         long executionTime = System.nanoTime() - start;
         Signature signature = joinPoint.getSignature();
 
-        log.info(String.format("##### @API Execution Time ##### [%dms] → %s.%s",
+        log.info(String.format("##### @API Execution Time ##### [%dns] → %s.%s",
                 executionTime, signature.getDeclaringTypeName(), signature.getName()));
 
         return proceed;
