@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.kernel360.code.common.CommonErrorCode;
 import com.kernel360.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -21,6 +24,8 @@ import java.util.UUID;
 public class FileUtils {
 
     private final AmazonS3 amazonS3;
+
+    private final Tika tika = new Tika();
 
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
@@ -34,8 +39,8 @@ public class FileUtils {
     public String upload(String path, MultipartFile multipartFile) {
         String filePath = makeFilePath(path);
         String filename = makeFileName();
-        String fileExtension = getFileExtension(multipartFile.getOriginalFilename());
-        String fileKey = String.join("", filePath, filename, fileExtension);
+        String fileExtension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+        String fileKey = String.join("", filePath, filename, "." + fileExtension);
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(multipartFile.getContentType());
@@ -73,11 +78,32 @@ public class FileUtils {
                 UUID.randomUUID().toString());
     }
 
-    private String getFileExtension(String originalFilename) {
-        // TODO: 확장자에 대한 검사 로직 추가할 수 있을지 체크
-        try {
-            return originalFilename.substring(originalFilename.lastIndexOf("."));
-        } catch (StringIndexOutOfBoundsException e) {
+    public void isValidFileExtension(List<MultipartFile> files) {
+        boolean isNotValid = files.stream()
+                                  .anyMatch(file -> FilenameUtils.getExtension(file.getOriginalFilename()).isBlank());
+
+        if (isNotValid) {
+            throw new BusinessException(CommonErrorCode.INVALID_FILE_EXTENSION);
+        }
+    }
+
+    public void isValidFileExtension(List<MultipartFile> files, List<String> allowedFileType) {
+        isValidFileExtension(files);
+
+        if (allowedFileType == null || allowedFileType.isEmpty()) {
+            return;
+        }
+
+        boolean isNotValid = files.stream()
+                                  .anyMatch(file -> {
+                                      try {
+                                          return !allowedFileType.contains(tika.detect(file.getInputStream()));
+                                      } catch (IOException e) {
+                                          throw new BusinessException(CommonErrorCode.FAIL_FILE_UPLOAD);
+                                      }
+                                  });
+
+        if (isNotValid) {
             throw new BusinessException(CommonErrorCode.INVALID_FILE_EXTENSION);
         }
     }
