@@ -24,9 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.springframework.util.MimeTypeUtils.*;
 
 @Slf4j
 @Service
@@ -44,6 +47,7 @@ public class ReviewService {
     private static final double MAX_STAR_RATING = 5.0;
     private static final String REVIEW_DOMAIN = FileReferType.REVIEW.getDomain();
     private static final String REVIEW_CODE = FileReferType.REVIEW.getCode();
+    private static final List<String> ALLOWED_FILE_TYPE = Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE);
 
     @Transactional(readOnly = true)
     public Page<ReviewResponseDto> getReviewsByProduct(Long productNo, String sortBy, Pageable pageable) {
@@ -77,6 +81,7 @@ public class ReviewService {
     public Review createReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> files, String id) {
         isValidMemberInfo(id, reviewRequestDto.memberNo());
         isValidStarRating(reviewRequestDto.starRating());
+        fileUtils.isValidFileExtension(files, ALLOWED_FILE_TYPE);
 
         Review review;
 
@@ -120,6 +125,7 @@ public class ReviewService {
         Review review = isVisibleReview(reviewRequestDto.reviewNo());
         isValidMemberInfo(id, review.getMember().getMemberNo());
         isValidStarRating(reviewRequestDto.starRating());
+        fileUtils.isValidFileExtension(files, ALLOWED_FILE_TYPE);
 
         long productNo = review.getProduct().getProductNo();
 
