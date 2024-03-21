@@ -15,6 +15,11 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class LogFilter implements Filter {
+    private static final Trie<String, Integer> DENIED_LIST = new PatriciaTrie<>();
+
+    static {
+        DENIED_LIST.put("/actuator/prometheus", 0);
+    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -61,16 +66,9 @@ public class LogFilter implements Filter {
         });
 
         String responseBody = new String(response.getContentAsByteArray());
-        if(!deninedList().containsKey(uri) && !uri.startsWith("/docs/")) {
+        if(!DENIED_LIST.containsKey(uri) && !uri.startsWith("/docs/")) {
             log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, responseHeaderValues, responseBody);
         }
         response.copyBodyToResponse();
-    }
-
-    private static Trie<String, Integer> deninedList(){
-        Trie<String, Integer> trie = new PatriciaTrie<>();
-
-        trie.put("/actuator/prometheus",0);
-        return trie;
     }
 }

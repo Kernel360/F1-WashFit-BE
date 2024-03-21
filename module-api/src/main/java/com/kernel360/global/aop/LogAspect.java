@@ -15,11 +15,11 @@ public class LogAspect {
 
     @Around("@annotation(com.kernel360.global.annotation.LogExecutionTime)")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         Object proceed = joinPoint.proceed();
 
-        long executionTime = System.currentTimeMillis() - start;
-        log.info("##### @LogExecutionTime ##### " + joinPoint.getSignature() + " executed in " + executionTime + "ms");
+        long executionTime = System.nanoTime() - start;
+        log.info("##### @LogExecutionTime ##### " + joinPoint.getSignature() + " executed in " + executionTime + "ns");
 
         return proceed;
     }
@@ -29,13 +29,13 @@ public class LogAspect {
 
     @Around("controller()")
     public Object logApiExecTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         Object proceed = joinPoint.proceed();
 
-        long executionTime = System.currentTimeMillis() - start;
+        long executionTime = System.nanoTime() - start;
         Signature signature = joinPoint.getSignature();
 
-        log.info(String.format("##### @API Execution Time ##### [%dms] → %s.%s",
+        log.info(String.format("##### @API Execution Time ##### [%dns] → %s.%s",
                 executionTime, signature.getDeclaringTypeName(), signature.getName()));
 
         return proceed;

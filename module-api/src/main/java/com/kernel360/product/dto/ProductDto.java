@@ -2,12 +2,14 @@ package com.kernel360.product.dto;
 
 import com.kernel360.product.entity.Product;
 import com.kernel360.product.enumset.SafetyStatus;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * DTO for {@link com.kernel360.product.entity.Product}
  */
-public record ProductDto(
+public record ProductDto (
         Long productNo,
         String productName,
         String barcode,
@@ -21,7 +23,7 @@ public record ProductDto(
         String createdBy,
         LocalDateTime modifiedAt,
         String modifiedBy
-) {
+)  implements Serializable{
 
     public static ProductDto of(
             Long productNo,
