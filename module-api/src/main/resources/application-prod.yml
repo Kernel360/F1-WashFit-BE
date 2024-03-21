@@ -58,15 +58,10 @@ logging:
       total-size-cap: 5GB
 
 management:
-  observations:
-    key-values:
-      application: ${spring.application.name}
-      instance: live
-
   endpoints:
     web:
       exposure:
-        include: health, metrics, prometheus
+        include: "prometheus, health"
   endpoint:
     health:
       show-details: never
