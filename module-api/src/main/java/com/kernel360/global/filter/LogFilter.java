@@ -61,7 +61,7 @@ public class LogFilter implements Filter {
         });
 
         String responseBody = new String(response.getContentAsByteArray());
-        if(!deninedList().containsKey(uri)) {
+        if(!deninedList().containsKey(uri) && !uri.startsWith("/docs/")) {
             log.info("##### RESPONSE ##### uri: {}, method: {}, header: {}, body: {}", uri, method, responseHeaderValues, responseBody);
         }
         response.copyBodyToResponse();
