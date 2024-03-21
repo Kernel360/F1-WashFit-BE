@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: washfit
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${DB_URL_AWS}
@@ -46,6 +44,8 @@ spring:
           max-idle: 20
       host: ${REDIS_PROD_HOST}
       password: ${REDIS_PROD_PASSWORD}
+  application:
+    name: washfit_live
 
 logging:
   file:
