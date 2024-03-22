@@ -7,6 +7,11 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.kernel360.code.common.CommonErrorCode;
 import com.kernel360.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,13 +19,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FileUtils {
 
     private final AmazonS3 amazonS3;
+    private final Tika tika = new Tika();
+    private final MimeTypes mimeTypes = MimeTypes.getDefaultMimeTypes();
 
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
@@ -74,10 +84,49 @@ public class FileUtils {
     }
 
     private String getFileExtension(String originalFilename) {
-        // TODO: 확장자에 대한 검사 로직 추가할 수 있을지 체크
-        try {
-            return originalFilename.substring(originalFilename.lastIndexOf("."));
-        } catch (StringIndexOutOfBoundsException e) {
+
+        return originalFilename.substring(originalFilename.lastIndexOf("."));
+    }
+
+    public void isValidFileExtension(List<MultipartFile> files) {
+        boolean isNotValid = files.stream()
+                                  .anyMatch(file -> {
+                                      try {
+                                          List<String> extensions = mimeTypes.forName(tika.detect(file.getInputStream())).getExtensions();
+                                          return !extensions.contains("." + FilenameUtils.getExtension(file.getOriginalFilename()));
+                                      } catch (MimeTypeException | IOException e) {
+                                          log.error("isValidFileExtension(List)", e.getMessage());
+                                          throw new BusinessException(CommonErrorCode.FAIL_FILE_EXTENSION_VALIDATE);
+                                      }
+                                  });
+
+        if (isNotValid) {
+            throw new BusinessException(CommonErrorCode.INVALID_FILE_EXTENSION);
+        }
+    }
+
+    public void isValidFileExtension(List<MultipartFile> files, List<String> allowedFileType) {
+        isValidFileExtension(files);
+
+        if (allowedFileType == null || allowedFileType.isEmpty()) {
+            return;
+        }
+
+        List<String> allowExt = new ArrayList<>();
+        allowedFileType.stream()
+                .forEach(type -> {
+                    try {
+                        allowExt.addAll(mimeTypes.forName(type).getExtensions());
+                    } catch (MimeTypeException e) {
+                        log.error("isValidFileExtension(List, List)", e.getMessage());
+                        throw new BusinessException(CommonErrorCode.FAIL_FILE_EXTENSION_VALIDATE);
+                    }
+                });
+
+        boolean isNotValid = files.stream()
+                                  .anyMatch(file -> !allowExt.contains(getFileExtension(file.getOriginalFilename())));
+
+        if (isNotValid) {
             throw new BusinessException(CommonErrorCode.INVALID_FILE_EXTENSION);
         }
     }

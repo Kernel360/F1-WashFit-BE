@@ -24,9 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.springframework.util.MimeTypeUtils.*;
 
 @Slf4j
 @Service
@@ -43,6 +46,7 @@ public class WashzoneReviewService {
     private static final double MAX_STAR_RATING = 5.0;
     private static final String WASHZONE_REVIEW_DOMAIN = FileReferType.WASHZONE_REVIEW.getDomain();
     private static final String WASHZONE_REVIEW_CODE = FileReferType.WASHZONE_REVIEW.getCode();
+    private static final List<String> ALLOWED_FILE_TYPE = Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE);
 
     @Transactional(readOnly = true)
     public Page<WashzoneReviewResponseDto> getWashzoneReviewsByWashzone(Long washzoneNo, String sortBy, Pageable pageable) {
@@ -76,6 +80,7 @@ public class WashzoneReviewService {
     public WashzoneReview createWashzoneReview(WashzoneReviewRequestDto requestDto, List<MultipartFile> files, String id) {
         isValidMemberInfo(id, requestDto.memberNo());
         isValidStarRating(requestDto.starRating());
+        fileUtils.isValidFileExtension(files, ALLOWED_FILE_TYPE);
 
         WashzoneReview washzoneReview;
 
@@ -119,6 +124,7 @@ public class WashzoneReviewService {
         WashzoneReview washzoneReview = isVisibleStatus(requestDto.washzoneReviewNo());
         isValidMemberInfo(id, washzoneReview.getMember().getMemberNo());
         isValidStarRating(requestDto.starRating());
+        fileUtils.isValidFileExtension(files, ALLOWED_FILE_TYPE);
 
         long washzoneNo = washzoneReview.getWashzone().getWashZoneNo();
 
