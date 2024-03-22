@@ -75,7 +75,7 @@ jobs:
         working-directory: ./module-api
         run: |
           chmod +x ./gradlew
-          ./gradlew bootJar
+          ./gradlew bootJar -PapiDocNeeded=false
 
       - name: Grant execute permission And Build with Gradle (batch)
         working-directory: ./module-batch
