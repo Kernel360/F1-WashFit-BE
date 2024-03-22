@@ -106,7 +106,7 @@ tasks.withType(GenerateSwaggerUI) {
 
 swaggerSources {
     sample {
-        setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+        setInputFile(file("${layout.buildDirectory.get().asFile}/api-spec/openapi3.yaml"))
     }
 }
 
@@ -122,9 +122,13 @@ openapi3 {
 }
 
 bootJar {
-    dependsOn generateSwaggerUISample
-    from("${generateSwaggerUISample.outputDir}") {
-        into 'static/docs'
+    def apiDocNeeded = !project.hasProperty('apiDocNeeded') ? true : apiDocNeeded.toBoolean()
+
+    if (apiDocNeeded) {
+        dependsOn generateSwaggerUISample
+        from("${generateSwaggerUISample.outputDir}") {
+            into 'static/docs'
+        }
     }
 }
 
