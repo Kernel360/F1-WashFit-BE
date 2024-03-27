@@ -22,12 +22,13 @@
 
 <br><br>
 ## 💧 주요 기능 시연 
-![1](https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/8063a669-43de-4ba4-9ec1-9db5e9e628ad)
+<img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/8063a669-43de-4ba4-9ec1-9db5e9e628ad" width="500px"/>
+<img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/96353b1e-113c-4422-9a0c-4749106c4af9" width="500px"/>
+<img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/aaa3dd18-2155-41dd-854e-5d0dfc1202d2" width="500px"/>
+<img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/9781cbf1-0ec2-4ec8-9540-b162d0c34140" width="500px"/>
+<img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/8fc68753-8724-4fcd-aca5-b95c7d2c6fb8" width="500px"/>
+<img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/282ab0c0-d0f3-43c2-9dd6-97e8bcc9d07e" width="500px"/>
 
-![3](https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/aaa3dd18-2155-41dd-854e-5d0dfc1202d2)
-![4](https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/9781cbf1-0ec2-4ec8-9540-b162d0c34140)
-![5](https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/8fc68753-8724-4fcd-aca5-b95c7d2c6fb8)
-![6](https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/282ab0c0-d0f3-43c2-9dd6-97e8bcc9d07e)
 
 
 ## | 기능 작성시 상세한 기획/정책/규칙 작성
