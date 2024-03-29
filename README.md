@@ -111,7 +111,7 @@
 <br><br>
 
 ### 개발 인프라 구조
-<img alt="개발 인프라 구조" src="https://github.com/Kernel360/F1-WashFit-BE/assets/88479739/89600c8d-97f4-4fd7-a02d-14ebe316b4e0" width="800px"/>
+<img alt="개발 인프라 구조" src="https://github.com/Kernel360/F1-WashFit-BE/assets/88479739/d9597fa9-b0c6-4e90-bd48-08bfbf57f2fb" width="800px"/>
 <br><br>
 
 ### ERD
