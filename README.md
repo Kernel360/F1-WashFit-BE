@@ -1,10 +1,13 @@
 # 🚘 WashFit
-<p align="center"><img width="1000" height="150" alt="image" src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/43b831e5-8608-490c-a8a6-a1c6802b2024" style="width: 100%"></p>
-
+<p align="center">
+    <img width="1000" height="150" alt="image" src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/43b831e5-8608-490c-a8a6-a1c6802b2024" style="width: 100%">
+</p>
 
 ## 💧 서비스 소개 
     세차용품 안전정보 제공 및 검증된 세차 관련 정보를 보여주는 플랫폼
-<p align="center"><img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/06a42af8-4b98-4c1a-b7ef-15e8a3c578cd" style="width: 60%" ></p>
+<p align="center">
+    <img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/06a42af8-4b98-4c1a-b7ef-15e8a3c578cd" style="width: 60%">
+</p>
 
 ## 💧 서비스 대상
     - 바이럴 마케팅, 제품 제공 후기가 아닌 솔직한 리뷰를 확인하고 싶은 소비자
@@ -15,12 +18,10 @@
 ## 💧 사이트 URL
     https://www.washfit.site
 
-
 ## 💧 주요 기능 
     회원 :: 가입/SNS 로그인, 마이페이지
     제품 :: 제품 안전정보 검색/조회
     기타 :: 세차장 지도, 세차 유튜브
-
 
 ## 💧 주요 기능 시연 
 <p align="center">
@@ -58,6 +59,7 @@
     - 목록 정보를 바탕으로 단일 제품 상세 정보 요청
     - 상세정보를 서비스에 사용하는 Product 테이블에 추가
 
+<br>
     
 ## 🖥️ 주요 기술 스택
 <div>
@@ -121,6 +123,8 @@
     - 회원탈퇴(탈퇴회원 관리 정책 필요)
     - Admin 페이지
     - (제품 추천 시스템)
+    
+<br>
 
 ## 🙏🏻 팀원 소개
 <table>
