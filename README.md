@@ -17,6 +17,9 @@
 
 ## 💧 사이트 URL
     https://www.washfit.site
+<p align="center">    
+    <img src="https://github.com/Kernel360/F1-WashFit-BE/assets/73059667/b3a73aa6-08ff-4ced-abd4-0bf611cf44b7">
+</p> 
 
 ## 💧 주요 기능 
     회원 :: 가입/SNS 로그인, 마이페이지
