@@ -1,14 +1,17 @@
 package com.kernel360.bbs.dto;
 
 import com.kernel360.bbs.entity.BBS;
+import com.kernel360.file.entity.File;
 import com.kernel360.member.dto.MemberDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * DTO for {@link com.kernel360.bbs.entity.BBS}
  */
 public record BBSDto(
+
         Long bbsNo,
         Long upperNo,
         String type,
@@ -20,7 +23,8 @@ public record BBSDto(
         LocalDateTime modifiedAt,
         String modifiedBy,
         Long viewCount,
-        MemberDto memberDto
+        MemberDto memberDto,
+        List<File> files
     ) {
 
     public static BBSDto of(
@@ -35,7 +39,8 @@ public record BBSDto(
             LocalDateTime modifiedAt,
             String modifiedBy,
             Long viewCount,
-            MemberDto memberDto
+            MemberDto memberDto,
+            List<File> files
     ){
         return new BBSDto(
             bbsNo,
@@ -49,11 +54,12 @@ public record BBSDto(
             modifiedAt,
             modifiedBy,
             viewCount,
-            memberDto
+            memberDto,
+                files
         );
     }
 
-    public static BBSDto from(BBS entity){
+    public static BBSDto from(BBS entity, List<File> byReferenceTypeAndReferenceNo){
         return new BBSDto(
                 entity.getBbsNo(),
                 entity.getUpperNo(),
@@ -66,21 +72,9 @@ public record BBSDto(
                 entity.getModifiedAt(),
                 entity.getModifiedBy(),
                 entity.getViewCount(),
-                MemberDto.from(entity.getMember())
+                MemberDto.from(entity.getMember()),
+                byReferenceTypeAndReferenceNo
         );
     }
-
-
-//    public BBS toEntity() {
-//        return BBS.create(
-//                this.bbsNo(),
-//                this.upperNo(),
-//                this.title(),
-//                this.contents()
-//
-//        );
-//    }
-
-
 
 }

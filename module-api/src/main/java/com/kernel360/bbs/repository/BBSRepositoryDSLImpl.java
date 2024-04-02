@@ -7,12 +7,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.kernel360.bbs.entity.QBBS.bBS;
 import static com.kernel360.member.entity.QMember.member;
@@ -25,20 +22,20 @@ public class BBSRepositoryDSLImpl implements BBSRepositoryDSL {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<BBSListDto> getBBSWithCondition(String type, String keyword, Pageable pageable) {
+    public Page<BBSListDto> getBBSWithConditionByPage(String type, String keyword, Pageable pageable) {
 
         Predicate finalPredicate = bBS.isVisible.eq(true)
-                                   .and(bBS.type.eq(BBSType.valueOf(type).name()));
+                                                .and(bBS.type.eq(BBSType.valueOf(type).name()));
 
         List<BBSListDto> bbs = getBBSListWithMember().
-                                            where(
-                                                    finalPredicate,
-                                                    keywordContains(keyword)
-                                            )
-                                            .orderBy(bBS.createdAt.desc())
-                                            .offset(pageable.getOffset())
-                                            .limit(pageable.getPageSize())
-                                            .fetch();
+                where(
+                        finalPredicate,
+                        keywordContains(keyword)
+                )
+                .orderBy(bBS.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
 
         Long totalCount = queryFactory
                 .select(bBS.count())
@@ -52,6 +49,32 @@ public class BBSRepositoryDSLImpl implements BBSRepositoryDSL {
         return new PageImpl<>(bbs, pageable, totalCount);
     }
 
+    @Override
+    public Slice<BBSListDto> getBBSWithConditionBySlice(String type, String keyword, Pageable pageable) {
+
+        Predicate finalPredicate = bBS.isVisible.eq(true)
+                                   .and(bBS.type.eq(BBSType.valueOf(type).name()));
+
+        List<BBSListDto> bbs = getBBSListWithMember().
+                                            where(
+                                                    finalPredicate,
+                                                    keywordContains(keyword)
+                                            )
+                                            .orderBy(bBS.createdAt.desc())
+                                            .offset(pageable.getOffset())
+                                            .limit(pageable.getPageSize() + 1)
+                                            .fetch();
+
+        boolean hasNext = false;
+        int pageSize = pageable.getPageSize();
+        if(bbs.size() > pageSize){
+            bbs.remove(pageSize);
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(bbs, pageable, hasNext);
+    }
+
     private JPAQuery<BBSListDto> getBBSListWithMember() {
         return queryFactory
                 .select(fields(BBSListDto.class,
@@ -61,8 +84,8 @@ public class BBSRepositoryDSLImpl implements BBSRepositoryDSL {
                         bBS.createdAt,
                         bBS.createdBy,
                         bBS.viewCount,
-                        bBS.member.memberNo,
-                        bBS.member.id
+                        member.memberNo,
+                        member.id
                         )
 
                 )
