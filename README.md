@@ -5,9 +5,6 @@
 
 ## 💧 서비스 소개 
     세차용품 안전정보 제공 및 검증된 세차 관련 정보를 보여주는 플랫폼
-<p align="center">
-    <img src="https://github.com/Kernel360/F1-WashFit-BE/assets/91066575/06a42af8-4b98-4c1a-b7ef-15e8a3c578cd" style="width: 60%">
-</p>
 
 ## 💧 서비스 대상
     - 바이럴 마케팅, 제품 제공 후기가 아닌 솔직한 리뷰를 확인하고 싶은 소비자
@@ -127,6 +124,11 @@
     - Admin 페이지
     - (제품 추천 시스템)
     
+<br>
+
+## 🔖 최종 발표회 자료
+[WashFit 발표자료 링크](https://docs.google.com/presentation/d/11U01JX0cyxGOTuKPDxSH1Vko8gDDBUfbCPqXjjgRyCQ/edit?usp=sharing)
+
 <br>
 
 ## 🙏🏻 팀원 소개
